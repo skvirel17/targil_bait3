@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class EditProfilePanel extends JPanel {
+    public static final String EDIT_PROFILE_PANEL = "EDIT_PROFILE_PANEL";
     public EditProfilePanel(){
         super();
         // פאנל עריכת פרופיל

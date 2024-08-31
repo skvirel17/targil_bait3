@@ -6,6 +6,12 @@ import GUI.panels.BasePanel;
 
 import javax.swing.*;
 
+import static GUI.panels.AppointNewManagerPanel.APPOINT_NEW_MANAGER_PANEL;
+import static GUI.panels.GetNumberOfDoctorsBySpecializationPanel.GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL;
+import static GUI.panels.HowManyVisitBeforePanel.HOW_MANY_VISIT_BEFORE_PANEL;
+import static GUI.panels.MedicationCalculatorPanel.MEDICATION_CALCULATOR_PANEL;
+import static GUI.panels.StandardCheckPanel.STANDARD_CHECK_PANEL;
+
 public class ToolsMenu extends JMenu {
     private static final String MENU_TOOLS = "Tools";
     private static final String MI_TOOLS_MEDICATION_CALCULATOR = "Medication Calculator";
@@ -22,10 +28,10 @@ public class ToolsMenu extends JMenu {
 
     public ToolsMenu() {
         super(MENU_TOOLS);
-        this.add(createItem(MI_TOOLS_MEDICATION_CALCULATOR, SystemUsersGUI.MEDICATION_CALCULATOR_PANEL));
-        this.add(createItem(MI_TOOLS_HOW_MANY_VISIT_BEFORE, SystemUsersGUI.HOW_MANY_VISIT_BEFORE_PANEL));
-        this.add(createItem(MI_TOOLS_GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION, SystemUsersGUI.GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL));
-        this.add(createItem(MI_TOOLS_STANDARD_CHECK, SystemUsersGUI.STANDARD_CHECK_PANEL));
-        this.add(createItem(MI_TOOLS_APPOINT_NEW_MANAGER, SystemUsersGUI.APPOINT_NEW_MANAGER_PANEL));
+        this.add(createItem(MI_TOOLS_MEDICATION_CALCULATOR, MEDICATION_CALCULATOR_PANEL));
+        this.add(createItem(MI_TOOLS_HOW_MANY_VISIT_BEFORE, HOW_MANY_VISIT_BEFORE_PANEL));
+        this.add(createItem(MI_TOOLS_GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION, GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL));
+        this.add(createItem(MI_TOOLS_STANDARD_CHECK, STANDARD_CHECK_PANEL));
+        this.add(createItem(MI_TOOLS_APPOINT_NEW_MANAGER, APPOINT_NEW_MANAGER_PANEL));
     }
 }

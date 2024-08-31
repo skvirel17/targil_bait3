@@ -24,6 +24,8 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 
 public class EditDepartmentPanel extends EditPanel {
 
+    public static final String EDIT_DEPARTMENT_PANEL = "EDIT_DEPARTMENT_PANEL";
+
     private JComboBox<Doctor> createManagerContent() {
         JComboBox<Doctor> managerContent = new JComboBox<>();
         for (Map.Entry staffMember : hospital.getStaffMembers().entrySet()){

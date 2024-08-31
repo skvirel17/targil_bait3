@@ -5,6 +5,7 @@ import model.Treatment;
 import java.util.Map;
 
 public class TreatmentsPanel extends TablePanel {
+    public static final String TREATMENTS_PANEL = "TREATMENTS_PANEL";
 
     private static final Object[] columns = {"SERIAL_NUMBER", "DESCRIPTION"};
 

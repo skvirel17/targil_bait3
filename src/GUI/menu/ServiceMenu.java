@@ -5,6 +5,13 @@ import GUI.actions.OpenPanelAction;
 
 import javax.swing.*;
 
+import static GUI.panels.AddIssueAndTreatmentToVisitPanel.ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL;
+import static GUI.panels.AddMedicationPanel.ADD_MEDICATION_PANEL;
+import static GUI.panels.AddTreatmentPanel.ADD_TREATMENT_PANEL;
+import static GUI.panels.AllPanel.ADD_ALL_PANEL;
+import static GUI.panels.EditProfilePanel.EDIT_PROFILE_PANEL;
+import static GUI.panels.ViewDataPanel.VIEW_DATA_PANEL;
+
 public class ServiceMenu extends JMenu{
 
     private static final String MENU_SERVICE = "Service";
@@ -23,11 +30,11 @@ public class ServiceMenu extends JMenu{
 
     public ServiceMenu() {
         super(MENU_SERVICE);
-        this.add(createItem(MI_SERVICE_EDIT_PROFILE, SystemUsersGUI.EDIT_PROFILE_PANEL));
-        this.add(createItem(MI_SERVICE_ADD_MEDICATION, SystemUsersGUI.ADD_MEDICATION_PANEL));
-        this.add(createItem(MI_SERVICE_ADD_TREATMENT, SystemUsersGUI.ADD_TREATMENT_PANEL));
-        this.add(createItem(MI_SERVICE_ADD_VISIT_INFO, SystemUsersGUI.ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL));
-        this.add(createItem(MI_SERVICE_ADD_SYSTEM_CURE, SystemUsersGUI.ADD_ALL_PANEL));
-        this.add(createItem(MI_SERVICE_VIEW_DATA, SystemUsersGUI.VIEW_DATA_PANEL));
+        this.add(createItem(MI_SERVICE_EDIT_PROFILE, EDIT_PROFILE_PANEL));
+        this.add(createItem(MI_SERVICE_ADD_MEDICATION, ADD_MEDICATION_PANEL));
+        this.add(createItem(MI_SERVICE_ADD_TREATMENT, ADD_TREATMENT_PANEL));
+        this.add(createItem(MI_SERVICE_ADD_VISIT_INFO, ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL));
+        this.add(createItem(MI_SERVICE_ADD_SYSTEM_CURE, ADD_ALL_PANEL));
+        this.add(createItem(MI_SERVICE_VIEW_DATA, VIEW_DATA_PANEL));
     }
 }

@@ -5,13 +5,17 @@ import model.Patient;
 
 import java.util.Map;
 
+import static GUI.panels.table_panels.edit_panels.EditDepartmentPanel.EDIT_DEPARTMENT_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditPatientsPanel.EDIT_PATIENT_PANEL;
+
 public class PatientsPanel extends TablePanel {
+    public static final String PATIENTS_PANEL = "PATIENTS_PANEL";
 
     private static final Object[] columns = {"ID", "FIRST_NAME", "LAST_NAME", "BIRTH_DATE", "ADDRESS", "PHONE_NUMBER",
             "EMAIL", "GENDER", "HELTH_FUND", "BIOLOGICAL_GENDER"};
 
     public PatientsPanel(Map<Integer, Patient> patients) {
-        super(mapData(patients), columns, SystemUsersGUI.EDIT_DEPARTMENT_PANEL);
+        super(mapData(patients), columns, EDIT_PATIENT_PANEL);
     }
 
     private static Object[][] mapData(Map<Integer, Patient> dataMap) {

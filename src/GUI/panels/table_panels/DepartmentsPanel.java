@@ -4,13 +4,15 @@ import GUI.mainScreen.SystemUsersGUI;
 import model.Department;
 import java.util.Map;
 
-public class DepartmentsPanel extends TablePanel {
+import static GUI.panels.table_panels.edit_panels.EditDepartmentPanel.EDIT_DEPARTMENT_PANEL;
 
-    private static final String DEPARTMENTS_PANEL = "DEPARTMENTS_PANEL";
+public class DepartmentsPanel extends TablePanel {
+    public static final String DEPARTMENTS_PANEL = "DEPARTMENTS_PANEL";
+
     private static final Object[] columns = {"ID", "NAME", "MANAGER", "LOCATION", "SPECIALIZATION"};
 
     public DepartmentsPanel(Map<Integer, Department> departments) {
-        super(mapData(departments), columns, SystemUsersGUI.EDIT_DEPARTMENT_PANEL);
+        super(mapData(departments), columns, EDIT_DEPARTMENT_PANEL);
     }
 
     private static Object[][] mapData(Map<Integer, Department> departments) {

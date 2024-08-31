@@ -5,6 +5,8 @@ import model.Medication;
 import java.util.Map;
 
 public class MedicationsPanel extends TablePanel {
+
+    public static final String MEDICATION_PANEL = "MEDICATION_PANEL";
     private static final Object[] columns = {"CODE", "NAME", "DOSAGE", "NUMBER_OF_DOSE"};
 
     public MedicationsPanel(Map<Integer, Medication> medications) {

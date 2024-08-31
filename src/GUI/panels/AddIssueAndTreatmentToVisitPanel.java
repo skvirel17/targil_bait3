@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class AddIssueAndTreatmentToVisitPanel extends JPanel{
+    public static final String ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL = "ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL";
     public AddIssueAndTreatmentToVisitPanel(){
         super();
         this.setLayout(new GridLayout(4, 2));

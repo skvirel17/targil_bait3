@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class AddTreatmentPanel extends JPanel {
+    public static final String ADD_TREATMENT_PANEL = "ADD_TREATMENT_PANEL";
     public  AddTreatmentPanel(){
         super();
         // פאנל להוספת טיפול

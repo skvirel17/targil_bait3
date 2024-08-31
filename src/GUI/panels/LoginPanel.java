@@ -7,8 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-import static GUI.mainScreen.SystemUsersGUI.DASHBOARD_PANEL;
+
 import static GUI.mainScreen.SystemUsersGUI.hospital;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class LoginPanel extends BasePanel {
 

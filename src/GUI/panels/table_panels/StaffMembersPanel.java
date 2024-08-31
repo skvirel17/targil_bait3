@@ -5,6 +5,7 @@ import model.StaffMember;
 import java.util.Map;
 
 public class StaffMembersPanel extends TablePanel {
+    public static final String STAFF_MEMBERS_PANEL = "STAFF_MEMBERS_PANEL";
 
     private static final Object[] columns = {"ID", "FIRST_NAME", "LAST_NAME", "BIRTH_DATE", "ADDRESS", "PHONE_NUMBER",
         "EMAIL", "GENDER", "WORK_START_DATE", "SALARY"};

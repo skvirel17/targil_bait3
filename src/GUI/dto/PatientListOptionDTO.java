@@ -1,9 +1,12 @@
 package GUI.dto;
 
-import model.Patient;
-import model.Visit;
 import enums.BiologicalSex;
 import enums.HealthFund;
+import enums.Specialization;
+import model.Department;
+import model.Doctor;
+import model.Patient;
+import model.Visit;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -17,23 +20,13 @@ public class PatientListOptionDTO extends Patient {
     }
 
     public static PatientListOptionDTO map(Patient patient) {
-        return new PatientListOptionDTO(
-                patient.getId(),
-                patient.getFirstName(),
-                patient.getLastName(),
-                patient.getBirthDate(),
-                patient.getAddress(),
-                patient.getPhoneNumber(),
-                patient.getEmail(),
-                patient.getGender(),
-                patient.getVisitsList(),
-                patient.getHealthFund(),
-                patient.getBiologicalSex()
-        );
+        return new PatientListOptionDTO(patient.getId(), patient.getFirstName(), patient.getLastName(), patient.getBirthDate(),
+                patient.getAddress(), patient.getPhoneNumber(), patient.getEmail(), patient.getGender(), patient.getVisitsList(),
+                   patient.getHealthFund(),patient.getBiologicalSex());
     }
 
     @Override
     public String toString() {
-        return getFirstName() + " " + getLastName() + " (" + getPhoneNumber() + ")";
+        return getFirstName() + " " + getLastName() + " - " + getBirthDate() + " (" + getPhoneNumber() + ")";
     }
 }

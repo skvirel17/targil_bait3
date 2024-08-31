@@ -1,0 +1,646 @@
+package control;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import enums.*;
+import model.*;
+import utils.MyFileLogWriter;
+import utils.UtilsMethods;
+
+
+public class Hospital implements Serializable {
+	private static final long serialVersionUID = -8625720283369221801L;
+	private static Hospital instance ;
+	private HashMap<Integer,Department>departments;
+	private HashMap<String,MedicalProblem>medicalProblems;
+	private HashMap<Integer,StaffMember>staffMembers;
+	private HashMap<Integer,Medication>medications;
+	private HashMap<Integer,Patient>patients;
+	private HashMap<Integer,Treatment>treatments;
+	private HashMap<Integer,Visit>visits;
+	public final static Date TODAY = UtilsMethods.parseDate("30/04/2024");
+	
+	
+	//private constructor
+	private Hospital() {
+		super();
+		this.departments = new HashMap<>();
+		this.medicalProblems = new HashMap<>();
+		this.staffMembers = new HashMap<>();
+		this.medications = new HashMap<>();
+		this.patients = new HashMap<>();
+		this.treatments = new HashMap<>();
+		this.visits = new HashMap<>();
+	}
+	//getInstance
+	public static Hospital getInstance() {
+		if (instance==null) {
+			instance = new Hospital();
+		}
+		return instance;
+	}
+	
+	
+	//add
+	public boolean addDoctorToDepartment(Department department,Doctor doctor) {
+		if(department!=null&&doctor!=null
+				&&departments.containsKey(department.getNumber())&&staffMembers.containsKey(doctor.getId())) {
+				return department.addDoctor(doctor);
+		}
+		return false;
+	}
+	
+	public boolean addNurseToDepartment(Department department,Nurse nurse) {
+		if(department!=null&&nurse!=null
+				&&departments.containsKey(department.getNumber())&&staffMembers.containsKey(nurse.getId())) {
+				return department.addNurse(nurse);
+		}
+		return false;
+	}
+	
+	
+	public boolean addDepartment(Department department) {
+		if(department==null) {
+			return false;
+		}
+		if (departments.containsKey(department.getNumber())) {
+			return false;
+		}
+		return departments.put(department.getNumber(),department)==null;
+	}
+	
+	public boolean addDisease(Disease disease) {
+		return addMedicalProblem(disease);
+	}
+	
+	public boolean addMedicalProblem(MedicalProblem medicalProblem) {
+		if(medicalProblem==null) {
+			return false;
+		}
+		if (medicalProblems.containsKey(medicalProblem.getCode())) {
+			return false;
+		}
+		boolean flag=true;
+		for(Treatment treatment:medicalProblem.getTreatmentsList()) {
+			if(!treatment.addMedicalProblem(medicalProblem)) {
+				flag=false;
+			}
+			
+		}
+		if (flag==true) {
+			flag=medicalProblems.put(medicalProblem.getCode(),medicalProblem)==null;
+		}
+		if(flag==false) {
+			for(Treatment treatment:medicalProblem.getTreatmentsList()) {
+				treatment.removeMedicalProblem(medicalProblem);
+			}
+		}
+		return flag;
+	}
+	
+	public boolean addFracture(Fracture fracture) {
+		return addMedicalProblem(fracture);
+	}
+	
+	public boolean addInjury(Injury injury) {
+		return addMedicalProblem(injury);
+	}
+	
+	public boolean addMedication(Medication medication) {
+		if(medication==null) {
+			return false;
+		}
+		if (medications.containsKey(medication.getCode())) {
+			return false;
+		}
+		return medications.put(medication.getCode(),medication)==null;
+	}
+	
+	public boolean addStaffMember(StaffMember staffMember) {
+		if(staffMember==null) {
+			return false;
+		}
+		if (staffMembers.containsKey(staffMember.getId())) {
+			return false;
+		}
+		return staffMembers.put(staffMember.getId(),staffMember)==null;
+	}
+	
+	public boolean addDoctor(Doctor doctor) {
+		return addStaffMember(doctor);
+	}
+	
+	public boolean addIntensiveCareDoctor(IntensiveCareDoctor doctor) {
+		return addStaffMember(doctor);
+	}
+	
+	public boolean addNurse(Nurse nurse) {
+		return addStaffMember(nurse);
+	}
+	
+	public boolean addIntensiveCareNurse(IntensiveCareNurse nurse) {
+		return addStaffMember(nurse);
+	}
+	
+	public boolean addPatient(Patient patient) {
+		if(patient==null) {
+			return false;
+		}
+		if (patients.containsKey(patient.getId())) {
+			return false;
+		}
+		return patients.put(patient.getId(),patient)==null;
+	}
+	
+	public boolean addTreatment(Treatment treatment) {
+		if(treatment==null) {
+			return false;
+		}
+		if (treatments.containsKey(treatment.getSerialNumber())) {
+			return false;
+		}
+		return treatments.put(treatment.getSerialNumber(),treatment)==null;
+	}
+	
+	public boolean addVisit(Visit visit) {
+		if(visit==null) {
+			return false;
+		}
+		if (visits.containsKey(visit.getNumber())) {
+			return false;
+		}
+		if(visit.getPatient().addVisit(visit))
+			return visits.put(visit.getNumber(),visit)==null;
+		return false;
+	}
+	
+	//remove
+	public boolean removeDepartment(Department department) {
+		if(department==null) {
+			return false;
+		}
+		if (!departments.containsKey(department.getNumber())) {
+			return false;
+		}
+		for(StaffMember staffMember:department.getStaffMembersList()) {
+			staffMember.removeDepartment(department);
+		}
+		for(MedicalProblem medicalProblem:medicalProblems.values()) {
+			if(medicalProblem.getDepartment().equals(department)) {
+				medicalProblem.setDepartment(null);
+			}
+		}
+		return departments.remove(department.getNumber())!=null;
+	}
+	
+	public boolean removeMedicalProblem(MedicalProblem medicalProblem) {
+		if(medicalProblem==null) {
+			return false;
+		}
+		if (!medicalProblems.containsKey(medicalProblem.getCode())) {
+			return false;
+		}
+		for(Treatment t:medicalProblem.getTreatmentsList()) {
+			t.removeMedicalProblem(medicalProblem);
+		}
+		for(Visit v:visits.values()) {
+			v.removeMedicalProblem(medicalProblem);
+		}
+		return medicalProblems.remove(medicalProblem.getCode())!=null;
+	}
+	public boolean removeDisease(Disease disease) {
+		return removeMedicalProblem(disease);
+	}
+	
+	public boolean removeFracture(Fracture fracture) {
+		return removeMedicalProblem(fracture);
+	}
+	
+	public boolean removeInjury(Injury injury) {
+		return removeMedicalProblem(injury);
+	}
+	
+	public boolean removeMedication(Medication medication) {
+		if(medication==null) {
+			return false;
+		}
+		if (!medications.containsKey(medication.getCode())) {
+			return false;
+		}
+		for(Treatment treatment:treatments.values()) {
+			treatment.removeMedication(medication);
+		}
+		return medications.remove(medication.getCode())!=null;
+	}
+	
+	public boolean removeStaffMember(StaffMember staffMember) {
+		if(staffMember==null) {
+			return false;
+		}
+		if (!staffMembers.containsKey(staffMember.getId())) {
+			return false;
+		}
+		for(Department d:staffMember.getDepartments()) {
+			d.removeStaffMember(staffMember);
+			if(d.getmanager().equals(staffMember)) {
+				d.setmanager(null);
+			}
+		}
+		return staffMembers.remove(staffMember.getId()) != null;
+	}
+	
+	public boolean removeDoctor(Doctor doctor) {
+		return removeStaffMember(doctor);
+	}
+	
+	public boolean removeNurse(Nurse nurse) {
+		return removeStaffMember(nurse);
+	}
+	
+	public boolean removePatient(Patient patient) {
+		if(patient==null) {
+			return false;
+		}
+		if (!patients.containsKey(patient.getId())) {
+			return false;
+		}
+		for(Visit visit:patient.getVisitsList()) {
+			visits.remove(visit.getNumber());
+		}
+		return patients.remove(patient.getId()) != null;
+	}
+
+	
+	public boolean removeTreatment(Treatment treatment) {
+		if(treatment==null) {
+			return false;
+		}
+		if (!treatments.containsKey(treatment.getSerialNumber())) {
+			return false;
+		}
+		for(MedicalProblem medicalProblem:treatment.getMedicalProblemsList()) {
+			medicalProblem.removeTreatment(treatment);
+		}
+		for(Visit v:visits.values()) {
+			v.removeTreatment(treatment);
+		}
+		return treatments.remove(treatment.getSerialNumber()) != null;
+	}
+	
+	public boolean removeVisit(Visit visit) {
+		if(visit==null) {
+			return false;
+		}
+		if (!visits.containsKey(visit.getNumber())) {
+			return false;
+		}if(visit.getPatient()!=null) {
+			visit.getPatient().removeVisit(visit);
+		}
+		return visits.remove(visit.getNumber()) != null;
+	}
+	
+	//getReal
+	public Department getRealDepartment(Integer number) {
+		return departments.get(number);
+	}
+	
+	public MedicalProblem getMedicalProblem(String code) {
+		return medicalProblems.get(code);
+	}
+	
+	public Disease getRealDisease(String code) {
+		return (Disease) getMedicalProblem(code);
+	}
+	
+	public Fracture getRealFracture(String code) {
+		return (Fracture) getMedicalProblem(code);
+	}
+	
+
+	public Injury getRealInjury(String code) {
+		return (Injury) getMedicalProblem(code);
+	}
+	
+	public StaffMember getStaffMember(Integer id) {
+		return staffMembers.get(id);
+	}
+	public Doctor getRealDoctor(int id) {
+		return (Doctor) getStaffMember(id);
+	}
+	
+	public Nurse getRealNurse(int id) {
+		return (Nurse) getStaffMember(id);
+	}
+	
+	public Patient getRealPatient(Integer id) {
+		return patients.get(id);
+	}
+	
+	
+	public Medication getRealMedication(Integer code) {
+		return medications.get(code);
+	}
+	
+	public Treatment getRealTreatment(Integer number) {
+		return treatments.get(number);
+	}
+	
+	public Visit getRealVisit(Integer number) {
+		return visits.get(number);
+	}
+	
+	//Queries
+	public int countMedications(double min_dosage, double max_dosage) {
+		//Returns the number of medications that have bigger dosage then the min and smaller then the max
+		int count=0;
+		for(Medication medication:medications.values()) {
+			if(medication.getDosage()>=min_dosage&&medication.getDosage()<=max_dosage) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public double differenceBetweenTheLongestAndShortestVisit(Patient patient) {
+		//Returns the difference Between The Longest And Shortest Visit of the patient
+		double longestVisit=Double.MIN_VALUE;
+		double shortestVisit=Double.MAX_VALUE;
+		for (Visit v:patient.getVisitsList()) {
+			if(v.visitLength()>longestVisit) {
+				longestVisit=v.visitLength();
+			}
+			if(v.visitLength()<shortestVisit) {
+				shortestVisit=v.visitLength();
+			}
+		}
+		return longestVisit-shortestVisit;
+	}
+	
+	public void printHowManyFinishInternship() {
+		//print the number of doctors that finish internship
+		int count=0;
+		for(StaffMember staffMember:staffMembers.values()) {
+			if(staffMember instanceof Doctor) {
+				Doctor doctor=(Doctor) staffMember;
+				if(doctor.isFinishInternship()) {
+					count++;
+				}
+			}
+		}
+		MyFileLogWriter.println("The number of doctors that finish internship is: "+count);
+	}
+	
+	public int howManyVisitBefore(Date date) {
+		//Returns how many patients have a visit that end before the date
+		int count=0;
+		for(Patient patient:patients.values()) {
+			boolean hasVisitBefore=false;
+			for(Visit v:patient.getVisitsList()) {
+				if(hasVisitBefore==false) {
+					hasVisitBefore=v.getEndDate().before(date);
+				}
+			}
+			if(hasVisitBefore) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public void printOldestNurse() {
+		//Prints the details of the nurse that have works the longest time
+		Nurse oldestNurse=null;
+		double oldestAge=Double.MIN_VALUE;
+		for(StaffMember staffMember:staffMembers.values()) {
+			if(staffMember instanceof Nurse) {
+				if(oldestAge<staffMember.getWorkTime()) {
+					oldestAge=staffMember.getWorkTime();
+					oldestNurse=(Nurse) staffMember;
+				}
+			}
+		}
+		MyFileLogWriter.println("The oldest Nurse in the job is : "+oldestNurse);
+	}
+	
+	public HashMap<StaffMember, ArrayList<Department>>staffMembersThatWorksInMoreThenOneDepartment(){
+		//Returns the StaffMembers that have more then one Department
+		HashMap<StaffMember, ArrayList<Department>>result=new HashMap<StaffMember, ArrayList<Department>>();
+		for(StaffMember staffMember:staffMembers.values()) {
+			if(staffMember.getDepartments().size()>1) {
+				result.put(staffMember, new ArrayList<Department>(staffMember.getDepartments()));
+			}
+		}
+		return result;
+	}
+	
+	public HashMap<Department, HashMap<MedicalProblem, ArrayList<Treatment>>>getTreatmentsByMedicalProblemsByDepartment(){
+		//Returns for each Department the MedicalProblems that treatments in it and their Treatments
+		HashMap<Department, HashMap<MedicalProblem, ArrayList<Treatment>>>result=
+				new HashMap<Department, HashMap<MedicalProblem,ArrayList<Treatment>>>();
+		for(Department department:departments.values()) {
+			result.put(department, new HashMap<MedicalProblem, ArrayList<Treatment>>());
+		}
+		for(MedicalProblem medicalProblem:medicalProblems.values()) {
+			result.get(medicalProblem.getDepartment()).put(medicalProblem, new ArrayList<Treatment>(medicalProblem.getTreatmentsList()));
+		}
+		return result;
+	}
+	
+	public HashMap<Specialization, Integer>getNumberOfDoctorsBySpecialization(){
+		//Returns for each Specialization the Number of Doctors that Specialize in it
+		HashMap<Specialization, Integer>result=new HashMap<Specialization, Integer>();
+		for(Specialization specialization:Specialization.values()) {
+			result.put(specialization, 0);
+		}
+		for(StaffMember staffMember:staffMembers.values()) {
+			if(staffMember instanceof Doctor) {
+				Doctor doctor=(Doctor) staffMember;
+				int x=result.get(doctor.getSpecialization());
+				//if(doctor.getSpecialization().equals(Specialization.IntensiveCare))
+				//System.out.println("a");
+				result.put(doctor.getSpecialization(), x+1);
+				//System.out.println(result.get(Specialization.IntensiveCare));
+			}
+		}
+		return result;
+	}
+	
+	public int howManyIntensiveCareStaffMembers() {
+		//Returns the number of StaffMembers that are IntensiveCareStaffMembers
+		int count=0;
+		for(StaffMember staffMember:staffMembers.values()) {
+			if(staffMember instanceof IntensiveCareStaffMember) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public double avgSalary() {
+		//Returns the average salary of all the StaffMembers
+		double sum=0.0;
+		for(StaffMember staffMember:staffMembers.values()) {
+			sum+=staffMember.getSalary();
+		}
+		return sum/staffMembers.size();
+	}
+
+	
+	public boolean isCompliesWithTheMinistryOfHealthStandard() {
+		/*Checks if the hospital complies with the ministry of health standard. a.k.a:
+		 * a. more then 50% IntensiveCareStaffMembers
+		 * b. the average salary of all the StaffMembers is higher then 10,000
+		*/
+		double requiredSalary=10000;
+		double requiredPercentOfIntensiveCareStaffMembers=0.5;
+		return (avgSalary()>=requiredSalary&&
+				(howManyIntensiveCareStaffMembers()/staffMembers.size())>=
+				requiredPercentOfIntensiveCareStaffMembers);
+	}
+	
+	public Doctor AppointANewManager(Department department){
+		/* The method Appoint a new manager to the department:
+		 * Fired the old manager if exist
+		 * Finds the designated new manager, a.k.a:
+		 * 		the doctor from the department that is works the most time,
+		 * 		that have finish internship
+		 * 		and them specialization much the department specialization
+		 * Appoint them as the new manager and give him 5000 rise
+		 * */
+		if(department==null) {
+			return null;
+		}
+		removeDoctor(department.getmanager());
+		Doctor doctor=getOldestDoctor(department);
+		if(doctor==null) {
+			return null;
+		}
+		doctor.setSalary(doctor.getSalary()+5000);
+		department.setmanager(doctor);
+		return doctor;	
+	}
+	
+	public Doctor getOldestDoctor(Department department) {
+		/*Finds the doctor from the department that is works the most time,
+		 *that have finish internship
+		 *and them specialization much the department specialization*/
+		Doctor oldestdoctor=null;
+		double oldestAge=Double.MIN_VALUE;
+		for(StaffMember staffMember:department.getStaffMembersList()) {
+			if(staffMember instanceof Doctor) {
+				Doctor doctor=(Doctor) staffMember;
+				if(doctor.getSpecialization().equals(department.getSpecialization())&&doctor.isFinishInternship()) {
+					if(oldestAge<doctor.getWorkTime()) {
+						oldestAge=doctor.getWorkTime();
+						oldestdoctor = doctor;
+					}
+				}
+			}
+		}	
+		return oldestdoctor;
+	}
+	
+	
+	
+	//getters
+	public HashMap<Integer, Department> getDepartments() {
+		return departments;
+	}
+	public HashMap<String, MedicalProblem> getMedicalProblems() {
+		return medicalProblems;
+	}
+	public HashMap<Integer, StaffMember> getStaffMembers() {
+		return staffMembers;
+	}
+	public HashMap<Integer, Medication> getMedications() {
+		return medications;
+	}
+	public HashMap<Integer, Patient> getPatients() {
+		return patients;
+	}
+	public HashMap<Integer, Treatment> getTreatments() {
+		return treatments;
+	}
+	public HashMap<Integer, Visit> getVisits() {
+		return visits;
+	}
+	
+	public Department searchDepartmentBySpecialization(Specialization specialization) {
+		//search Department that it's specialization much the required specialization
+		for(Department department:departments.values()) {
+			if(department.getSpecialization().equals(specialization)) {
+				return department;
+			}
+		}
+		return null;
+	}
+	
+	//setters
+	public void setDepartments(HashMap<Integer, Department> departments) {
+		this.departments = departments;
+	}
+	public void setMedicalProblems(HashMap<String, MedicalProblem> medicalProblems) {
+		this.medicalProblems = medicalProblems;
+	}
+	public void setStaffMembers(HashMap<Integer, StaffMember> staffMembers) {
+		this.staffMembers = staffMembers;
+	}
+	public void setMedications(HashMap<Integer, Medication> medications) {
+		this.medications = medications;
+	}
+	public void setPatients(HashMap<Integer, Patient> patients) {
+		this.patients = patients;
+	}
+	public void setTreatments(HashMap<Integer, Treatment> treatments) {
+		this.treatments = treatments;
+	}
+	public void setVisits(HashMap<Integer, Visit> visits) {
+		this.visits = visits;
+	}
+	
+	public void serialize(){
+		// Сериализуем объект в файл hospital.ser
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("hospital.ser"))) {
+
+			out.writeObject(this);
+			System.out.println("Object was serialized hospital.ser");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Hospital deserialize(String filename) {
+		Object obj = null;
+		try (FileInputStream fileIn = new FileInputStream(filename);
+			ObjectInputStream in = new ObjectInputStream(fileIn)) {
+
+			// Чтение объекта из файла
+			obj = in.readObject();
+			System.out.println("Object was deserialize " + filename);
+
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return (Hospital) obj;
+	}
+
+	public boolean isUserValid(String id) {
+		return staffMembers.containsKey(id);  // Проверяем, есть ли такой ID в HashMap
+	}
+
+	public Department getDepartmentByName(String name) {
+		for (Department department : departments.values()) { // assuming departments is a HashMap or List
+			if (department.getName().equalsIgnoreCase(name)) {
+				return department;
+			}
+		}
+		return null;
+	}
+}
+
+		

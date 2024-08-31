@@ -52,10 +52,9 @@ public class EditDepartmentPanel extends EditPanel {
         JList<String> activeStaffList = new JList<>(activeStaffListModel);
         activeStaffPane.add(activeStaffList);
 
-        JScrollPane allStaffPane = new JScrollPane();
         DefaultListModel<String> allStaffListModel = new DefaultListModel<>();
         JList<String> allStaffList = new JList<>(allStaffListModel);
-        allStaffPane.add(allStaffList);
+        JScrollPane allStaffPane = new JScrollPane(allStaffList);
 
         for (StaffMember member : hospital.getStaffMembers().values()) {
             allStaffListModel.addElement(StaffMemberListOptionDTO.map(member).toString());

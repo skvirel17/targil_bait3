@@ -5,6 +5,14 @@ import GUI.mainScreen.SystemUsersGUI;
 
 import javax.swing.*;
 
+import static GUI.panels.table_panels.DepartmentsPanel.DEPARTMENTS_PANEL;
+import static GUI.panels.table_panels.MedicalProblemsPanel.MEDICAL_PROBLEMS_PANEL;
+import static GUI.panels.table_panels.MedicationsPanel.MEDICATION_PANEL;
+import static GUI.panels.table_panels.PatientsPanel.PATIENTS_PANEL;
+import static GUI.panels.table_panels.StaffMembersPanel.STAFF_MEMBERS_PANEL;
+import static GUI.panels.table_panels.TreatmentsPanel.TREATMENTS_PANEL;
+import static GUI.panels.table_panels.VisitsPanel.VISITS_PANEL;
+
 public class DataMenu extends JMenu {
 
     private static final String MENU_DATA = "Data";
@@ -24,12 +32,12 @@ public class DataMenu extends JMenu {
 
     public DataMenu() {
         super(MENU_DATA);
-        this.add(createItem(MI_DATA_DEPARTMENTS, SystemUsersGUI.DEPARTMENTS_PANEL));
-        this.add(createItem(MI_DATA_MEDICAL_PROBLEMS, SystemUsersGUI.MEDICAL_PROBLEMS_PANEL));
-        this.add(createItem(MI_DATA_STAFF_MEMBERS, SystemUsersGUI.STAFF_MEMBERS_PANEL));
-        this.add(createItem(MI_DATA_MEDICATIONS, SystemUsersGUI.MEDICATION_PANEL));
-        this.add(createItem(MI_DATA_PATIENTS, SystemUsersGUI.PATIENTS_PANEL));
-        this.add(createItem(MI_DATA_TREATMENTS, SystemUsersGUI.TREATMENTS_PANEL));
-        this.add(createItem(MI_DATA_VISITS, SystemUsersGUI.VISITS_PANEL));
+        this.add(createItem(MI_DATA_DEPARTMENTS, DEPARTMENTS_PANEL));
+        this.add(createItem(MI_DATA_MEDICAL_PROBLEMS, MEDICAL_PROBLEMS_PANEL));
+        this.add(createItem(MI_DATA_STAFF_MEMBERS, STAFF_MEMBERS_PANEL));
+        this.add(createItem(MI_DATA_MEDICATIONS, MEDICATION_PANEL));
+        this.add(createItem(MI_DATA_PATIENTS, PATIENTS_PANEL));
+        this.add(createItem(MI_DATA_TREATMENTS, TREATMENTS_PANEL));
+        this.add(createItem(MI_DATA_VISITS, VISITS_PANEL));
     }
 }

@@ -8,8 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class AllPanel extends JPanel{
+
+    public static final String ADD_ALL_PANEL = "ADD_ALL_PANEL";
     public  AllPanel(){
         super();
 

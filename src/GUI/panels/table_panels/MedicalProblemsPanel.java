@@ -1,15 +1,17 @@
 package GUI.panels.table_panels;
 
+import GUI.panels.table_panels.edit_panels.EditMedicalProblem;
 import model.MedicalProblem;
 
 import java.util.Map;
 
 public class MedicalProblemsPanel extends TablePanel {
+    public static final String MEDICAL_PROBLEMS_PANEL = "MEDICAL_PROBLEMS_PANEL";
 
     private static final Object[] columns = {"CODE", "NAME", "DEPARTMENT"};
 
     public MedicalProblemsPanel(Map<String, MedicalProblem> problems) {
-        super(mapData(problems), columns, "");
+        super(mapData(problems), columns, EditMedicalProblem.EDIT_MEDICAL_PROBLEM_PANEL);
     }
 
     private static Object[][] mapData(Map<String, MedicalProblem> problems) {

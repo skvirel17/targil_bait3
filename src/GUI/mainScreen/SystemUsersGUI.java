@@ -4,7 +4,10 @@ import GUI.menu.*;
 import GUI.panels.*;
 import GUI.panels.table_panels.*;
 import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
+import GUI.panels.table_panels.edit_panels.EditMedicalProblem;
+import GUI.panels.table_panels.edit_panels.EditPatientsPanel;
 import control.Hospital;
+import model.MedicalProblem;
 import model.StaffMember;
 
 import javax.swing.*;
@@ -12,31 +15,33 @@ import java.awt.*;
 import java.io.File;
 import java.util.Map;
 
+import static GUI.panels.AddIssueAndTreatmentToVisitPanel.ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL;
+import static GUI.panels.AddMedicationPanel.ADD_MEDICATION_PANEL;
+import static GUI.panels.AddTreatmentPanel.ADD_TREATMENT_PANEL;
+import static GUI.panels.AllPanel.ADD_ALL_PANEL;
+import static GUI.panels.AppointNewManagerPanel.APPOINT_NEW_MANAGER_PANEL;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
+import static GUI.panels.EditProfilePanel.EDIT_PROFILE_PANEL;
+import static GUI.panels.GetNumberOfDoctorsBySpecializationPanel.GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL;
+import static GUI.panels.HowManyVisitBeforePanel.HOW_MANY_VISIT_BEFORE_PANEL;
+import static GUI.panels.MedicationCalculatorPanel.MEDICATION_CALCULATOR_PANEL;
+import static GUI.panels.StandardCheckPanel.STANDARD_CHECK_PANEL;
+import static GUI.panels.ViewDataPanel.VIEW_DATA_PANEL;
+import static GUI.panels.table_panels.MedicalProblemsPanel.MEDICAL_PROBLEMS_PANEL;
+import static GUI.panels.table_panels.MedicationsPanel.MEDICATION_PANEL;
+import static GUI.panels.table_panels.PatientsPanel.PATIENTS_PANEL;
+import static GUI.panels.table_panels.StaffMembersPanel.STAFF_MEMBERS_PANEL;
+import static GUI.panels.table_panels.TreatmentsPanel.TREATMENTS_PANEL;
+import static GUI.panels.table_panels.VisitsPanel.VISITS_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditDepartmentPanel.EDIT_DEPARTMENT_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditMedicalProblem.EDIT_MEDICAL_PROBLEM_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditPatientsPanel.EDIT_PATIENT_PANEL;
+
 
 public class SystemUsersGUI {
     private static final String FRAME_NAME = "Doctor Dashboard";
     public static final String LOGIN_PANEL = "LOGIN_PANEL";
-    public static final String EDIT_PROFILE_PANEL = "EDIT_PROFILE_PANEL";
-    public static final String ADD_ALL_PANEL = "ADD_ALL_PANEL";
-    public static final String ADD_MEDICATION_PANEL = "ADD_MEDICATION_PANEL";
-    public static final String ADD_TREATMENT_PANEL = "ADD_TREATMENT_PANEL";
-    public static final String ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL = "ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL";
-    public static final String VIEW_DATA_PANEL = "VIEW_DATA_PANEL";
-    public static final String DASHBOARD_PANEL = "DASHBOARD_PANEL";
-    public static final String DEPARTMENTS_PANEL = "DEPARTMENTS_PANEL";
-    public static final String MEDICAL_PROBLEMS_PANEL = "MEDICAL_PROBLEMS_PANEL";
-    public static final String STAFF_MEMBERS_PANEL = "STAFF_MEMBERS_PANEL";
-    public static final String MEDICATION_PANEL = "MEDICATION_PANEL";
-    public static final String PATIENTS_PANEL = "PATIENTS_PANEL";
-    public static final String TREATMENTS_PANEL = "TREATMENTS_PANEL";
-    public static final String VISITS_PANEL = "VISITS_PANEL";
 
-    public static final String MEDICATION_CALCULATOR_PANEL = "MEDICATION_CALCULATOR_PANEL";
-    public static final String HOW_MANY_VISIT_BEFORE_PANEL = "HOW_MANY_VISIT_BEFORE_PANEL";
-    public static final String GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL = "GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL";
-    public static final String STANDARD_CHECK_PANEL = "STANDARD_CHECK_PANEL";
-    public static final String APPOINT_NEW_MANAGER_PANEL = "APPOINT_NEW_MANAGER_PANEL";
-    public static final String EDIT_DEPARTMENT_PANEL = "EDIT_DEPARTMENT_PANEL";
     private static final JFrame mainFrame = new MainScreenPanel();
     private static final JPanel mainScreen = new JPanel();
     private static final CardLayout cardLayout = new CardLayout();
@@ -93,6 +98,9 @@ public class SystemUsersGUI {
         JPanel standardCheckPanel = new StandardCheckPanel();
         JPanel appointNewManagerPanel = new AppointNewManagerPanel();
         JPanel editDepartmentPanel = new EditDepartmentPanel(departmentsPanel);
+        JPanel editMedicalProblemPanel = new EditMedicalProblem((BasePanel) medicalProblemsPanel);
+        JPanel editPatientPanel = new EditPatientsPanel((BasePanel) patientsPanel);
+
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(new BaseMenu());
@@ -124,6 +132,8 @@ public class SystemUsersGUI {
         mainScreen.add(standardCheckPanel, STANDARD_CHECK_PANEL);
         mainScreen.add(appointNewManagerPanel, APPOINT_NEW_MANAGER_PANEL);
         mainScreen.add(editDepartmentPanel, EDIT_DEPARTMENT_PANEL);
+        mainScreen.add(editMedicalProblemPanel, EDIT_MEDICAL_PROBLEM_PANEL);
+        mainScreen.add(editPatientPanel, EDIT_PATIENT_PANEL);
 
         mainFrame.setContentPane(mainScreen);
 

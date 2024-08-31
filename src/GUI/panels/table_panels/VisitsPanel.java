@@ -5,6 +5,7 @@ import model.Visit;
 import java.util.Map;
 
 public class VisitsPanel extends TablePanel {
+    public static final String VISITS_PANEL = "VISITS_PANEL";
 
     private static final Object[] columns = {"NUMBER", "PATIENT", "START_DATE", "END_DATE"};
 

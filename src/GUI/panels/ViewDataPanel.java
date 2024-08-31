@@ -5,8 +5,11 @@ import GUI.actions.OpenPanelAction;
 import javax.swing.*;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
+import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class ViewDataPanel extends JPanel {
+
+    public static final String VIEW_DATA_PANEL = "VIEW_DATA_PANEL";
     public ViewDataPanel(){
         super();
         // פאנל לצפייה בכל הנתונים מלבד נתוני הצוות

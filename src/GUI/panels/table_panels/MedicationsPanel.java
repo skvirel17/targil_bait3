@@ -1,5 +1,6 @@
 package GUI.panels.table_panels;
 
+import GUI.panels.table_panels.edit_panels.EditMedicationPanel;
 import model.Medication;
 
 import java.util.Map;

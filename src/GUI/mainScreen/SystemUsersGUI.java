@@ -4,6 +4,9 @@ import GUI.menu.*;
 import GUI.panels.*;
 import GUI.panels.table_panels.*;
 import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
+import GUI.panels.table_panels.edit_panels.EditMedicationPanel;
+import GUI.panels.table_panels.edit_panels.EditStaffMembersPanel;
+import GUI.panels.table_panels.edit_panels.EditTreatmentsPanel;
 import control.Hospital;
 import model.StaffMember;
 
@@ -40,6 +43,9 @@ public class SystemUsersGUI {
     private static final JFrame mainFrame = new MainScreenPanel();
     private static final JPanel mainScreen = new JPanel();
     private static final CardLayout cardLayout = new CardLayout();
+    private static final String EDIT_MEDICATION_PANEL = "EDIT_MEDICATION_PANEL";
+    private static final String EDIT_STAFFMEMBERS_PANEL = "EDIT_STAFFMEMBERS_PANEL";
+    private static final String EDIT_TREATMENTS_PANEL = "EDIT_TREATMENTS_PANEL";
 
     public static Hospital hospital;
 
@@ -93,6 +99,9 @@ public class SystemUsersGUI {
         JPanel standardCheckPanel = new StandardCheckPanel();
         JPanel appointNewManagerPanel = new AppointNewManagerPanel();
         JPanel editDepartmentPanel = new EditDepartmentPanel(departmentsPanel);
+        JPanel editMedicationPanel = new EditMedicationPanel(medicationPanel);
+        JPanel editStaffMembersPanel = new EditStaffMembersPanel((BasePanel) staffMembersPanel);
+        JPanel editTreatmentsPanel = new EditTreatmentsPanel(treatmentsPanel);
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(new BaseMenu());
@@ -124,6 +133,9 @@ public class SystemUsersGUI {
         mainScreen.add(standardCheckPanel, STANDARD_CHECK_PANEL);
         mainScreen.add(appointNewManagerPanel, APPOINT_NEW_MANAGER_PANEL);
         mainScreen.add(editDepartmentPanel, EDIT_DEPARTMENT_PANEL);
+        mainScreen.add(editMedicationPanel, EDIT_MEDICATION_PANEL);
+        mainScreen.add(editStaffMembersPanel, EDIT_STAFFMEMBERS_PANEL);
+        mainScreen.add(editTreatmentsPanel, EDIT_TREATMENTS_PANEL);
 
         mainFrame.setContentPane(mainScreen);
 

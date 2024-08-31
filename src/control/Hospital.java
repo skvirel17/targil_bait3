@@ -468,7 +468,8 @@ public class Hospital implements Serializable {
 		}
 		return result;
 	}
-	
+
+
 	public int howManyIntensiveCareStaffMembers() {
 		//Returns the number of StaffMembers that are IntensiveCareStaffMembers
 		int count=0;

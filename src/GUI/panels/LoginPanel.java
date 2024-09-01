@@ -13,6 +13,8 @@ import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class LoginPanel extends BasePanel {
 
+    public static final String LOGIN_PANEL = "LOGIN_PANEL";
+
     public LoginPanel() {
         super();
 

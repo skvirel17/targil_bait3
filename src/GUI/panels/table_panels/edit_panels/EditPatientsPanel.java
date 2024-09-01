@@ -1,15 +1,12 @@
 package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
-import GUI.dto.DoctorListOptionDTO;
-import GUI.dto.PatientListOptionDTO;
-import GUI.dto.StaffMemberListOptionDTO;
+import GUI.dto.*;
 import GUI.panels.BasePanel;
+import GUI.panels.table_panels.PatientsPanel;
 import enums.BiologicalSex;
 import enums.Specialization;
-import model.Doctor;
-import model.Patient;
-import model.StaffMember;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -23,12 +20,12 @@ public class EditPatientsPanel extends EditPanel {
 
         public static final String EDIT_PATIENT_PANEL = "EDIT_PATIENT_PANEL";
 
-        private JComboBox<BiologicalSex> createPatientsContent() {
-            JComboBox<BiologicalSex> patientContent = new JComboBox<>();
+        private JComboBox<BiologicalSex> createBioSexContent() {
+            JComboBox<BiologicalSex> res = new JComboBox<>();
             for(BiologicalSex biologicalSex : BiologicalSex.values()){
-                patientContent.addItem(biologicalSex);
+                res.addItem(biologicalSex);
             }
-            return patientContent;
+            return res;
         }
 
         public EditPatientsPanel(BasePanel prev) {
@@ -61,7 +58,28 @@ public class EditPatientsPanel extends EditPanel {
             JTextField healthFundText = new JTextField();
 
             JLabel biologicalLabel = new JLabel("BiologicalSex:");
-            JComboBox<BiologicalSex> biologicalText = createPatientsContent();
+            JComboBox<BiologicalSex> biologicalText = createBioSexContent();
+
+            JLabel visitsLabel = new JLabel("Visits:");
+            JScrollPane activeVisitsPane = new JScrollPane();
+            DefaultListModel<String> activeVisitsListModel = new DefaultListModel<>();
+            JList<String> activeVisitsList = new JList<>(activeVisitsListModel);
+            activeVisitsPane.add(activeVisitsList);
+
+            DefaultListModel<String> allVisitsListModel = new DefaultListModel<>();
+            JList<String> allVisitsList = new JList<>(allVisitsListModel);
+            JScrollPane allVisitsPane = new JScrollPane(allVisitsList);
+
+            for (Visit visit : hospital.getVisits().values()) {
+                allVisitsListModel.addElement(VisitListOptionDTO.map(visit).toString());
+            }
+
+            JButton button = new JButton("Select Sublist");
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                }
+            });
 
 
             JButton savePatientButton = new JButton("Save");
@@ -91,15 +109,15 @@ public class EditPatientsPanel extends EditPanel {
             layout.setAutoCreateGaps(true);
             layout.setAutoCreateContainerGaps(true);
 
-//            GroupLayout.Group staffGroupHor = layout.createSequentialGroup()
-//                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeStaffPane))
-//                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
-//                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allStaffPane));
-//            GroupLayout.Group staffGroupVer = layout.createSequentialGroup()
-//                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                            .addComponent(activeStaffPane)
-//                            .addComponent(button)
-//                            .addComponent(allStaffPane));
+            GroupLayout.Group visitsGroupHor = layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeVisitsPane))
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allVisitsPane));
+            GroupLayout.Group visitsGroupVer = layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                            .addComponent(activeVisitsPane)
+                            .addComponent(button)
+                            .addComponent(allVisitsPane));
 
             layout.setHorizontalGroup(
                     layout.createSequentialGroup()
@@ -113,6 +131,7 @@ public class EditPatientsPanel extends EditPanel {
                                     .addComponent(healthFundLabel)
                                     .addComponent(emailLabel)
                                     .addComponent(biologicalLabel)
+                                    .addComponent(visitsLabel)
                                     .addComponent(backButton))
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(patientFirstNameText)
@@ -124,6 +143,7 @@ public class EditPatientsPanel extends EditPanel {
                                     .addComponent(healthFundText)
                                     .addComponent(emailText)
                                     .addComponent(biologicalText)
+                                    .addGroup(visitsGroupHor)
                                     .addComponent(savePatientButton))
             );
 
@@ -156,6 +176,9 @@ public class EditPatientsPanel extends EditPanel {
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(biologicalLabel)
                                     .addComponent(biologicalText))
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(visitsLabel)
+                                    .addGroup(visitsGroupVer))
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(backButton)
                                     .addComponent(savePatientButton))

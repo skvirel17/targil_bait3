@@ -1,8 +1,11 @@
 package GUI.panels.table_panels;
 
+import GUI.panels.table_panels.edit_panels.EditVisitsPanel;
 import model.Visit;
 
 import java.util.Map;
+
+import static GUI.panels.table_panels.edit_panels.EditVisitsPanel.EDIT_VISIT_PANEL;
 
 public class VisitsPanel extends TablePanel {
     public static final String VISITS_PANEL = "VISITS_PANEL";
@@ -10,7 +13,7 @@ public class VisitsPanel extends TablePanel {
     private static final Object[] columns = {"NUMBER", "PATIENT", "START_DATE", "END_DATE"};
 
     public VisitsPanel(Map<Integer, Visit> visits) {
-        super(mapData(visits), columns, "");
+        super(mapData(visits), columns, EDIT_VISIT_PANEL);
     }
 
     private static Object[][] mapData(Map<Integer, Visit> map) {
@@ -28,5 +31,10 @@ public class VisitsPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    @Override
+    public String getPanelStringKey() {
+        return VISITS_PANEL;
     }
 }

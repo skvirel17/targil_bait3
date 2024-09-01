@@ -2,10 +2,9 @@ package GUI.menu;
 
 import GUI.mainScreen.SystemUsersGUI;
 import GUI.actions.OpenPanelAction;
+import GUI.panels.LoginPanel;
 
 import javax.swing.*;
-
-import static GUI.mainScreen.SystemUsersGUI.LOGIN_PANEL;
 
 public class AccountMenu extends JMenu{
 
@@ -14,7 +13,7 @@ public class AccountMenu extends JMenu{
 
     private static JMenuItem createLogoutItem() {
         JMenuItem logoutItem = new JMenuItem(MI_ACCOUNT_LOGOUT);
-        logoutItem.addActionListener(new OpenPanelAction(SystemUsersGUI.getMainScreen(), LOGIN_PANEL, SystemUsersGUI.getCardLayout()));
+        logoutItem.addActionListener(new OpenPanelAction(SystemUsersGUI.getMainScreen(), LoginPanel.LOGIN_PANEL, SystemUsersGUI.getCardLayout()));
         return logoutItem;
     }
 

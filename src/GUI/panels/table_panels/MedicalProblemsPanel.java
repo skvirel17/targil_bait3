@@ -1,9 +1,11 @@
 package GUI.panels.table_panels;
 
-import GUI.panels.table_panels.edit_panels.EditMedicalProblem;
+import GUI.panels.table_panels.edit_panels.EditMedicalProblemPanel;
 import model.MedicalProblem;
 
 import java.util.Map;
+
+import static GUI.panels.table_panels.edit_panels.EditMedicalProblemPanel.EDIT_MEDICAL_PROBLEM_PANEL;
 
 public class MedicalProblemsPanel extends TablePanel {
     public static final String MEDICAL_PROBLEMS_PANEL = "MEDICAL_PROBLEMS_PANEL";
@@ -11,7 +13,7 @@ public class MedicalProblemsPanel extends TablePanel {
     private static final Object[] columns = {"CODE", "NAME", "DEPARTMENT"};
 
     public MedicalProblemsPanel(Map<String, MedicalProblem> problems) {
-        super(mapData(problems), columns, EditMedicalProblem.EDIT_MEDICAL_PROBLEM_PANEL);
+        super(mapData(problems), columns, EDIT_MEDICAL_PROBLEM_PANEL);
     }
 
     private static Object[][] mapData(Map<String, MedicalProblem> problems) {
@@ -27,5 +29,10 @@ public class MedicalProblemsPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    @Override
+    public String getPanelStringKey() {
+        return MEDICAL_PROBLEMS_PANEL;
     }
 }

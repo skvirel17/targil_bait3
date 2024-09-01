@@ -1,6 +1,7 @@
 package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
+import GUI.dto.DepartmentOptionDTO;
 import GUI.dto.StaffMemberListOptionDTO;
 import GUI.panels.BasePanel;
 import model.StaffMember;
@@ -16,16 +17,18 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 
  public class EditStaffMembersPanel extends EditPanel {
 
-     private JComboBox<StaffMember> createStaffMembersContent() {
-         JComboBox<StaffMember> staffMemberContent = new JComboBox<>();
+     public static final String EDIT_STAFF_MEMBERS_PANEL = "EDIT_STAFF_MEMBERS_PANEL";
+
+     private JComboBox<Department> createStaffMembersContent() {
+         JComboBox<Department> res = new JComboBox<>();
 
          // Получаем все сотрудники из hospital
-         for (Map.Entry<Integer, StaffMember> entry : hospital.getStaffMembers().entrySet()) {
+         for (Map.Entry<Integer, Department> entry : hospital.getDepartments().entrySet()) {
              // Добавляем каждого сотрудника в JComboBox с помощью DTO
-             staffMemberContent.addItem(StaffMemberListOptionDTO.map(entry.getValue()));
+             res.addItem(DepartmentOptionDTO.map(entry.getValue()));
          }
 
-         return staffMemberContent;
+         return res;
      }
 
 
@@ -57,7 +60,7 @@ import static GUI.mainScreen.SystemUsersGUI.*;
         JTextField salaryText = new JTextField();
 
         JLabel departmentLabel = new JLabel("Department:");
-        JComboBox<Department> departmentCombo = new JComboBox<>();
+        JComboBox<Department> departmentCombo = createStaffMembersContent();
         // Populate departmentCombo with available departments if needed
 
         JButton addButton = new JButton("Save");

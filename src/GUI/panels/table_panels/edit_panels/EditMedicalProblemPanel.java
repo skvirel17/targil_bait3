@@ -2,12 +2,9 @@ package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
 import GUI.dto.DepartmentOptionDTO;
-import GUI.dto.StaffMemberListOptionDTO;
 import GUI.dto.TreatmentListOptionDTO;
 import GUI.panels.BasePanel;
 import model.Department;
-import model.MedicalProblem;
-import model.StaffMember;
 import model.Treatment;
 
 import javax.swing.*;
@@ -17,7 +14,7 @@ import java.util.Map;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
-public class EditMedicalProblem extends EditPanel{
+public class EditMedicalProblemPanel extends EditPanel{
 
     public static final String EDIT_MEDICAL_PROBLEM_PANEL = "EDIT_MEDICAL_PROBLEM_PANEL";
 
@@ -29,7 +26,7 @@ public class EditMedicalProblem extends EditPanel{
         return departmentContent;
     }
 
-    public  EditMedicalProblem(BasePanel prev){
+    public EditMedicalProblemPanel(BasePanel prev){
         super(prev);
 
         JLabel medicalProblemLabel = new JLabel("Medical problem name:");

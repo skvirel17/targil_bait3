@@ -3,11 +3,8 @@ package GUI.mainScreen;
 import GUI.menu.*;
 import GUI.panels.*;
 import GUI.panels.table_panels.*;
-import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
-import GUI.panels.table_panels.edit_panels.EditMedicalProblem;
-import GUI.panels.table_panels.edit_panels.EditPatientsPanel;
+import GUI.panels.table_panels.edit_panels.*;
 import control.Hospital;
-import model.MedicalProblem;
 import model.StaffMember;
 
 import javax.swing.*;
@@ -24,9 +21,11 @@ import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 import static GUI.panels.EditProfilePanel.EDIT_PROFILE_PANEL;
 import static GUI.panels.GetNumberOfDoctorsBySpecializationPanel.GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL;
 import static GUI.panels.HowManyVisitBeforePanel.HOW_MANY_VISIT_BEFORE_PANEL;
+import static GUI.panels.LoginPanel.LOGIN_PANEL;
 import static GUI.panels.MedicationCalculatorPanel.MEDICATION_CALCULATOR_PANEL;
 import static GUI.panels.StandardCheckPanel.STANDARD_CHECK_PANEL;
 import static GUI.panels.ViewDataPanel.VIEW_DATA_PANEL;
+import static GUI.panels.table_panels.DepartmentsPanel.DEPARTMENTS_PANEL;
 import static GUI.panels.table_panels.MedicalProblemsPanel.MEDICAL_PROBLEMS_PANEL;
 import static GUI.panels.table_panels.MedicationsPanel.MEDICATION_PANEL;
 import static GUI.panels.table_panels.PatientsPanel.PATIENTS_PANEL;
@@ -34,13 +33,15 @@ import static GUI.panels.table_panels.StaffMembersPanel.STAFF_MEMBERS_PANEL;
 import static GUI.panels.table_panels.TreatmentsPanel.TREATMENTS_PANEL;
 import static GUI.panels.table_panels.VisitsPanel.VISITS_PANEL;
 import static GUI.panels.table_panels.edit_panels.EditDepartmentPanel.EDIT_DEPARTMENT_PANEL;
-import static GUI.panels.table_panels.edit_panels.EditMedicalProblem.EDIT_MEDICAL_PROBLEM_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditMedicalProblemPanel.EDIT_MEDICAL_PROBLEM_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditMedicationPanel.EDIT_MEDICATION_PANEL;
 import static GUI.panels.table_panels.edit_panels.EditPatientsPanel.EDIT_PATIENT_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditStaffMembersPanel.EDIT_STAFF_MEMBERS_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditTreatmentsPanel.EDIT_TREATMENT_PANEL;
+import static GUI.panels.table_panels.edit_panels.EditVisitsPanel.EDIT_VISIT_PANEL;
 
 
 public class SystemUsersGUI {
-    private static final String FRAME_NAME = "Doctor Dashboard";
-    public static final String LOGIN_PANEL = "LOGIN_PANEL";
 
     private static final JFrame mainFrame = new MainScreenPanel();
     private static final JPanel mainScreen = new JPanel();
@@ -62,8 +63,6 @@ public class SystemUsersGUI {
 
 
     public static void main(String[] args) {
-
-        //hospital = Hospital.deserialize("hospital.ser");
         File file = new File("hospital.ser");
 
         if (file.exists()) {
@@ -84,8 +83,8 @@ public class SystemUsersGUI {
         JPanel viewDataPanel = new ViewDataPanel();
         JPanel addTreatmentPanel = new AddTreatmentPanel();
         JPanel dashboardPanel = new DashBoardPanel();
-        JPanel loginPanel = new LoginPanel();
-        DepartmentsPanel departmentsPanel = new DepartmentsPanel(hospital.getDepartments());
+        LoginPanel loginPanel = new LoginPanel();
+        JPanel departmentsPanel = new DepartmentsPanel(hospital.getDepartments());
         JPanel medicalProblemsPanel = new MedicalProblemsPanel(hospital.getMedicalProblems());
         JPanel staffMembersPanel = new StaffMembersPanel(hospital.getStaffMembers());
         JPanel medicationPanel = new MedicationsPanel(hospital.getMedications());
@@ -97,10 +96,13 @@ public class SystemUsersGUI {
         JPanel getNumberOfDoctorsBySpecializationPanel = new GetNumberOfDoctorsBySpecializationPanel();
         JPanel standardCheckPanel = new StandardCheckPanel();
         JPanel appointNewManagerPanel = new AppointNewManagerPanel();
-        JPanel editDepartmentPanel = new EditDepartmentPanel(departmentsPanel);
-        JPanel editMedicalProblemPanel = new EditMedicalProblem((BasePanel) medicalProblemsPanel);
-        JPanel editPatientPanel = new EditPatientsPanel((BasePanel) patientsPanel);
-
+        JPanel editDepartmentPanel = new EditDepartmentPanel((BasePanel) departmentsPanel);
+        JPanel editMedicalProblemPanel = new EditMedicalProblemPanel((BasePanel) medicalProblemsPanel);
+        JPanel editPatientsPanel = new EditPatientsPanel((BasePanel) patientsPanel);
+        JPanel editMedicationPanel = new EditMedicationPanel((BasePanel) medicationPanel);
+        JPanel editStaffMembersPanel = new EditStaffMembersPanel((BasePanel) staffMembersPanel);
+        JPanel editTreatmentPanel = new EditTreatmentsPanel((BasePanel) treatmentsPanel);
+        JPanel editVisitsPanel = new EditVisitsPanel((BasePanel) visitsPanel);
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(new BaseMenu());
@@ -113,13 +115,13 @@ public class SystemUsersGUI {
         mainScreen.setLayout(cardLayout);
         mainScreen.add(loginPanel, LOGIN_PANEL);
         mainScreen.add(editProfilePanel, EDIT_PROFILE_PANEL);
-        mainScreen.add(addAllPanel,ADD_ALL_PANEL);
+        mainScreen.add(addAllPanel, ADD_ALL_PANEL);
         mainScreen.add(addMedicationPanel, ADD_MEDICATION_PANEL);
         mainScreen.add(addTreatmentPanel, ADD_TREATMENT_PANEL);
         mainScreen.add(addIssueAndTreatmentToVisitPanel, ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL);
         mainScreen.add(viewDataPanel, VIEW_DATA_PANEL);
         mainScreen.add(dashboardPanel, DASHBOARD_PANEL);
-        mainScreen.add(departmentsPanel, departmentsPanel.getPanelStringKey());
+        mainScreen.add(departmentsPanel, DEPARTMENTS_PANEL);
         mainScreen.add(medicalProblemsPanel, MEDICAL_PROBLEMS_PANEL);
         mainScreen.add(staffMembersPanel, STAFF_MEMBERS_PANEL);
         mainScreen.add(medicationPanel, MEDICATION_PANEL);
@@ -133,7 +135,11 @@ public class SystemUsersGUI {
         mainScreen.add(appointNewManagerPanel, APPOINT_NEW_MANAGER_PANEL);
         mainScreen.add(editDepartmentPanel, EDIT_DEPARTMENT_PANEL);
         mainScreen.add(editMedicalProblemPanel, EDIT_MEDICAL_PROBLEM_PANEL);
-        mainScreen.add(editPatientPanel, EDIT_PATIENT_PANEL);
+        mainScreen.add(editPatientsPanel, EDIT_PATIENT_PANEL);
+        mainScreen.add(editMedicationPanel, EDIT_MEDICATION_PANEL);
+        mainScreen.add(editStaffMembersPanel, EDIT_STAFF_MEMBERS_PANEL);
+        mainScreen.add(editTreatmentPanel, EDIT_TREATMENT_PANEL);
+        mainScreen.add(editVisitsPanel, EDIT_VISIT_PANEL);
 
         mainFrame.setContentPane(mainScreen);
 

@@ -29,6 +29,8 @@ public class VisitListOptionDTO extends Visit {
 
     @Override
     public String toString() {
-        return "Visit Number: " + getNumber() + ", Patient: " + getPatient().getFirstName() + " " + getPatient().getLastName();
+        return "Visit Number: " + getNumber() + ", Patient: " +
+                ((getPatient() != null) ? getPatient().getFirstName() + " " + getPatient().getLastName() : "") +
+                " (" + getStartDate().toString() + " - " + ((getEndDate() != null) ? getEndDate() : "...") + ")";
     }
 }

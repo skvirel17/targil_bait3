@@ -6,6 +6,7 @@ import GUI.dto.PatientListOptionDTO;
 import GUI.dto.TreatmentListOptionDTO;
 import GUI.panels.BasePanel;
 import model.Doctor;
+import model.MedicalProblem;
 import model.Patient;
 import model.Treatment;
 
@@ -18,6 +19,7 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 
 public class EditVisitsPanel extends EditPanel {
 
+    public static final String EDIT_VISIT_PANEL = "EDIT_VISIT_PANEL";
 
     private JComboBox<Patient> createPatientContent() {
         JComboBox<Patient> patientContent = new JComboBox<>();
@@ -26,8 +28,6 @@ public class EditVisitsPanel extends EditPanel {
         }
         return patientContent;
     }
-
-
 
     public  EditVisitsPanel(BasePanel prev) {
         super(prev);
@@ -70,6 +70,27 @@ public class EditVisitsPanel extends EditPanel {
             }
         });
 
+        //MedicalProblem list
+        JLabel medicalProblemLabel = new JLabel("Medical problems:");
+        JScrollPane activeMedicalProblemPane = new JScrollPane();
+        DefaultListModel<String> activeMedicalProblemListModel = new DefaultListModel<>();
+        JList<String> activeMedicalProblemList = new JList<>(activeMedicalProblemListModel);
+        activeMedicalProblemPane.add(activeMedicalProblemList);
+
+        DefaultListModel<String> allMedicalProblemListModel = new DefaultListModel<>();
+        JList<String> allMedicalProblemList = new JList<>(allMedicalProblemListModel);
+        JScrollPane allMedicalProblemPane = new JScrollPane(allMedicalProblemList);
+
+        for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
+            allMedicalProblemListModel.addElement("[" +medicalProblem.getCode() + "] " + medicalProblem.getName());
+        }
+        JButton medicalProblemButton = new JButton("Select Sublist");
+        medicalProblemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
         JButton saveVisitButton = new JButton("Save");
         saveVisitButton.addActionListener(new ActionListener() {
             @Override
@@ -107,6 +128,16 @@ public class EditVisitsPanel extends EditPanel {
                         .addComponent(addButton)
                         .addComponent(allTreatmentsPane));
 
+        GroupLayout.Group medicalProblemsGroupHor = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeMedicalProblemPane))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(medicalProblemButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allMedicalProblemPane));
+        GroupLayout.Group medicalProblemsGroupVer = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(activeMedicalProblemPane)
+                        .addComponent(medicalProblemButton)
+                        .addComponent(allMedicalProblemPane));
+
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -115,6 +146,7 @@ public class EditVisitsPanel extends EditPanel {
                                 .addComponent(startDateLabel)
                                 .addComponent(endDateLabel)
                                 .addComponent(treatmentsLabel)
+                                .addComponent(medicalProblemLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(numberText)
@@ -122,6 +154,7 @@ public class EditVisitsPanel extends EditPanel {
                                 .addComponent(startDateText)
                                 .addComponent(endDateText)
                                 .addGroup(treatmentsGroupHor)
+                                .addGroup(medicalProblemsGroupHor)
                                 .addComponent(saveVisitButton))
         );
 
@@ -142,6 +175,9 @@ public class EditVisitsPanel extends EditPanel {
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(treatmentsLabel)
                                 .addGroup(treatmentsGroupVer))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(medicalProblemLabel)
+                                .addGroup(medicalProblemsGroupVer))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(saveVisitButton))

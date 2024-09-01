@@ -5,13 +5,15 @@ import model.Medication;
 
 import java.util.Map;
 
+import static GUI.panels.table_panels.edit_panels.EditMedicationPanel.EDIT_MEDICATION_PANEL;
+
 public class MedicationsPanel extends TablePanel {
 
     public static final String MEDICATION_PANEL = "MEDICATION_PANEL";
     private static final Object[] columns = {"CODE", "NAME", "DOSAGE", "NUMBER_OF_DOSE"};
 
     public MedicationsPanel(Map<Integer, Medication> medications) {
-        super(mapData(medications), columns, "");
+        super(mapData(medications), columns, EDIT_MEDICATION_PANEL);
     }
 
     private static Object[][] mapData(Map<Integer, Medication> map) {
@@ -28,5 +30,10 @@ public class MedicationsPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    @Override
+    public String getPanelStringKey() {
+        return MEDICATION_PANEL;
     }
 }

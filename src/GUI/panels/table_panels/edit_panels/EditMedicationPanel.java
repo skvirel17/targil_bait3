@@ -3,6 +3,7 @@ package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
 import GUI.dto.MedicationListOptionDTO;
+import GUI.panels.BasePanel;
 import model.Medication;
 
 import javax.swing.*;
@@ -14,33 +15,22 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 
 public class EditMedicationPanel extends EditPanel {
 
-    // Метод для создания выпадающего списка с медикаментами
-    private JComboBox<Medication> createMedicationContent() {
-        JComboBox<Medication> medicationContent = new JComboBox<>();
-        for (Map.Entry<Integer, Medication> medicationEntry : hospital.getMedications().entrySet()) {
-            medicationContent.addItem(MedicationListOptionDTO.map(medicationEntry.getValue()));
-        }
-        return medicationContent;
-    }
+    public static final String EDIT_MEDICATION_PANEL = "EDIT_MEDICATION_PANEL";
 
-    public <BasePanel> EditMedicationPanel(BasePanel prev) {
-        super((JPanel) prev);
+    public EditMedicationPanel(BasePanel prev) {
+        super(prev);
 
         // Метка и текстовое поле для названия лекарства
-        JLabel medicationNameLabel = new JLabel("Medication Name:");
-        JTextField medicationNameText = new JTextField();
+        JLabel nameLabel = new JLabel("Medication Name:");
+        JTextField nameText = new JTextField();
 
         // Метка и текстовое поле для дозировки
         JLabel dosageLabel = new JLabel("Dosage (mg):");
         JTextField dosageText = new JTextField();
 
-        // Метка и текстовое поле для производителя
-        JLabel manufacturerLabel = new JLabel("Manufacturer:");
-        JTextField manufacturerText = new JTextField();
-
         // Метка и текстовое поле для количества доз (numberOfDose)
-        JLabel numberOfDoseLabel = new JLabel("Number of Doses:");
-        JTextField numberOfDoseText = new JTextField();
+        JLabel doseNumberLabel = new JLabel("Number of Doses:");
+        JTextField doseNumberText = new JTextField();
 
 // Кнопка сохранения медикамента
         JButton saveMedicationButton = new JButton("Save Medication");
@@ -48,9 +38,9 @@ public class EditMedicationPanel extends EditPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Button clicked!");
-                String name = medicationNameText.getText();
+                String name = nameText.getText();
                 String dosageStr = dosageText.getText();
-                String numberOfDoseStr = numberOfDoseText.getText(); // Для количества доз
+                String numberOfDoseStr = doseNumberText.getText(); // Для количества доз
 
                 if (name.isEmpty() || dosageStr.isEmpty() || numberOfDoseStr.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -87,7 +77,7 @@ public class EditMedicationPanel extends EditPanel {
                 int result = JOptionPane.showConfirmDialog(null,
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
-                    new OpenPanelAction(getMainScreen(), prev.toString(), getCardLayout()).actionPerformed(e);
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
                 }
             }
         });
@@ -101,28 +91,28 @@ public class EditMedicationPanel extends EditPanel {
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(medicationNameLabel)
+                                .addComponent(nameLabel)
                                 .addComponent(dosageLabel)
-                                .addComponent(manufacturerLabel)
+                                .addComponent(doseNumberLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(medicationNameText)
+                                .addComponent(nameText)
                                 .addComponent(dosageText)
-                                .addComponent(manufacturerText)
+                                .addComponent(doseNumberText)
                                 .addComponent(saveMedicationButton))
         );
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(medicationNameLabel)
-                                .addComponent(medicationNameText))
+                                .addComponent(nameLabel)
+                                .addComponent(nameText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(dosageLabel)
                                 .addComponent(dosageText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(manufacturerLabel)
-                                .addComponent(manufacturerText))
+                                .addComponent(doseNumberLabel)
+                                .addComponent(doseNumberText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(saveMedicationButton))

@@ -41,4 +41,9 @@ public class PatientsPanel extends TablePanel {
 
         return data;
     }
+
+    @Override
+    public String getPanelStringKey() {
+        return PATIENTS_PANEL;
+    }
 }

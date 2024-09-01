@@ -1,8 +1,11 @@
 package GUI.panels.table_panels;
 
+import GUI.panels.table_panels.edit_panels.EditStaffMembersPanel;
 import model.StaffMember;
 
 import java.util.Map;
+
+import static GUI.panels.table_panels.edit_panels.EditStaffMembersPanel.EDIT_STAFF_MEMBERS_PANEL;
 
 public class StaffMembersPanel extends TablePanel {
     public static final String STAFF_MEMBERS_PANEL = "STAFF_MEMBERS_PANEL";
@@ -11,7 +14,7 @@ public class StaffMembersPanel extends TablePanel {
         "EMAIL", "GENDER", "WORK_START_DATE", "SALARY"};
 
     public StaffMembersPanel(Map<Integer, StaffMember> staffMembers) {
-        super(mapData(staffMembers), columns, "");
+        super(mapData(staffMembers), columns, EDIT_STAFF_MEMBERS_PANEL);
     }
 
     private static Object[][] mapData(Map<Integer, StaffMember> dataMap) {
@@ -36,5 +39,10 @@ public class StaffMembersPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    @Override
+    public String getPanelStringKey() {
+        return STAFF_MEMBERS_PANEL;
     }
 }

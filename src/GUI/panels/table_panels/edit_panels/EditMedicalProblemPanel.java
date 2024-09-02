@@ -2,9 +2,12 @@ package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
 import GUI.dto.DepartmentOptionDTO;
+import GUI.dto.StaffMemberListOptionDTO;
 import GUI.dto.TreatmentListOptionDTO;
 import GUI.panels.BasePanel;
 import model.Department;
+import model.MedicalProblem;
+import model.StaffMember;
 import model.Treatment;
 
 import javax.swing.*;
@@ -17,40 +20,61 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditMedicalProblemPanel extends EditPanel{
 
     public static final String EDIT_MEDICAL_PROBLEM_PANEL = "EDIT_MEDICAL_PROBLEM_PANEL";
+    private JLabel nameLabel;
+    private JTextField nameText;
+    private JLabel departmentLabel;
+    private JComboBox<DepartmentOptionDTO> departmentContent;
+    private JLabel treatmentLabel;
+    private JScrollPane activeTreatmentPane;
+    private DefaultListModel<TreatmentListOptionDTO> activeTreatmentListModel;
+    private JList<TreatmentListOptionDTO> activeTreatmentList;
+    private DefaultListModel<TreatmentListOptionDTO> allTreatmentListModel;
+    private JList<TreatmentListOptionDTO> allTreatmentList;
+    private JScrollPane allTreatmentPane;
+    private JButton button;
+    private JButton saveMedicalProblemButton;
+    private JButton backButton;
+    private GroupLayout layout;
 
-    private JComboBox<DepartmentOptionDTO> createDepartmentContent() {
-        JComboBox<DepartmentOptionDTO> departmentContent = new JComboBox<>();
-        for (Map.Entry department : hospital.getDepartments().entrySet()){
-            departmentContent.addItem(DepartmentOptionDTO.map((Department) department.getValue()));
-        }
-        return departmentContent;
-    }
 
-    public EditMedicalProblemPanel(BasePanel prev){
+    public EditMedicalProblemPanel(BasePanel prev) {
         super(prev);
 
-        JLabel medicalProblemLabel = new JLabel("Medical problem name:");
-        JTextField medicalProblemText = new JTextField();
+        buildNameField();
+        buildDepartmentField();
+        buildTreatmentField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
 
-        JLabel departmentLabel = new JLabel("Department:");
-        JComboBox<DepartmentOptionDTO> departmentContent = createDepartmentContent();
+        compose();
 
-        JLabel treatmentLabel = new JLabel("Treatments:");
-        JScrollPane activeTreatmentPane = new JScrollPane();
-        DefaultListModel<String> activeTreatmentListModel = new DefaultListModel<>();
-        JList<String> activeTreatmentList = new JList<>(activeTreatmentListModel);
-        activeTreatmentPane.add(activeTreatmentList);
+    }
+    private void buildNameField(){
+        nameLabel = new JLabel("Medical problem name:");
+        nameText = new JTextField();
+    }
+
+    private void buildDepartmentField(){
+        departmentLabel = new JLabel("Department:");
+        departmentContent = createDepartmentContent();
+    }
 
 
-        DefaultListModel<String> allTreatmentListModel = new DefaultListModel<>();
-        JList<String> allTreatmentList = new JList<>(allTreatmentListModel);
-        JScrollPane allTreatmentPane = new JScrollPane(allTreatmentList);
+    private void buildTreatmentField(){
+        treatmentLabel = new JLabel("Treatments:");
+        activeTreatmentListModel = new DefaultListModel<>();
+        activeTreatmentList = new JList<>(activeTreatmentListModel);
+        activeTreatmentPane = new JScrollPane(activeTreatmentList);
+
+        allTreatmentListModel = new DefaultListModel<>();
+        allTreatmentList = new JList<>(allTreatmentListModel);
+        allTreatmentPane = new JScrollPane(allTreatmentList);
 
         for (Treatment member : hospital.getTreatments().values()) {
-            allTreatmentListModel.addElement(TreatmentListOptionDTO.map(member).toString());
+            allTreatmentListModel.addElement(TreatmentListOptionDTO.map(member));
         }
 
-        JButton button = new JButton("Select Sublist");
+        button = new JButton("Select Sublist");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -58,9 +82,10 @@ public class EditMedicalProblemPanel extends EditPanel{
                 new OpenPanelAction(getMainScreen(), targetPanelKey, getCardLayout()).actionPerformed(e);
             }
         });
+    }
 
-
-        JButton saveMedicalProblemButton = new JButton("Save");
+    private void buildSaveButton(BasePanel prev){
+        saveMedicalProblemButton = new JButton("Save");
         saveMedicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,8 +94,10 @@ public class EditMedicalProblemPanel extends EditPanel{
                 new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
             }
         });
+    }
 
-        JButton backButton = new JButton("back");
+    private void buildBackButton(BasePanel prev){
+        backButton = new JButton("back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,8 +108,10 @@ public class EditMedicalProblemPanel extends EditPanel{
                 }
             }
         });
+    }
 
-        GroupLayout layout = new GroupLayout(this);
+    private void compose(){
+        layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
@@ -100,12 +129,12 @@ public class EditMedicalProblemPanel extends EditPanel{
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(medicalProblemLabel)
+                                .addComponent(nameLabel)
                                 .addComponent(departmentLabel)
                                 .addComponent(treatmentLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(medicalProblemText)
+                                .addComponent(nameText)
                                 .addComponent(departmentContent)
                                 .addGroup(treatmentGroupHor)
                                 .addComponent(saveMedicalProblemButton))
@@ -114,8 +143,8 @@ public class EditMedicalProblemPanel extends EditPanel{
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(medicalProblemLabel)
-                                .addComponent(medicalProblemText))
+                                .addComponent(nameLabel)
+                                .addComponent(nameText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(departmentLabel)
                                 .addComponent(departmentContent))
@@ -127,6 +156,33 @@ public class EditMedicalProblemPanel extends EditPanel{
                                 .addComponent(saveMedicalProblemButton))
 
         );
+    }
+
+
+    private JComboBox<DepartmentOptionDTO> createDepartmentContent() {
+        JComboBox<DepartmentOptionDTO> departmentContent = new JComboBox<>();
+        for (Map.Entry department : hospital.getDepartments().entrySet()){
+            departmentContent.addItem(DepartmentOptionDTO.map((Department) department.getValue()));
+        }
+        return departmentContent;
+    }
+
+    public void fillFromObject(MedicalProblem medicalProblem) {
+        clearPanel();
+        nameText.setText(medicalProblem.getName());
+        for (int i = 0; i < departmentContent.getItemCount(); i++) {
+            if (departmentContent.getItemAt(i).getNumber() == medicalProblem.getDepartment().getNumber()) {
+                departmentContent.setSelectedIndex(i);
+            }
+        }
+        for (Treatment treatment : medicalProblem.getTreatmentsList()) {
+            activeTreatmentListModel.addElement(TreatmentListOptionDTO.map(treatment));
+        }
+    }
+
+    private void clearPanel() {
+        nameText.setText("");
+        activeTreatmentListModel.removeAllElements();
     }
 }
 

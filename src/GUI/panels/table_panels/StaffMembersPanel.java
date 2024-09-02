@@ -1,10 +1,17 @@
 package GUI.panels.table_panels;
 
+import GUI.actions.OpenPanelAction;
+import GUI.mainScreen.SystemUsersGUI;
+import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
 import GUI.panels.table_panels.edit_panels.EditStaffMembersPanel;
+import model.Department;
 import model.StaffMember;
 
+import javax.swing.*;
 import java.util.Map;
 
+import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
+import static GUI.mainScreen.SystemUsersGUI.hospital;
 import static GUI.panels.table_panels.edit_panels.EditStaffMembersPanel.EDIT_STAFF_MEMBERS_PANEL;
 
 public class StaffMembersPanel extends TablePanel {
@@ -13,8 +20,35 @@ public class StaffMembersPanel extends TablePanel {
     private static final Object[] columns = {"ID", "FIRST_NAME", "LAST_NAME", "BIRTH_DATE", "ADDRESS", "PHONE_NUMBER",
         "EMAIL", "GENDER", "WORK_START_DATE", "SALARY"};
 
+    public JPanel itemPanel;
+
     public StaffMembersPanel(Map<Integer, StaffMember> staffMembers) {
         super(mapData(staffMembers), columns, EDIT_STAFF_MEMBERS_PANEL);
+
+        //Adding Edit button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[1]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        (new OpenPanelAction(SystemUsersGUI.getMainScreen(), this.getItemInfoPanel(), getCardLayout())).actionPerformed(e);
+                        StaffMember editStaffMember = hospital.getStaffMember(
+                                (Integer) this.getContent().getModel().
+                                        getValueAt(this.getContent().getSelectedRow(), 0));
+                        ((EditStaffMembersPanel)itemPanel).fillFromObject(editStaffMember);
+                    }
+                }
+        );
+
+        //Adding Delete button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[2]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        hospital.removeStaffMember(
+                                hospital.getStaffMember(
+                                        (Integer) this.getContent().getModel().getValueAt(this.getContent().getSelectedRow(), 0)));
+                        this.reloadData(hospital.getStaffMembers());
+                    }
+                }
+        );
     }
 
     private static Object[][] mapData(Map<Integer, StaffMember> dataMap) {
@@ -39,6 +73,10 @@ public class StaffMembersPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    public void reloadData(Map<Integer, StaffMember> staffMemberMap) {
+        reloadData(mapData(staffMemberMap), columns);
     }
 
     @Override

@@ -3,9 +3,13 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.DepartmentOptionDTO;
 import GUI.dto.StaffMemberListOptionDTO;
+import GUI.dto.VisitListOptionDTO;
 import GUI.panels.BasePanel;
+import model.Patient;
 import model.StaffMember;
 import model.Department;
+import model.Visit;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,55 +19,132 @@ import java.util.Map;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
- public class EditStaffMembersPanel extends EditPanel {
+public class EditStaffMembersPanel extends EditPanel {
 
-     public static final String EDIT_STAFF_MEMBERS_PANEL = "EDIT_STAFF_MEMBERS_PANEL";
+    public static final String EDIT_STAFF_MEMBERS_PANEL = "EDIT_STAFF_MEMBERS_PANEL";
 
-     private JComboBox<Department> createStaffMembersContent() {
-         JComboBox<Department> res = new JComboBox<>();
-
-         // Получаем все сотрудники из hospital
-         for (Map.Entry<Integer, Department> entry : hospital.getDepartments().entrySet()) {
-             // Добавляем каждого сотрудника в JComboBox с помощью DTO
-             res.addItem(DepartmentOptionDTO.map(entry.getValue()));
-         }
-
-         return res;
-     }
+    //First name
+    private JLabel firstNameLabel;
+    private JTextField firstNameText;
+    //Last name
+    private JLabel lastNameLabel;
+    private JTextField lastNameText;
+    //BirthDate
+    private JLabel birthDateLabel;
+    private JTextField birthDateText;
+    //Address
+    private JLabel addressLabel;
+    private JTextField addressText;
+    //Phone number
+    private JLabel phoneNumberLabel;
+    private JTextField phoneNumberText;
+    //Email
+    private JLabel emailLabel;
+    private JTextField emailText;
+    //Gender
+    private JLabel genderLabel;
+    private JTextField genderText;
+    //Salary
+    private JLabel salaryLabel;
+    private JTextField salaryText;
+    //Department
+    private JLabel departmentLabel;
+    private DefaultListModel<DepartmentOptionDTO> activeDepartmentListModel;
+    private JList<DepartmentOptionDTO> activeDepartmentList;
+    private JScrollPane activeDepartmentPane;
+    private DefaultListModel<DepartmentOptionDTO> allDepartmentListModel;
+    private JList<DepartmentOptionDTO> allDepartmentList;
+    private JScrollPane allDepartmentPane;
+    private JButton selectDepartmentButton;
+    //Save button
+    private JButton addButton;
+    //Back button
+    private JButton backButton;
 
 
     public EditStaffMembersPanel(BasePanel prev) {
         super(prev);
 
-        JLabel firstNameLabel = new JLabel("First Name:");
-        JTextField firstNameText = new JTextField();
+        buildFirstNameField();
+        buildLastNameField();
+        buildBirthDateField();
+        buildAddressField();
+        buildPhoneNumberField();
+        buildEmailField();
+        buildGenderField();
+        buildSalaryField();
+        buildDepartmentField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
 
-        JLabel lastNameLabel = new JLabel("Last Name:");
-        JTextField lastNameText = new JTextField();
+        compose();
+    }
 
-        JLabel birthDateLabel = new JLabel("Birth Date (YYYY-MM-DD):");
-        JTextField birthDateText = new JTextField();
+    private void buildFirstNameField() {
+        firstNameLabel = new JLabel("First Name:");
+        firstNameText = new JTextField();
+    }
 
-        JLabel addressLabel = new JLabel("Address:");
-        JTextField addressText = new JTextField();
+    private void buildLastNameField() {
+        lastNameLabel = new JLabel("Last Name:");
+        lastNameText = new JTextField();
+    }
 
-        JLabel phoneNumberLabel = new JLabel("Phone Number:");
-        JTextField phoneNumberText = new JTextField();
+    private void buildBirthDateField() {
+        birthDateLabel = new JLabel("Birth Date (YYYY-MM-DD):");
+        birthDateText = new JTextField();
+    }
 
-        JLabel emailLabel = new JLabel("Email:");
-        JTextField emailText = new JTextField();
+    private void buildAddressField() {
+        addressLabel = new JLabel("Address:");
+        addressText = new JTextField();
+    }
 
-        JLabel genderLabel = new JLabel("Gender:");
-        JComboBox<String> genderCombo = new JComboBox<>(new String[]{"Male", "Female", "Other"});
+    private void buildPhoneNumberField() {
+        phoneNumberLabel = new JLabel("Phone Number:");
+        phoneNumberText = new JTextField();
+    }
 
-        JLabel salaryLabel = new JLabel("Salary:");
-        JTextField salaryText = new JTextField();
+    private void buildEmailField() {
+        emailLabel = new JLabel("Email:");
+        emailText = new JTextField();
+    }
 
-        JLabel departmentLabel = new JLabel("Department:");
-        JComboBox<Department> departmentCombo = createStaffMembersContent();
-        // Populate departmentCombo with available departments if needed
+    private void buildGenderField() {
+        genderLabel = new JLabel("Gender:");
+        genderText = new JTextField();
+    }
 
-        JButton addButton = new JButton("Save");
+    private void buildSalaryField() {
+        salaryLabel = new JLabel("Salary:");
+        salaryText = new JTextField();
+    }
+
+    private void buildDepartmentField() {
+        departmentLabel = new JLabel("Department:");
+
+        activeDepartmentListModel = new DefaultListModel<>();
+        activeDepartmentList = new JList<>(activeDepartmentListModel);
+        activeDepartmentPane = new JScrollPane(activeDepartmentList);
+
+        allDepartmentListModel = new DefaultListModel<>();
+        allDepartmentList = new JList<>(allDepartmentListModel);
+        allDepartmentPane = new JScrollPane(allDepartmentList);
+
+        for (Department department : hospital.getDepartments().values()) {
+            allDepartmentListModel.addElement(DepartmentOptionDTO.map(department));
+        }
+
+        selectDepartmentButton = new JButton("Select Sublist");
+        selectDepartmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+    }
+
+    private void buildSaveButton(BasePanel prev) {
+        addButton = new JButton("Save");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,12 +154,14 @@ import static GUI.mainScreen.SystemUsersGUI.*;
                 String address = addressText.getText();
                 String phoneNumber = phoneNumberText.getText();
                 String email = emailText.getText();
-                String gender = (String) genderCombo.getSelectedItem();
+                String gender = genderText.getText();
                 String salaryStr = salaryText.getText();
             }
         });
+    }
 
-        JButton backButton = new JButton("Back");
+    private void buildBackButton(BasePanel prev) {
+        backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,11 +172,23 @@ import static GUI.mainScreen.SystemUsersGUI.*;
                 }
             }
         });
+    }
 
+    private void compose() {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
+
+        GroupLayout.Group departmentGroupHor = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeDepartmentPane))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectDepartmentButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allDepartmentPane));
+        GroupLayout.Group departmentGroupVer = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(activeDepartmentPane)
+                        .addComponent(selectDepartmentButton)
+                        .addComponent(allDepartmentPane));
 
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
@@ -115,9 +210,9 @@ import static GUI.mainScreen.SystemUsersGUI.*;
                                 .addComponent(addressText)
                                 .addComponent(phoneNumberText)
                                 .addComponent(emailText)
-                                .addComponent(genderCombo)
+                                .addComponent(genderText)
                                 .addComponent(salaryText)
-                                .addComponent(departmentCombo)
+                                .addGroup(departmentGroupHor)
                                 .addComponent(addButton))
         );
 
@@ -143,20 +238,42 @@ import static GUI.mainScreen.SystemUsersGUI.*;
                                 .addComponent(emailText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(genderLabel)
-                                .addComponent(genderCombo))
+                                .addComponent(genderText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(salaryLabel)
                                 .addComponent(salaryText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(departmentLabel)
-                                .addComponent(departmentCombo))
+                                .addGroup(departmentGroupVer))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(addButton))
         );
     }
 
-    private int generateUniqueId() {
-        return hospital.getStaffMembers().size() + 1; // Simple unique ID generator
+    public void fillFromObject(StaffMember staffMember) {
+        clearPanel();
+        firstNameText.setText(staffMember.getFirstName());
+        lastNameText.setText(staffMember.getLastName());
+        birthDateText.setText(staffMember.getBirthDate().toString());
+        addressText.setText(staffMember.getAddress());
+        phoneNumberText.setText(staffMember.getPhoneNumber());
+        genderText.setText(staffMember.getGender());
+        emailText.setText(staffMember.getEmail());
+        salaryText.setText(Double.toString(staffMember.getSalary()));
+        for (Department department : staffMember.getDepartments()) {
+            activeDepartmentListModel.addElement(DepartmentOptionDTO.map(department));
+        }
+    }
+
+    private void clearPanel() {
+        firstNameText.setText("");
+        lastNameText.setText("");
+        birthDateText.setText("");
+        addressText.setText("");
+        phoneNumberText.setText("");
+        genderText.setText("");
+        emailText.setText("");
+        activeDepartmentListModel.removeAllElements();
     }
 }

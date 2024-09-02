@@ -30,7 +30,7 @@ public class TablePanel extends BasePanel {
         this.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout());
-        Button buttonAdd = new Button("Add");
+        JButton buttonAdd = new JButton("Add");
         buttonAdd.addActionListener(new AddItemAction());
         buttons.add(buttonAdd);
         buttons.add(new JButton("Edit"));

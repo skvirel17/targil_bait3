@@ -1,14 +1,9 @@
 package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
-import GUI.dto.DoctorListOptionDTO;
-import GUI.dto.PatientListOptionDTO;
-import GUI.dto.TreatmentListOptionDTO;
+import GUI.dto.*;
 import GUI.panels.BasePanel;
-import model.Doctor;
-import model.MedicalProblem;
-import model.Patient;
-import model.Treatment;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,6 +16,53 @@ public class EditVisitsPanel extends EditPanel {
 
     public static final String EDIT_VISIT_PANEL = "EDIT_VISIT_PANEL";
 
+    //Patient
+    private JLabel patientLabel;
+    private JComboBox<Patient> patientContent;
+    //Start date
+    private JLabel startDateLabel;
+    private JTextField startDateText;
+    //End date
+    private JLabel endDateLabel;
+    private JTextField endDateText;
+    //Treatment list
+    private JLabel treatmentsLabel;
+    private DefaultListModel<TreatmentListOptionDTO> treatmentsListModel;
+    private JList<TreatmentListOptionDTO> treatmentsList;
+    private JScrollPane treatmentsPane;
+    private DefaultListModel<TreatmentListOptionDTO> allTreatmentsListModel;
+    private JList<TreatmentListOptionDTO> allTreatmentsList;
+    private JScrollPane allTreatmentsPane;
+    private JButton selectTreatmentButton;
+    //Medical problem list
+    private JLabel medicalProblemLabel;
+    private JList<MedicationProblemListOptionDTO> activeMedicalProblemList;
+    private DefaultListModel<MedicationProblemListOptionDTO> activeMedicalProblemListModel;
+    private JScrollPane activeMedicalProblemPane;
+    private DefaultListModel<MedicationProblemListOptionDTO> allMedicalProblemListModel;
+    private JList<MedicationProblemListOptionDTO> allMedicalProblemList;
+    private JScrollPane allMedicalProblemPane;
+    private JButton medicalProblemButton;
+    //Save button
+    private JButton saveVisitButton;
+    //Back button
+    private JButton backButton;
+
+
+    public  EditVisitsPanel(BasePanel prev) {
+        super(prev);
+
+        buildPatientField();
+        buildStartDateField();
+        buildEndDateField();
+        buildMedicalProblemListField();
+        buildTreatmentListField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
+
+        compose();
+    }
+
     private JComboBox<Patient> createPatientContent() {
         JComboBox<Patient> patientContent = new JComboBox<>();
         for (Patient patient : hospital.getPatients().values()) {
@@ -29,69 +71,71 @@ public class EditVisitsPanel extends EditPanel {
         return patientContent;
     }
 
-    public  EditVisitsPanel(BasePanel prev) {
-        super(prev);
+    private void buildPatientField() {
+        patientLabel = new JLabel("Patient:");
+        patientContent = createPatientContent();
+    }
 
-        JLabel numberLabel = new JLabel("Visit Number:");
-        JTextField numberText = new JTextField();
+    private void buildStartDateField() {
+        startDateLabel = new JLabel("Start Date:");
+        startDateText = new JTextField();
+    }
 
-        JLabel patientLabel = new JLabel("Patient:");
-        JComboBox<Patient> patientContent = createPatientContent();
+    private void buildEndDateField() {
+        endDateLabel = new JLabel("End Date:");
+        endDateText = new JTextField();
+    }
 
-        JLabel startDateLabel = new JLabel("Start Date:");
-        JTextField startDateText = new JTextField();
+    private void buildTreatmentListField() {
+        treatmentsLabel = new JLabel("Treatments:");
+        treatmentsListModel = new DefaultListModel<>();
+        treatmentsList = new JList<>(treatmentsListModel);
+        treatmentsPane = new JScrollPane(treatmentsList);
 
-        JLabel endDateLabel = new JLabel("End Date:");
-        JTextField endDateText = new JTextField();
-
-        JLabel treatmentsLabel = new JLabel("Treatments:");
-        JScrollPane treatmentsPane = new JScrollPane();
-        DefaultListModel<String> treatmentsListModel = new DefaultListModel<>();
-        JList<String> treatmentsList = new JList<>(treatmentsListModel);
-        treatmentsPane.setViewportView(treatmentsList);
-
-        DefaultListModel<String> allTreatmentsListModel = new DefaultListModel<>();
-        JList<String> allTreatmentsList = new JList<>(allTreatmentsListModel);
-        JScrollPane allTreatmentsPane = new JScrollPane(allTreatmentsList);
+        allTreatmentsListModel = new DefaultListModel<>();
+        allTreatmentsList = new JList<>(allTreatmentsListModel);
+        allTreatmentsPane = new JScrollPane(allTreatmentsList);
 
         for (Treatment treatment : hospital.getTreatments().values()) {
-            allTreatmentsListModel.addElement(TreatmentListOptionDTO.map(treatment).toString());
+            allTreatmentsListModel.addElement(TreatmentListOptionDTO.map(treatment));
         }
 
-        JButton addButton = new JButton("Add Treatment");
-        addButton.addActionListener(new ActionListener() {
+        selectTreatmentButton = new JButton("Add Treatment");
+        selectTreatmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Add selected treatment to the list
-                String selectedTreatment = allTreatmentsList.getSelectedValue();
+                TreatmentListOptionDTO selectedTreatment = allTreatmentsList.getSelectedValue();
                 if (selectedTreatment != null) {
                     treatmentsListModel.addElement(selectedTreatment);
                 }
             }
         });
+    }
 
-        //MedicalProblem list
-        JLabel medicalProblemLabel = new JLabel("Medical problems:");
-        JScrollPane activeMedicalProblemPane = new JScrollPane();
-        DefaultListModel<String> activeMedicalProblemListModel = new DefaultListModel<>();
-        JList<String> activeMedicalProblemList = new JList<>(activeMedicalProblemListModel);
-        activeMedicalProblemPane.add(activeMedicalProblemList);
+    private void buildMedicalProblemListField() {
+        medicalProblemLabel = new JLabel("Medical problems:");
+        activeMedicalProblemListModel = new DefaultListModel<>();
+        activeMedicalProblemList = new JList<>(activeMedicalProblemListModel);
+        activeMedicalProblemPane = new JScrollPane(activeMedicalProblemList);
 
-        DefaultListModel<String> allMedicalProblemListModel = new DefaultListModel<>();
-        JList<String> allMedicalProblemList = new JList<>(allMedicalProblemListModel);
-        JScrollPane allMedicalProblemPane = new JScrollPane(allMedicalProblemList);
+        allMedicalProblemListModel = new DefaultListModel<>();
+        allMedicalProblemList = new JList<>(allMedicalProblemListModel);
+        allMedicalProblemPane = new JScrollPane(allMedicalProblemList);
 
         for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
-            allMedicalProblemListModel.addElement("[" +medicalProblem.getCode() + "] " + medicalProblem.getName());
+            allMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(medicalProblem));
         }
-        JButton medicalProblemButton = new JButton("Select Sublist");
+        medicalProblemButton = new JButton("Select Sublist");
         medicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         });
+    }
 
-        JButton saveVisitButton = new JButton("Save");
+    private void buildSaveButton(BasePanel prev) {
+        saveVisitButton = new JButton("Save");
         saveVisitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,8 +144,10 @@ public class EditVisitsPanel extends EditPanel {
                 new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
             }
         });
+    }
 
-        JButton backButton = new JButton("Back");
+    private void buildBackButton(BasePanel prev) {
+        backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,7 +158,9 @@ public class EditVisitsPanel extends EditPanel {
                 }
             }
         });
+    }
 
+    private void compose() {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -120,12 +168,12 @@ public class EditVisitsPanel extends EditPanel {
 
         GroupLayout.Group treatmentsGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(treatmentsPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(addButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectTreatmentButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentsPane));
         GroupLayout.Group treatmentsGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(treatmentsPane)
-                        .addComponent(addButton)
+                        .addComponent(selectTreatmentButton)
                         .addComponent(allTreatmentsPane));
 
         GroupLayout.Group medicalProblemsGroupHor = layout.createSequentialGroup()
@@ -141,7 +189,6 @@ public class EditVisitsPanel extends EditPanel {
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(numberLabel)
                                 .addComponent(patientLabel)
                                 .addComponent(startDateLabel)
                                 .addComponent(endDateLabel)
@@ -149,7 +196,6 @@ public class EditVisitsPanel extends EditPanel {
                                 .addComponent(medicalProblemLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(numberText)
                                 .addComponent(patientContent)
                                 .addComponent(startDateText)
                                 .addComponent(endDateText)
@@ -160,9 +206,6 @@ public class EditVisitsPanel extends EditPanel {
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(numberLabel)
-                                .addComponent(numberText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(patientLabel)
                                 .addComponent(patientContent))
@@ -182,5 +225,29 @@ public class EditVisitsPanel extends EditPanel {
                                 .addComponent(backButton)
                                 .addComponent(saveVisitButton))
         );
+    }
+
+    public void fillFromObject(Visit visit) {
+        clearPanel();
+        for (int i = 0; i < patientContent.getItemCount(); i++) {
+            if (patientContent.getItemAt(i).getId() == visit.getPatient().getId()) {
+                patientContent.setSelectedIndex(i);
+            }
+        }
+        startDateText.setText(visit.getStartDate().toString());
+        endDateText.setText(visit.getEndDate().toString());
+        for (Treatment treatment : visit.getTreatmentsList()) {
+            treatmentsListModel.addElement(TreatmentListOptionDTO.map(treatment));
+        }
+        for (MedicalProblem problem : visit.getMedicalProblemsList()) {
+            activeMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(problem));
+        }
+    }
+
+    private void clearPanel() {
+        startDateText.setText("");
+        endDateText.setText("");
+        treatmentsListModel.removeAllElements();
+        activeMedicalProblemListModel.removeAllElements();
     }
 }

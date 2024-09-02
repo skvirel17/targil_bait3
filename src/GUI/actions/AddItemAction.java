@@ -16,7 +16,7 @@ public class AddItemAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Button source = (Button) (e.getSource());
+        JButton source = (JButton) (e.getSource());
         TablePanel parent = (TablePanel) (source.getParent().getParent());
         parent.getContent().getSelectedRow();
         (new OpenPanelAction(SystemUsersGUI.getMainScreen(), parent.getItemInfoPanel(), SystemUsersGUI.getCardLayout())).actionPerformed(e);

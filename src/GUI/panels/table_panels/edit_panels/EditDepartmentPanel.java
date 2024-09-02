@@ -4,20 +4,17 @@ import GUI.actions.OpenPanelAction;
 import GUI.dto.DoctorListOptionDTO;
 import GUI.dto.StaffMemberListOptionDTO;
 import GUI.panels.BasePanel;
-import control.Hospital;
+import GUI.panels.table_panels.DepartmentsPanel;
 import enums.Specialization;
+import model.Department;
 import model.Doctor;
 import model.StaffMember;
 
-import javax.print.Doc;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-//import javax.xml.bind.JAXBContext;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
@@ -25,67 +22,143 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 public class EditDepartmentPanel extends EditPanel {
 
     public static final String EDIT_DEPARTMENT_PANEL = "EDIT_DEPARTMENT_PANEL";
+    //Name
+    private JLabel departmentNameLabel;
+    private JTextField departmentNameText;
+    //Manager
+    private JLabel managerLabel;
+    private JComboBox<Doctor> managerContent;
+    //Location
+    private JLabel locationLabel;
+    private JTextField locationText;
+    //StaffMembers
+    private JLabel staffMembersLabel;
+    private DefaultListModel<StaffMemberListOptionDTO> activeStaffListModel;
+    private JList<StaffMemberListOptionDTO> activeStaffList;
+    private JScrollPane activeStaffPane;
+    private DefaultListModel<StaffMemberListOptionDTO> allStaffListModel;
+    private JList<StaffMemberListOptionDTO> allStaffList;
+    private JScrollPane allStaffPane;
+    private JButton selectStaffListButton;
+    //Specialization
+    private JLabel specializationLabel;
+    private JComboBox<Specialization> specializationContent;
+    //Save button
+    private JButton saveDepartmentButton;
+    //Back button
+    private JButton backButton;
+
+
+    public  EditDepartmentPanel(BasePanel prev){
+        super(prev);
+
+        buildNameField();
+        buildManagerField();
+        buildLocationField();
+        buildStaffMembersField();
+        buildSpecializationField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
+
+        compose();
+    }
 
     private JComboBox<Doctor> createManagerContent() {
         JComboBox<Doctor> managerContent = new JComboBox<>();
-        for (Map.Entry staffMember : hospital.getStaffMembers().entrySet()){
-            if(staffMember.getValue() instanceof Doctor){
-                managerContent.addItem(DoctorListOptionDTO.map((Doctor)staffMember.getValue()));
+        for (StaffMember staffMember : hospital.getStaffMembers().values()){
+            if(staffMember instanceof Doctor){
+                managerContent.addItem(DoctorListOptionDTO.map((Doctor)staffMember));
             }
         }
         return managerContent;
     }
 
-    public  EditDepartmentPanel(BasePanel prev){
-        super(prev);
+    private void buildNameField() {
+        departmentNameLabel = new JLabel("Department Name:");
+        departmentNameText = new JTextField();
+    }
 
-        JLabel departmentNameLabel = new JLabel("Department Name:");
-        JTextField departmentNameText = new JTextField();
+    private void buildManagerField() {
+        managerLabel = new JLabel("Manager:");
+        managerContent = createManagerContent();
+    }
 
-        JLabel managerLabel = new JLabel("Manager:");
-        JComboBox<Doctor> managerContent = createManagerContent();
+    private void buildLocationField() {
+        locationLabel = new JLabel("Location:");
+        locationText = new JTextField();
+    }
 
-        JLabel locationLabel = new JLabel("Location:");
-        JTextField locationText = new JTextField();
+    private void buildStaffMembersField() {
+        staffMembersLabel = new JLabel("Staff members:");
 
-        JLabel staffMembersLabel = new JLabel("Staff members:");
-        JScrollPane activeStaffPane = new JScrollPane();
-        DefaultListModel<String> activeStaffListModel = new DefaultListModel<>();
-        JList<String> activeStaffList = new JList<>(activeStaffListModel);
-        activeStaffPane.add(activeStaffList);
+        activeStaffListModel = new DefaultListModel<>();
+        activeStaffList = new JList<>(activeStaffListModel);
+        activeStaffPane = new JScrollPane(activeStaffList);
 
-        DefaultListModel<String> allStaffListModel = new DefaultListModel<>();
-        JList<String> allStaffList = new JList<>(allStaffListModel);
-        JScrollPane allStaffPane = new JScrollPane(allStaffList);
+        allStaffListModel = new DefaultListModel<>();
+        allStaffList = new JList<>(allStaffListModel);
+        allStaffPane = new JScrollPane(allStaffList);
 
         for (StaffMember member : hospital.getStaffMembers().values()) {
-            allStaffListModel.addElement(StaffMemberListOptionDTO.map(member).toString());
+            allStaffListModel.addElement(StaffMemberListOptionDTO.map(member));
         }
 
-        JButton button = new JButton("Select Sublist");
-        button.addActionListener(new ActionListener() {
+        selectStaffListButton = new JButton("Select Sublist");
+        selectStaffListButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<StaffMemberListOptionDTO> selected = allStaffList.getSelectedValuesList();
+                for (StaffMemberListOptionDTO item : selected) {
+                    if (activeStaffListModel.indexOf(item) == -1) {
+                        activeStaffListModel.addElement(item);
+                    };
+                }
             }
         });
+    }
 
-        JLabel specializationLabel = new JLabel("Specialization:");
-        JComboBox<Specialization> specializationText = new JComboBox<>();
+    private JComboBox<Specialization> createSpecializationContent() {
+        specializationContent = new JComboBox<>();
         for (Specialization spec : Specialization.values()){
-            specializationText.addItem(spec);
+            specializationContent.addItem(spec);
         }
+        return specializationContent;
+    }
 
-        JButton saveDepartmentButton = new JButton("Save");
+    private void buildSpecializationField() {
+        specializationLabel = new JLabel("Specialization:");
+        specializationContent = createSpecializationContent();
+    }
+
+    private void buildSaveButton(BasePanel prev) {
+        saveDepartmentButton = new JButton("Save");
         saveDepartmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Doctor newDoctor = getNewInfo();
-                JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-                new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                int depNumber = hospital.generateNewDepartmentNumber();
+                String name = departmentNameText.getText();
+                Doctor manager = (Doctor) managerContent.getSelectedItem();
+                String location = locationText.getText();
+                Specialization spec = (Specialization) specializationContent.getSelectedItem();
+                HashSet<StaffMember> staffMembers = new HashSet<>();
+                for (int i = 0; i < activeStaffListModel.getSize(); i++) {
+                    staffMembers.add(activeStaffListModel.get(i));
+                }
+
+                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
+                if (hospital.addDepartment(newDepartment)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
+    }
 
-        JButton backButton = new JButton("back");
+    private void buildBackButton(BasePanel prev) {
+        backButton = new JButton("back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -96,7 +169,9 @@ public class EditDepartmentPanel extends EditPanel {
                 }
             }
         });
+    }
 
+    private void compose() {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -104,12 +179,12 @@ public class EditDepartmentPanel extends EditPanel {
 
         GroupLayout.Group staffGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeStaffPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectStaffListButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allStaffPane));
         GroupLayout.Group staffGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeStaffPane)
-                        .addComponent(button)
+                        .addComponent(selectStaffListButton)
                         .addComponent(allStaffPane));
 
         layout.setHorizontalGroup(
@@ -126,7 +201,7 @@ public class EditDepartmentPanel extends EditPanel {
                                 .addComponent(managerContent)
                                 .addComponent(locationText)
                                 .addGroup(staffGroupHor)
-                                .addComponent(specializationText)
+                                .addComponent(specializationContent)
                                 .addComponent(saveDepartmentButton))
         );
 
@@ -146,12 +221,37 @@ public class EditDepartmentPanel extends EditPanel {
                                 .addGroup(staffGroupVer))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(specializationLabel)
-                                .addComponent(specializationText))
+                                .addComponent(specializationContent))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(saveDepartmentButton))
 
         );
+    }
+
+    public void fillFromObject(Department department) {
+        clearPanel();
+        departmentNameText.setText(department.getName());
+        for (int i = 0; i < managerContent.getItemCount(); i++) {
+            if (managerContent.getItemAt(i).getId() == department.getmanager().getId()) {
+                managerContent.setSelectedIndex(i);
+            }
+        }
+        locationText.setText(department.getLocation());
+        for (StaffMember staffMember : department.getStaffMembersList()) {
+            activeStaffListModel.addElement(StaffMemberListOptionDTO.map(staffMember));
+        }
+        for (int i = 0; i < specializationContent.getItemCount(); i++) {
+            if (specializationContent.getItemAt(i).equals(department.getSpecialization())) {
+                specializationContent.setSelectedIndex(i);
+            }
+        }
+    }
+
+    private void clearPanel() {
+        departmentNameText.setText("");
+        locationText.setText("");
+        activeStaffListModel.removeAllElements();
     }
 }
 

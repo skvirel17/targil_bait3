@@ -24,6 +24,7 @@ public class TablePanel extends BasePanel {
         content.setShowGrid(true);
         content.setDefaultEditor(Object.class, null);
         content.getTableHeader().setFont(content.getTableHeader().getFont().deriveFont(Font.BOLD));
+        content.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(content);
 
         this.add(scrollPane, BorderLayout.CENTER);
@@ -32,8 +33,8 @@ public class TablePanel extends BasePanel {
         Button buttonAdd = new Button("Add");
         buttonAdd.addActionListener(new AddItemAction());
         buttons.add(buttonAdd);
-        buttons.add(new Button("Edit"));
-        buttons.add(new Button("Delete"));
+        buttons.add(new JButton("Edit"));
+        buttons.add(new JButton("Delete"));
 
         this.add(buttons, BorderLayout.NORTH);
 
@@ -51,4 +52,5 @@ public class TablePanel extends BasePanel {
         DefaultTableModel newModel = new DefaultTableModel(data, columns);
         content.setModel(newModel);
     }
+
 }

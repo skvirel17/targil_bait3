@@ -1,11 +1,9 @@
 package control;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.sun.corba.se.impl.orbutil.ObjectUtility;
 import enums.*;
 import model.*;
 import utils.MyFileLogWriter;
@@ -61,7 +59,14 @@ public class Hospital implements Serializable {
 		}
 		return false;
 	}
-	
+
+	public int generateNewDepartmentNumber() {
+		int max = Integer.MIN_VALUE;
+		for (int departmentNumber: getDepartments().keySet()) {
+			max = (departmentNumber > max) ? departmentNumber : max;
+		}
+		return max+1;
+	}
 	
 	public boolean addDepartment(Department department) {
 		if(department==null) {
@@ -190,7 +195,7 @@ public class Hospital implements Serializable {
 			staffMember.removeDepartment(department);
 		}
 		for(MedicalProblem medicalProblem:medicalProblems.values()) {
-			if(medicalProblem.getDepartment().equals(department)) {
+			if(!Objects.isNull(medicalProblem.getDepartment()) && medicalProblem.getDepartment().equals(department)) {
 				medicalProblem.setDepartment(null);
 			}
 		}

@@ -1,18 +1,53 @@
 package GUI.panels.table_panels;
 
+import GUI.actions.OpenPanelAction;
 import GUI.mainScreen.SystemUsersGUI;
+import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
 import model.Department;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.Map;
 
+import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
+import static GUI.mainScreen.SystemUsersGUI.hospital;
 import static GUI.panels.table_panels.edit_panels.EditDepartmentPanel.EDIT_DEPARTMENT_PANEL;
 
 public class DepartmentsPanel extends TablePanel {
     public static final String DEPARTMENTS_PANEL = "DEPARTMENTS_PANEL";
 
     private static final Object[] columns = {"ID", "NAME", "MANAGER", "LOCATION", "SPECIALIZATION"};
+    public JPanel itemPanel;
 
     public DepartmentsPanel(Map<Integer, Department> departments) {
         super(mapData(departments), columns, EDIT_DEPARTMENT_PANEL);
+
+        //Adding Edit button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[1]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        (new OpenPanelAction(SystemUsersGUI.getMainScreen(), this.getItemInfoPanel(), getCardLayout())).actionPerformed(e);
+                        Department editDepartment = hospital.getRealDepartment(
+                                (Integer) this.getContent().getModel().
+                                        getValueAt(this.getContent().getSelectedRow(), 0));
+                        ((EditDepartmentPanel)itemPanel).fillFromObject(editDepartment);
+
+                    }
+
+                }
+        );
+
+        //Adding Delete button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[2]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        hospital.removeDepartment(
+                                hospital.getRealDepartment(
+                                        (Integer) this.getContent().getModel().getValueAt(this.getContent().getSelectedRow(), 0)));
+                        this.reloadData(hospital.getDepartments());
+                    }
+                }
+        );
     }
 
     private static Object[][] mapData(Map<Integer, Department> departments) {

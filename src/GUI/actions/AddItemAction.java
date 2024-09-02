@@ -20,6 +20,5 @@ public class AddItemAction extends AbstractAction {
         TablePanel parent = (TablePanel) (source.getParent().getParent());
         parent.getContent().getSelectedRow();
         (new OpenPanelAction(SystemUsersGUI.getMainScreen(), parent.getItemInfoPanel(), SystemUsersGUI.getCardLayout())).actionPerformed(e);
-        //source.setVisible(false);
     }
 }

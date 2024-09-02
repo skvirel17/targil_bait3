@@ -108,6 +108,7 @@ public class SystemUsersGUI {
         ((MedicationsPanel) medicationPanel).itemPanel = editMedicationPanel;
         ((PatientsPanel) patientsPanel).itemPanel = editPatientsPanel;
         ((StaffMembersPanel) staffMembersPanel).itemPanel = editStaffMembersPanel;
+        ((TreatmentsPanel) treatmentsPanel).itemPanel = editTreatmentPanel;
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(new BaseMenu());

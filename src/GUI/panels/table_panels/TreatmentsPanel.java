@@ -1,10 +1,17 @@
 package GUI.panels.table_panels;
 
+import GUI.actions.OpenPanelAction;
+import GUI.mainScreen.SystemUsersGUI;
+import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
 import GUI.panels.table_panels.edit_panels.EditTreatmentsPanel;
+import model.Department;
 import model.Treatment;
 
+import javax.swing.*;
 import java.util.Map;
 
+import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
+import static GUI.mainScreen.SystemUsersGUI.hospital;
 import static GUI.panels.table_panels.edit_panels.EditTreatmentsPanel.EDIT_TREATMENT_PANEL;
 
 public class TreatmentsPanel extends TablePanel {
@@ -12,8 +19,37 @@ public class TreatmentsPanel extends TablePanel {
 
     private static final Object[] columns = {"SERIAL_NUMBER", "DESCRIPTION"};
 
+    public JPanel itemPanel;
+
     public TreatmentsPanel(Map<Integer, Treatment> treatments) {
         super(mapData(treatments), columns, EDIT_TREATMENT_PANEL);
+
+        //Adding Edit button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[1]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        (new OpenPanelAction(SystemUsersGUI.getMainScreen(), this.getItemInfoPanel(), getCardLayout())).actionPerformed(e);
+                        Treatment editTreatment= hospital.getRealTreatment(
+                                (Integer) this.getContent().getModel().
+                                        getValueAt(this.getContent().getSelectedRow(), 0));
+                        ((EditTreatmentsPanel)itemPanel).fillFromObject(editTreatment);
+
+                    }
+
+                }
+        );
+
+        //Adding Delete button action
+        ((JButton)((JPanel) this.getComponents()[1]).getComponents()[2]).addActionListener(e ->
+                {
+                    if (this.getContent().getSelectedRow() != -1) {
+                        hospital.removeTreatment(
+                                hospital.getRealTreatment(
+                                        (Integer) this.getContent().getModel().getValueAt(this.getContent().getSelectedRow(), 0)));
+                        this.reloadData(hospital.getTreatments());
+                    }
+                }
+        );
     }
 
     private static Object[][] mapData(Map<Integer, Treatment> map) {
@@ -28,6 +64,10 @@ public class TreatmentsPanel extends TablePanel {
         }
 
         return data;
+    }
+
+    public void reloadData(Map<Integer, Treatment> treatmentMap) {
+        reloadData(mapData(treatmentMap), columns);
     }
 
     @Override

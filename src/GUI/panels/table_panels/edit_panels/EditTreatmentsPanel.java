@@ -2,10 +2,7 @@
 package GUI.panels.table_panels.edit_panels;
 
 import GUI.actions.OpenPanelAction;
-import GUI.dto.DoctorListOptionDTO;
-import GUI.dto.MedicationListOptionDTO;
-import GUI.dto.StaffMemberListOptionDTO;
-import GUI.dto.TreatmentListOptionDTO;
+import GUI.dto.*;
 import GUI.panels.BasePanel;
 import control.Hospital;
 import enums.Specialization;
@@ -23,86 +20,136 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public static final String EDIT_TREATMENT_PANEL = "EDIT_TREATMENT_PANEL";
 
+    //Description
+    private JLabel descriptionLabel;
+    private JTextField descriptionText;
+    //Doctor list
+    private JLabel doctorLabel;
+    private JScrollPane activeDoctorPane;
+    private DefaultListModel<DoctorListOptionDTO> activeDoctorListModel;
+    private JList<DoctorListOptionDTO> activeDoctorList;
+    private DefaultListModel<DoctorListOptionDTO> allDoctorListModel;
+    private JList<DoctorListOptionDTO> allDoctorList;
+    private JScrollPane allDoctorPane;
+    private JButton selectDoctorButton;
+    //Medication list
+    private JLabel medicationLabel;
+    private JScrollPane activeMedicationPane;
+    private DefaultListModel<MedicationListOptionDTO> activeMedicationListModel;
+    private JList<MedicationListOptionDTO> activeMedicationList;
+    private DefaultListModel<MedicationListOptionDTO> allMedicationListModel;
+    private JList<MedicationListOptionDTO> allMedicationList;
+    private JScrollPane allMedicationPane;
+    private JButton medicationSelectButton;
+    //Medical problem list
+    private JLabel medicalProblemLabel;
+    private JScrollPane activeMedicalProblemPane;
+    private DefaultListModel<MedicationProblemListOptionDTO> activeMedicalProblemListModel;
+    private JList<MedicationProblemListOptionDTO> activeMedicalProblemList;
+    private DefaultListModel<MedicationProblemListOptionDTO> allMedicalProblemListModel;
+    private JList<MedicationProblemListOptionDTO> allMedicalProblemList;
+    private JScrollPane allMedicalProblemPane;
+    private JButton medicalProblemButton;
+    //Save button
+    private JButton addButton;
+    //Back button
+    private JButton backButton;
+
+
     public EditTreatmentsPanel(BasePanel prev) {
         super(prev);
 
-        JLabel descriptionLabel = new JLabel("Treatment Description:");
-        JTextField descriptionText = new JTextField();
+        buildDescriptionField();
+        buildDoctorsListField();
+        buildMedicationListField();
+        buildMedicalProblemListField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
 
-        //Doctors list
-        JLabel doctorLabel = new JLabel("Doctors:");
-        JScrollPane activeDoctorPane = new JScrollPane();
-        DefaultListModel<String> activeDoctorListModel = new DefaultListModel<>();
-        JList<String> activeDoctorList = new JList<>(activeDoctorListModel);
-        activeDoctorPane.add(activeDoctorList);
+        compose();
+    }
 
-        DefaultListModel<String> allDoctorListModel = new DefaultListModel<>();
-        JList<String> allDoctorList = new JList<>(allDoctorListModel);
-        JScrollPane allDoctorPane = new JScrollPane(allDoctorList);
+    private void buildDescriptionField() {
+        descriptionLabel = new JLabel("Treatment Description:");
+        descriptionText = new JTextField();
+    }
+
+    private void buildDoctorsListField() {
+        doctorLabel = new JLabel("Doctors:");
+        activeDoctorListModel = new DefaultListModel<>();
+        activeDoctorList = new JList<>(activeDoctorListModel);
+        activeDoctorPane = new JScrollPane(activeDoctorList);
+
+        allDoctorListModel = new DefaultListModel<>();
+        allDoctorList = new JList<>(allDoctorListModel);
+        allDoctorPane = new JScrollPane(allDoctorList);
 
         for (StaffMember member : hospital.getStaffMembers().values()) {
             if (member instanceof Doctor) {
-                allDoctorListModel.addElement(DoctorListOptionDTO.map((Doctor) member).toString());
+                allDoctorListModel.addElement(DoctorListOptionDTO.map((Doctor) member));
             }
         }
-        JButton button = new JButton("Select Sublist");
-        button.addActionListener(new ActionListener() {
+        selectDoctorButton = new JButton("Select Sublist");
+        selectDoctorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         });
+    }
 
+    private void buildMedicationListField() {
+        medicationLabel = new JLabel("Medications:");
+        activeMedicationListModel = new DefaultListModel<>();
+        activeMedicationList = new JList<>(activeMedicationListModel);
+        activeMedicationPane = new JScrollPane(activeMedicationList);
 
-        //Medication list
-        JLabel medicationLabel = new JLabel("Medications:");
-        JScrollPane activeMedicationPane = new JScrollPane();
-        DefaultListModel<String> activeMedicationListModel = new DefaultListModel<>();
-        JList<String> activeMedicationList = new JList<>(activeMedicationListModel);
-        activeMedicationPane.add(activeMedicationList);
-
-        DefaultListModel<String> allMedicationListModel = new DefaultListModel<>();
-        JList<String> allMedicationList = new JList<>(allMedicationListModel);
-        JScrollPane allMedicationPane = new JScrollPane(allMedicationList);
+        allMedicationListModel = new DefaultListModel<>();
+        allMedicationList = new JList<>(allMedicationListModel);
+        allMedicationPane = new JScrollPane(allMedicationList);
 
         for (Medication medication : hospital.getMedications().values()) {
-            allMedicationListModel.addElement(MedicationListOptionDTO.map(medication).toString());
+            allMedicationListModel.addElement(MedicationListOptionDTO.map(medication));
         }
-        JButton medicationSelectButton = new JButton("Select Sublist");
-        button.addActionListener(new ActionListener() {
+        medicationSelectButton = new JButton("Select Sublist");
+        medicationSelectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         });
+    }
 
-        //MedicalProblem list
-        JLabel medicalProblemLabel = new JLabel("Medical problems:");
-        JScrollPane activeMedicalProblemPane = new JScrollPane();
-        DefaultListModel<String> activeMedicalProblemListModel = new DefaultListModel<>();
-        JList<String> activeMedicalProblemList = new JList<>(activeMedicalProblemListModel);
-        activeMedicalProblemPane.add(activeMedicalProblemList);
+    private void buildMedicalProblemListField() {
+        medicalProblemLabel = new JLabel("Medical problems:");
+        activeMedicalProblemListModel = new DefaultListModel<>();
+        activeMedicalProblemList = new JList<>(activeMedicalProblemListModel);
+        activeMedicalProblemPane = new JScrollPane(activeMedicalProblemList);
 
-        DefaultListModel<String> allMedicalProblemListModel = new DefaultListModel<>();
-        JList<String> allMedicalProblemList = new JList<>(allMedicalProblemListModel);
-        JScrollPane allMedicalProblemPane = new JScrollPane(allMedicalProblemList);
+        allMedicalProblemListModel = new DefaultListModel<>();
+        allMedicalProblemList = new JList<>(allMedicalProblemListModel);
+        allMedicalProblemPane = new JScrollPane(allMedicalProblemList);
 
         for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
-            allMedicalProblemListModel.addElement("[" +medicalProblem.getCode() + "] " + medicalProblem.getName());
+            allMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(medicalProblem));
         }
-        JButton medicalProblemButton = new JButton("Select Sublist");
+        medicalProblemButton = new JButton("Select Sublist");
         medicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         });
+    }
 
-        JButton addButton = new JButton("Save");
+    private void buildSaveButton(BasePanel prev) {
+        addButton = new JButton("Save");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         });
+    }
 
-        JButton backButton = new JButton("Back");
+    private void buildBackButton(BasePanel prev) {
+        backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,8 +160,9 @@ public class EditTreatmentsPanel extends EditPanel {
                 }
             }
         });
+    }
 
-
+    private void compose() {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -122,12 +170,12 @@ public class EditTreatmentsPanel extends EditPanel {
 
         GroupLayout.Group doctorGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeDoctorPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectDoctorButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allDoctorPane));
         GroupLayout.Group doctorGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeDoctorPane)
-                        .addComponent(button)
+                        .addComponent(selectDoctorButton)
                         .addComponent(allDoctorPane));
 
         GroupLayout.Group medicationGroupHor = layout.createSequentialGroup()
@@ -185,6 +233,27 @@ public class EditTreatmentsPanel extends EditPanel {
                                 .addComponent(addButton)
                                 .addComponent(backButton))
         );
+    }
+
+    public void fillFromObject(Treatment treatment) {
+        clearPanel();
+        descriptionText.setText(treatment.getDescription());
+        for (Doctor doctor : treatment.getDoctorsList()) {
+            activeDoctorListModel.addElement(DoctorListOptionDTO.map(doctor));
+        }
+        for (Medication medication : treatment.getMedicationsList()) {
+            activeMedicationListModel.addElement(MedicationListOptionDTO.map(medication));
+        }
+        for (MedicalProblem problem : treatment.getMedicalProblemsList()) {
+            activeMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(problem));
+        }
+    }
+
+    private void clearPanel() {
+        descriptionText.setText("");
+        activeDoctorListModel.removeAllElements();
+        activeMedicationListModel.removeAllElements();
+        activeMedicalProblemListModel.removeAllElements();
     }
 }
 

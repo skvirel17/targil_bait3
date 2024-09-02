@@ -2,38 +2,63 @@ package GUI.panels.table_panels.edit_panels;
 
 
 import GUI.actions.OpenPanelAction;
-import GUI.dto.MedicationListOptionDTO;
+import GUI.dto.TreatmentListOptionDTO;
 import GUI.panels.BasePanel;
+import model.MedicalProblem;
 import model.Medication;
+import model.Treatment;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
 public class EditMedicationPanel extends EditPanel {
 
     public static final String EDIT_MEDICATION_PANEL = "EDIT_MEDICATION_PANEL";
+    private JLabel nameLabel;
+    private JTextField nameText;
+    private JLabel dosageLabel;
+    private JTextField dosageText;
+    private JLabel doseNumberLabel;
+    private JTextField doseNumberText;
+    private JButton saveMedicationButton;
+    private JButton backButton;
+    private GroupLayout layout;
 
     public EditMedicationPanel(BasePanel prev) {
         super(prev);
+        buildName();
+        buildDosageField();
+        buildNumberOfDosageField();
+        buildSaveButton(prev);
+        buildBackButton(prev);
 
+        compose();
         // Метка и текстовое поле для названия лекарства
-        JLabel nameLabel = new JLabel("Medication Name:");
-        JTextField nameText = new JTextField();
+    }
 
+    private void buildName() {
+        nameLabel = new JLabel("Medication Name:");
+        nameText = new JTextField();
+    }
+
+    private void buildDosageField() {
         // Метка и текстовое поле для дозировки
-        JLabel dosageLabel = new JLabel("Dosage (mg):");
-        JTextField dosageText = new JTextField();
+        dosageLabel = new JLabel("Dosage (mg):");
+        dosageText = new JTextField();
+    }
 
+    private void buildNumberOfDosageField() {
         // Метка и текстовое поле для количества доз (numberOfDose)
-        JLabel doseNumberLabel = new JLabel("Number of Doses:");
-        JTextField doseNumberText = new JTextField();
+        doseNumberLabel = new JLabel("Number of Doses:");
+        doseNumberText = new JTextField();
+    }
 
-// Кнопка сохранения медикамента
-        JButton saveMedicationButton = new JButton("Save Medication");
+    private void buildSaveButton(BasePanel prev) {
+        // Кнопка сохранения медикамента
+        saveMedicationButton = new JButton("Save Medication");
         saveMedicationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,10 +92,11 @@ public class EditMedicationPanel extends EditPanel {
                 }
             }
         });
+    }
 
-
+    private void buildBackButton(BasePanel prev) {
         // Кнопка возврата назад
-        JButton backButton = new JButton("Back");
+        backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,9 +107,11 @@ public class EditMedicationPanel extends EditPanel {
                 }
             }
         });
+    }
 
+    private void compose() {
         // Используем GroupLayout для расположения элементов
-        GroupLayout layout = new GroupLayout(this);
+        layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
@@ -121,6 +149,19 @@ public class EditMedicationPanel extends EditPanel {
 
     private int generateUniqueCode() {
         return hospital.getMedications().size() + 1; // Генерация уникального кода
+    }
+
+    public void fillFromObject(Medication medication) {
+        clearPanel();
+        nameText.setText(medication.getName());
+        dosageText.setText(Double.toString(medication.getDosage()));
+        doseNumberText.setText(Integer.toString(medication.getNumberOfDose()));
+    }
+
+    private void clearPanel() {
+        nameText.setText("");
+        dosageText.setText("");
+        doseNumberText.setText("");
     }
 
 }

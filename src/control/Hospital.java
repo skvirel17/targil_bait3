@@ -67,6 +67,16 @@ public class Hospital implements Serializable {
 		}
 		return max+1;
 	}
+
+	public int generateNewMedicationCode() {
+		int max = Integer.MIN_VALUE;
+		for (int medicationCode: getMedications().keySet()) {
+			max = (medicationCode > max) ? medicationCode : max;
+		}
+		return max+1;
+	}
+
+
 	
 	public boolean addDepartment(Department department) {
 		if(department==null) {
@@ -192,14 +202,14 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(StaffMember staffMember:department.getStaffMembersList()) {
-			staffMember.removeDepartment(department);
-		}
+				staffMember.removeDepartment(department);
+			}
 		for(MedicalProblem medicalProblem:medicalProblems.values()) {
 			if(!Objects.isNull(medicalProblem.getDepartment()) && medicalProblem.getDepartment().equals(department)) {
 				medicalProblem.setDepartment(null);
 			}
 		}
-		return departments.remove(department.getNumber())!=null;
+		return departments.remove(department.getNumber()) != null;
 	}
 	
 	public boolean removeMedicalProblem(MedicalProblem medicalProblem) {
@@ -210,10 +220,14 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(Treatment t:medicalProblem.getTreatmentsList()) {
-			t.removeMedicalProblem(medicalProblem);
+			if(!Objects.isNull(t)) {
+				t.removeMedicalProblem(medicalProblem);
+			}
 		}
 		for(Visit v:visits.values()) {
-			v.removeMedicalProblem(medicalProblem);
+			if(!Objects.isNull(v)) {
+				v.removeMedicalProblem(medicalProblem);
+			}
 		}
 		return medicalProblems.remove(medicalProblem.getCode())!=null;
 	}
@@ -237,8 +251,11 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(Treatment treatment:treatments.values()) {
-			treatment.removeMedication(medication);
+			if (!Objects.isNull(treatment)) {
+				treatment.removeMedication(medication);
+			}
 		}
+
 		return medications.remove(medication.getCode())!=null;
 	}
 	
@@ -250,9 +267,11 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(Department d:staffMember.getDepartments()) {
-			d.removeStaffMember(staffMember);
-			if(d.getmanager().equals(staffMember)) {
-				d.setmanager(null);
+			if(!Objects.isNull(d)) {
+				d.removeStaffMember(staffMember);
+				if (!Objects.isNull(d.getmanager()) && d.getmanager().equals(staffMember)) {
+					d.setmanager(null);
+				}
 			}
 		}
 		return staffMembers.remove(staffMember.getId()) != null;
@@ -274,7 +293,9 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(Visit visit:patient.getVisitsList()) {
-			visits.remove(visit.getNumber());
+			if(!Objects.isNull(visit)) {
+				visits.remove(visit.getNumber());
+			}
 		}
 		return patients.remove(patient.getId()) != null;
 	}
@@ -288,10 +309,14 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		for(MedicalProblem medicalProblem:treatment.getMedicalProblemsList()) {
-			medicalProblem.removeTreatment(treatment);
+			if(!Objects.isNull(medicalProblem)) {
+				medicalProblem.removeTreatment(treatment);
+			}
 		}
 		for(Visit v:visits.values()) {
-			v.removeTreatment(treatment);
+			if(!Objects.isNull(v)) {
+				v.removeTreatment(treatment);
+			}
 		}
 		return treatments.remove(treatment.getSerialNumber()) != null;
 	}

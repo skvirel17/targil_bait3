@@ -4,13 +4,15 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.TreatmentListOptionDTO;
 import GUI.panels.BasePanel;
-import model.MedicalProblem;
-import model.Medication;
-import model.Treatment;
+import GUI.panels.table_panels.DepartmentsPanel;
+import GUI.panels.table_panels.MedicationsPanel;
+import enums.Specialization;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -51,44 +53,28 @@ public class EditMedicationPanel extends EditPanel {
     }
 
     private void buildNumberOfDosageField() {
-        // Метка и текстовое поле для количества доз (numberOfDose)
+        // Mark and text field (numberOfDose)
         doseNumberLabel = new JLabel("Number of Doses:");
         doseNumberText = new JTextField();
     }
 
     private void buildSaveButton(BasePanel prev) {
-        // Кнопка сохранения медикамента
-        saveMedicationButton = new JButton("Save Medication");
+        saveMedicationButton = new JButton("Save");
         saveMedicationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Button clicked!");
+                int codeMedication = hospital.generateNewMedicationCode();
                 String name = nameText.getText();
-                String dosageStr = dosageText.getText();
-                String numberOfDoseStr = doseNumberText.getText(); // Для количества доз
+                Double dosage = Double.valueOf(dosageText.getText());
+                int numberOfDosage = Integer.parseInt(doseNumberText.getText());
 
-                if (name.isEmpty() || dosageStr.isEmpty() || numberOfDoseStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                try {
-                    double dosage = Double.parseDouble(dosageStr);
-                    int numberOfDose = Integer.parseInt(numberOfDoseStr); // Парсинг количества доз
-
-                    // Создаем новый объект Medication
-                    Medication newMedication = new Medication(generateUniqueCode(), name, dosage, numberOfDose);
-
-                    // Добавляем его в систему (в hospital)
-                    hospital.getMedications().put(newMedication.getCode(), newMedication);
-
-                    JOptionPane.showMessageDialog(null, "Medication saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-                    // Возврат к предыдущей панели
-                    new OpenPanelAction(getMainScreen(), prev.toString(), getCardLayout()).actionPerformed(e);
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Please enter valid dosage and number of doses.", "Error", JOptionPane.ERROR_MESSAGE);
+                Medication newMedication = new Medication(codeMedication, name, dosage, numberOfDosage);
+                if (hospital.addMedication(newMedication)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((MedicationsPanel) prev).reloadData(hospital.getMedications());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

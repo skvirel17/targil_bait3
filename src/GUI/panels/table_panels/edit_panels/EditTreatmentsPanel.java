@@ -4,15 +4,12 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.*;
 import GUI.panels.BasePanel;
-import control.Hospital;
-import enums.Specialization;
+import GUI.panels.table_panels.TreatmentsPanel;
 import model.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -51,7 +48,7 @@ public class EditTreatmentsPanel extends EditPanel {
     private JScrollPane allMedicalProblemPane;
     private JButton medicalProblemButton;
     //Save button
-    private JButton addButton;
+    private JButton saveButton;
     //Back button
     private JButton backButton;
 
@@ -139,11 +136,49 @@ public class EditTreatmentsPanel extends EditPanel {
         });
     }
 
+//    private void buildSaveButton(BasePanel prev) {
+//        saveDepartmentButton = new JButton("Save");
+//        saveDepartmentButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int depNumber = hospital.generateNewDepartmentNumber();
+//                String name = departmentNameText.getText();
+//                Doctor manager = (Doctor) managerContent.getSelectedItem();
+//                String location = locationText.getText();
+//                Specialization spec = (Specialization) specializationContent.getSelectedItem();
+//                HashSet<StaffMember> staffMembers = new HashSet<>();
+//                for (int i = 0; i < activeStaffListModel.getSize(); i++) {
+//                    staffMembers.add(activeStaffListModel.get(i));
+//                }
+//
+//                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
+//                if (hospital.addDepartment(newDepartment)) {
+//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
+//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+//                } else {
+//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+//                }
+//            }
+//        });
+//    }
+
     private void buildSaveButton(BasePanel prev) {
-        addButton = new JButton("Save");
-        addButton.addActionListener(new ActionListener() {
+        saveButton = new JButton("Save");
+        saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int id = hospital.generateNewTreatmentNumber();
+                String description = descriptionText.getText();
+
+                Treatment newTreatment = new Treatment(id, description);
+                if (hospital.addTreatment(newTreatment)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((TreatmentsPanel) prev).reloadData(hospital.getTreatments());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
@@ -206,7 +241,7 @@ public class EditTreatmentsPanel extends EditPanel {
                                 .addComponent(doctorLabel)
                                 .addComponent(medicationLabel)
                                 .addComponent(medicalProblemLabel)
-                                .addComponent(addButton))
+                                .addComponent(saveButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(descriptionText)
                                 .addGroup(doctorGroupHor)
@@ -230,7 +265,7 @@ public class EditTreatmentsPanel extends EditPanel {
                                 .addComponent(medicalProblemLabel)
                                 .addGroup(medicalProblemGroupVer))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(addButton)
+                                .addComponent(saveButton)
                                 .addComponent(backButton))
         );
     }

@@ -3,14 +3,22 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.*;
 import GUI.panels.BasePanel;
+import GUI.panels.table_panels.DepartmentsPanel;
+import GUI.panels.table_panels.PatientsPanel;
 import enums.BiologicalSex;
 import enums.HealthFund;
+import enums.Specialization;
 import model.*;
+import utils.UtilsMethods;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -106,9 +114,13 @@ public class EditPatientsPanel extends EditPanel {
     }
 
     private void buildBirthDateField() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         patientBirthDateLabel = new JLabel("Birthdate:");
-        patientBirthDateText = new JFormattedTextField(dateFormat);
+        try {
+            patientBirthDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
     }
 
     private void buildAddressField() {
@@ -169,9 +181,34 @@ public class EditPatientsPanel extends EditPanel {
         savePatientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Doctor newDoctor = getNewInfo();
-                JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-                new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                int id = hospital.generateNewPatientNumber();
+                String name = patientFirstNameText.getText();
+                String lastName = patientLastText.getText();
+                Date birthdate = UtilsMethods.parseDate(patientBirthDateText.getText());
+                String inputDate = patientBirthDateText.getText();
+                if (!inputDate.equals(UtilsMethods.format(birthdate))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format. Please enter a valid date.");
+                    return;
+                }
+                String address = addressText.getText();
+                String phoneNumber = phoneNumberText.getText();
+                String email = emailText.getText();
+                String gender = genderText.getText();
+                HealthFund healthFund = (HealthFund) healthFundContent.getSelectedItem();
+                BiologicalSex biologicalSex = (BiologicalSex) biologicalText.getSelectedItem();
+                HashSet<Visit> visit = new HashSet<>();
+                for (int i = 0; i < activeVisitsListModel.getSize(); i++) {
+                    visit.add(activeVisitsListModel.get(i));
+                }
+
+                Patient newPatient = new Patient(id, name, lastName, birthdate, address, phoneNumber, email, gender, visit, healthFund, biologicalSex);
+                if (hospital.addPatient(newPatient)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((PatientsPanel) prev).reloadData(hospital.getPatients());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
@@ -277,7 +314,7 @@ public class EditPatientsPanel extends EditPanel {
         clearPanel();
         patientFirstNameText.setText(patient.getFirstName());
         patientLastText.setText(patient.getLastName());
-        patientBirthDateText.setText(patient.getBirthDate().toString());
+        patientBirthDateText.setText(UtilsMethods.format(patient.getBirthDate()));
         addressText.setText(patient.getAddress());
         phoneNumberText.setText(patient.getPhoneNumber());
         genderText.setText(patient.getGender());

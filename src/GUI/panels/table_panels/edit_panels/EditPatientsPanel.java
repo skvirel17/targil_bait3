@@ -34,7 +34,6 @@ public class EditPatientsPanel extends EditPanel {
     private JTextField patientLastText;
     //BirthDate
     private JLabel patientBirthDateLabel;
-    private SimpleDateFormat sdf;
     private JFormattedTextField patientBirthDateText;
     //Address
     private JLabel addressLabel;
@@ -115,7 +114,6 @@ public class EditPatientsPanel extends EditPanel {
     }
 
     private void buildBirthDateField() {
-        sdf = new SimpleDateFormat("dd/MM/yyyy");
         patientBirthDateLabel = new JLabel("Birthdate:");
         try {
             patientBirthDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
@@ -178,32 +176,6 @@ public class EditPatientsPanel extends EditPanel {
         });
     }
 
-//    private void buildSaveButton(BasePanel prev) {
-//        saveDepartmentButton = new JButton("Save");
-//        saveDepartmentButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int depNumber = hospital.generateNewDepartmentNumber();
-//                String name = departmentNameText.getText();
-//                Doctor manager = (Doctor) managerContent.getSelectedItem();
-//                String location = locationText.getText();
-//                Specialization spec = (Specialization) specializationContent.getSelectedItem();
-//                HashSet<StaffMember> staffMembers = new HashSet<>();
-//                for (int i = 0; i < activeStaffListModel.getSize(); i++) {
-//                    staffMembers.add(activeStaffListModel.get(i));
-//                }
-//
-//                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
-//                if (hospital.addDepartment(newDepartment)) {
-//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
-//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
-//                }
-//            }
-//        });
-//    }
     private void buildSaveButton(BasePanel prev) {
         savePatientButton = new JButton("Save");
         savePatientButton.addActionListener(new ActionListener() {
@@ -212,11 +184,11 @@ public class EditPatientsPanel extends EditPanel {
                 int id = hospital.generateNewPatientNumber();
                 String name = patientFirstNameText.getText();
                 String lastName = patientLastText.getText();
-                Date birthdate = null;
-                try {
-                    birthdate = sdf.parse(patientBirthDateText.getText());
-                } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
+                Date birthdate = UtilsMethods.parseDate(patientBirthDateText.getText());
+                String inputDate = patientBirthDateText.getText();
+                if (!inputDate.equals(UtilsMethods.format(birthdate))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format. Please enter a valid date.");
+                    return;
                 }
                 String address = addressText.getText();
                 String phoneNumber = phoneNumberText.getText();
@@ -342,7 +314,7 @@ public class EditPatientsPanel extends EditPanel {
         clearPanel();
         patientFirstNameText.setText(patient.getFirstName());
         patientLastText.setText(patient.getLastName());
-        patientBirthDateText.setText(sdf.format(patient.getBirthDate()));
+        patientBirthDateText.setText(UtilsMethods.format(patient.getBirthDate()));
         addressText.setText(patient.getAddress());
         phoneNumberText.setText(patient.getPhoneNumber());
         genderText.setText(patient.getGender());

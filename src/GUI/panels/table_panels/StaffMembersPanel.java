@@ -6,6 +6,7 @@ import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
 import GUI.panels.table_panels.edit_panels.EditStaffMembersPanel;
 import model.Department;
 import model.StaffMember;
+import utils.UtilsMethods;
 
 import javax.swing.*;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class StaffMembersPanel extends TablePanel {
             data[i][0] = entry.getKey();
             data[i][1] = entry.getValue().getFirstName();
             data[i][2] = entry.getValue().getLastName();
-            data[i][3] = entry.getValue().getBirthDate();
+            data[i][3] = UtilsMethods.format(entry.getValue().getBirthDate());
             data[i][4] = entry.getValue().getAddress();
             data[i][5] = entry.getValue().getPhoneNumber();
             data[i][6] = entry.getValue().getEmail();

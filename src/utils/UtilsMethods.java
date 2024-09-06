@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class UtilsMethods {
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 	
 	public static double dateDiffInDays(Date date1, Date date2) {
 		return  Math.abs( ((date1.getTime() - date2.getTime())
@@ -13,12 +14,15 @@ public class UtilsMethods {
 	public static Date parseDate(String string) {
 		Date date = null;
 		try {
-			date = new SimpleDateFormat("dd/MM/yyyy").parse(string);
+			date = SDF.parse(string);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return date;
 	}
-	
+
+	public static String format(Date date) {
+		return SDF.format(date);
+	}
 
 }

@@ -6,6 +6,7 @@ import GUI.panels.table_panels.edit_panels.EditDepartmentPanel;
 import GUI.panels.table_panels.edit_panels.EditVisitsPanel;
 import model.Department;
 import model.Visit;
+import utils.UtilsMethods;
 
 import javax.swing.*;
 import java.util.Map;
@@ -59,8 +60,8 @@ public class VisitsPanel extends TablePanel {
             data[i][0] = entry.getKey();
             data[i][1] = (entry.getValue().getPatient() == null) ? "" :
                     entry.getValue().getPatient().getLastName() + " " + entry.getValue().getPatient().getFirstName();
-            data[i][2] = entry.getValue().getStartDate();
-            data[i][3] = entry.getValue().getEndDate();
+            data[i][2] = UtilsMethods.format(entry.getValue().getStartDate());
+            data[i][3] = UtilsMethods.format(entry.getValue().getEndDate());
             i++;
         }
 

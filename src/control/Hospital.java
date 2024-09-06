@@ -92,6 +92,14 @@ public class Hospital implements Serializable {
 		return max+1;
 	}
 
+	public int generateNewTreatmentNumber() {
+		int max = Integer.MIN_VALUE;
+		for (int treatmentNumber: getTreatments().keySet()) {
+			max = (treatmentNumber > max) ? treatmentNumber : max;
+		}
+		return max+1;
+	}
+
 	
 	public boolean addDepartment(Department department) {
 		if(department==null) {

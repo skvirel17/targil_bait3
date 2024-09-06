@@ -113,10 +113,10 @@ public class SystemUsersGUI {
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(new BaseMenu());
-        menuBar.add(new AccountMenu());
-        menuBar.add(new ServiceMenu());
-        menuBar.add(new DataMenu());
-        menuBar.add(new ToolsMenu());
+        //menuBar.add(new AccountMenu());
+        //menuBar.add(new ServiceMenu());
+        //menuBar.add(new DataMenu());
+        //menuBar.add(new ToolsMenu());
         mainFrame.setJMenuBar(menuBar);
 
         mainScreen.setLayout(cardLayout);

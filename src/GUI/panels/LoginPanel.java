@@ -1,6 +1,11 @@
 package GUI.panels;
 
 import GUI.actions.OpenPanelAction;
+import GUI.menu.menu_by_user_role.AdminMenu;
+import GUI.menu.menu_by_user_role.DoctorMenu;
+import GUI.menu.menu_by_user_role.NurseMenu;
+import model.Doctor;
+import model.Nurse;
 import model.StaffMember;
 
 import javax.swing.*;
@@ -8,7 +13,7 @@ import java.awt.*;
 import java.util.Map;
 
 
-import static GUI.mainScreen.SystemUsersGUI.hospital;
+import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.panels.DashBoardPanel.DASHBOARD_PANEL;
 
 public class LoginPanel extends BasePanel {
@@ -66,9 +71,26 @@ public class LoginPanel extends BasePanel {
     }
 
     public static boolean isUserValid(String login, String passText) {
-        for(Map.Entry<Integer, StaffMember> entry: hospital.getStaffMembers().entrySet()){
-            if(entry.getValue().getEmail()!= null && entry.getValue().getEmail().equals(login) ){
-                if(entry.getValue().getPassWord() != null && entry.getValue().getPassWord().equals(passText)){
+        if (login.equals("admin") && passText.equals("admin")) {
+            getMainFrame().setJMenuBar(AdminMenu.getInstance());
+            return true;
+        }
+        for(StaffMember staffMember: hospital.getStaffMembers().values()){
+            if(staffMember.getEmail() != null && staffMember.getEmail().equals(login)){
+                if(staffMember.getPassWord() != null && staffMember.getPassWord().equals(passText)){
+                    if (passText.equals("")) {
+                        if (!PasswordInputDialog.confirmPassword(staffMember)) {
+                             return false;
+                        }
+                    }
+                    if (staffMember instanceof Doctor) {
+                        getMainFrame().setJMenuBar(DoctorMenu.getInstance());
+                    } else if (staffMember instanceof Nurse) {
+                        getMainFrame().setJMenuBar(NurseMenu.getInstance());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "User is not defined!", "", JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
                     return true;
                 } else {
                     JOptionPane.showMessageDialog(null, "Wrong password!", "", JOptionPane.WARNING_MESSAGE);

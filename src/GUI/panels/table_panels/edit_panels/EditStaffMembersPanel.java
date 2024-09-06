@@ -49,6 +49,8 @@ public class EditStaffMembersPanel extends EditPanel {
     private JTextField salaryText;
     //Department
     private JLabel departmentLabel;
+    private JLabel positionLabel;
+    private JComboBox<String> positionContent;
     private DefaultListModel<DepartmentOptionDTO> activeDepartmentListModel;
     private JList<DepartmentOptionDTO> activeDepartmentList;
     private JScrollPane activeDepartmentPane;
@@ -65,6 +67,7 @@ public class EditStaffMembersPanel extends EditPanel {
     public EditStaffMembersPanel(BasePanel prev) {
         super(prev);
 
+        buildPositionField();
         buildFirstNameField();
         buildLastNameField();
         buildBirthDateField();
@@ -118,6 +121,11 @@ public class EditStaffMembersPanel extends EditPanel {
     private void buildSalaryField() {
         salaryLabel = new JLabel("Salary:");
         salaryText = new JTextField();
+    }
+
+    private void buildPositionField(){
+        positionLabel = new JLabel("Type:");
+        positionContent = createPositionContent();
     }
 
     private void buildDepartmentField() {
@@ -174,6 +182,7 @@ public class EditStaffMembersPanel extends EditPanel {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int id = hospital.generateNewStaffMember();
                 String firstName = firstNameText.getText();
                 String lastName = lastNameText.getText();
                 String birthDateStr = birthDateText.getText();
@@ -182,7 +191,19 @@ public class EditStaffMembersPanel extends EditPanel {
                 String email = emailText.getText();
                 String gender = genderText.getText();
                 String salaryStr = salaryText.getText();
-
+                String position = positionContent.getItemAt(positionContent.getSelectedIndex());
+//                if(position.equals("doctor")){
+//                    StaffMember staffMember = new Doctor(id, firstName, lastName, birthDateStr, address, phoneNumber, email, gender, salaryStr)
+//                }
+//
+//                StaffMember staffMember = new StaffMember(id, firstName, lastName, birthDateStr, address, phoneNumber, email, gender, salaryStr);
+//                if (hospital.addDepartment(newDepartment)) {
+//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
+//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+//                } else {
+//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+//                }
                 //StaffMember newStaffMember = new StaffMember(id, firstName, lastName);
             }
         });
@@ -221,6 +242,7 @@ public class EditStaffMembersPanel extends EditPanel {
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(positionLabel)
                                 .addComponent(firstNameLabel)
                                 .addComponent(lastNameLabel)
                                 .addComponent(birthDateLabel)
@@ -232,6 +254,7 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addComponent(departmentLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(positionContent)
                                 .addComponent(firstNameText)
                                 .addComponent(lastNameText)
                                 .addComponent(birthDateText)
@@ -246,6 +269,9 @@ public class EditStaffMembersPanel extends EditPanel {
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(positionLabel)
+                                .addComponent(positionContent))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(firstNameLabel)
                                 .addComponent(firstNameText))
@@ -279,6 +305,10 @@ public class EditStaffMembersPanel extends EditPanel {
         );
     }
 
+    private JComboBox<String> createPositionContent() {
+        return new JComboBox<>(new String[]{"doctor", "nurse"});
+    }
+
     public void fillFromObject(StaffMember staffMember) {
         clearPanel();
         firstNameText.setText(staffMember.getFirstName());
@@ -304,4 +334,6 @@ public class EditStaffMembersPanel extends EditPanel {
         emailText.setText("");
         activeDepartmentListModel.removeAllElements();
     }
+
+
 }

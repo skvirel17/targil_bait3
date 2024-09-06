@@ -5,10 +5,10 @@ import GUI.dto.DepartmentOptionDTO;
 import GUI.dto.StaffMemberListOptionDTO;
 import GUI.dto.VisitListOptionDTO;
 import GUI.panels.BasePanel;
-import model.Patient;
-import model.StaffMember;
-import model.Department;
-import model.Visit;
+import GUI.panels.table_panels.DepartmentsPanel;
+import GUI.panels.table_panels.StaffMembersPanel;
+import enums.Specialization;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -143,6 +143,32 @@ public class EditStaffMembersPanel extends EditPanel {
         });
     }
 
+//    private void buildSaveButton(BasePanel prev) {
+//        saveDepartmentButton = new JButton("Save");
+//        saveDepartmentButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int depNumber = hospital.generateNewDepartmentNumber();
+//                String name = departmentNameText.getText();
+//                Doctor manager = (Doctor) managerContent.getSelectedItem();
+//                String location = locationText.getText();
+//                Specialization spec = (Specialization) specializationContent.getSelectedItem();
+//                HashSet<StaffMember> staffMembers = new HashSet<>();
+//                for (int i = 0; i < activeStaffListModel.getSize(); i++) {
+//                    staffMembers.add(activeStaffListModel.get(i));
+//                }
+//
+//                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
+//                if (hospital.addDepartment(newDepartment)) {
+//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
+//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+//                } else {
+//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+//                }
+//            }
+//        });
+//    }
     private void buildSaveButton(BasePanel prev) {
         addButton = new JButton("Save");
         addButton.addActionListener(new ActionListener() {
@@ -156,6 +182,8 @@ public class EditStaffMembersPanel extends EditPanel {
                 String email = emailText.getText();
                 String gender = genderText.getText();
                 String salaryStr = salaryText.getText();
+
+                //StaffMember newStaffMember = new StaffMember(id, firstName, lastName);
             }
         });
     }

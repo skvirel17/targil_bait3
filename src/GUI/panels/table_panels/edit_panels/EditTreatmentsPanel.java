@@ -10,6 +10,7 @@ import model.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -60,8 +61,8 @@ public class EditTreatmentsPanel extends EditPanel {
         buildDoctorsListField();
         buildMedicationListField();
         buildMedicalProblemListField();
-        buildSaveButton(prev);
-        buildBackButton(prev);
+        buildSaveButton(prev, this);
+        buildBackButton(prev, this);
 
         compose();
     }
@@ -136,34 +137,7 @@ public class EditTreatmentsPanel extends EditPanel {
         });
     }
 
-//    private void buildSaveButton(BasePanel prev) {
-//        saveDepartmentButton = new JButton("Save");
-//        saveDepartmentButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int depNumber = hospital.generateNewDepartmentNumber();
-//                String name = departmentNameText.getText();
-//                Doctor manager = (Doctor) managerContent.getSelectedItem();
-//                String location = locationText.getText();
-//                Specialization spec = (Specialization) specializationContent.getSelectedItem();
-//                HashSet<StaffMember> staffMembers = new HashSet<>();
-//                for (int i = 0; i < activeStaffListModel.getSize(); i++) {
-//                    staffMembers.add(activeStaffListModel.get(i));
-//                }
-//
-//                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
-//                if (hospital.addDepartment(newDepartment)) {
-//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
-//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
-//                }
-//            }
-//        });
-//    }
-
-    private void buildSaveButton(BasePanel prev) {
+    private void buildSaveButton(BasePanel prev, EditTreatmentsPanel panel) {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -171,11 +145,25 @@ public class EditTreatmentsPanel extends EditPanel {
                 int id = hospital.generateNewTreatmentNumber();
                 String description = descriptionText.getText();
 
-                Treatment newTreatment = new Treatment(id, description);
+                HashSet<Medication> medications = new HashSet<>();
+                HashSet<Doctor> doctors = new HashSet<>();
+                HashSet<MedicalProblem> problems = new HashSet<>();
+                for (int i = 0; i < activeMedicationListModel.getSize(); i++) {
+                    medications.add(activeMedicationListModel.getElementAt(i));
+                }
+                for (int i = 0; i < activeDoctorListModel.getSize(); i++) {
+                    doctors.add(activeDoctorListModel.getElementAt(i));
+                }
+                for (int i = 0; i < activeMedicalProblemListModel.getSize(); i++) {
+                    problems.add(activeMedicalProblemListModel.getElementAt(i));
+                }
+
+                Treatment newTreatment = new Treatment(id, description, medications, doctors, problems);
                 if (hospital.addTreatment(newTreatment)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((TreatmentsPanel) prev).reloadData(hospital.getTreatments());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 } else {
                     JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
                 }
@@ -183,7 +171,7 @@ public class EditTreatmentsPanel extends EditPanel {
         });
     }
 
-    private void buildBackButton(BasePanel prev) {
+    private void buildBackButton(BasePanel prev, EditTreatmentsPanel panel) {
         backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -192,6 +180,7 @@ public class EditTreatmentsPanel extends EditPanel {
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 }
             }
         });

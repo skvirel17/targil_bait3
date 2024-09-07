@@ -3,11 +3,18 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.*;
 import GUI.panels.BasePanel;
+import GUI.panels.table_panels.TreatmentsPanel;
+import GUI.panels.table_panels.VisitsPanel;
 import model.*;
+import utils.UtilsMethods;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
@@ -21,10 +28,10 @@ public class EditVisitsPanel extends EditPanel {
     private JComboBox<Patient> patientContent;
     //Start date
     private JLabel startDateLabel;
-    private JTextField startDateText;
+    private JFormattedTextField startDateText;
     //End date
     private JLabel endDateLabel;
-    private JTextField endDateText;
+    private JFormattedTextField endDateText;
     //Treatment list
     private JLabel treatmentsLabel;
     private DefaultListModel<TreatmentListOptionDTO> treatmentsListModel;
@@ -57,8 +64,8 @@ public class EditVisitsPanel extends EditPanel {
         buildEndDateField();
         buildMedicalProblemListField();
         buildTreatmentListField();
-        buildSaveButton(prev);
-        buildBackButton(prev);
+        buildSaveButton(prev, this);
+        buildBackButton(prev, this);
 
         compose();
     }
@@ -77,13 +84,23 @@ public class EditVisitsPanel extends EditPanel {
     }
 
     private void buildStartDateField() {
-        startDateLabel = new JLabel("Start Date:");
-        startDateText = new JTextField();
+        startDateLabel = new JLabel("First visit:");
+        try {
+            startDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
     }
 
     private void buildEndDateField() {
-        endDateLabel = new JLabel("End Date:");
-        endDateText = new JTextField();
+        endDateLabel = new JLabel("Last visit:");
+        try {
+            endDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
     }
 
     private void buildTreatmentListField() {
@@ -134,19 +151,55 @@ public class EditVisitsPanel extends EditPanel {
         });
     }
 
-    private void buildSaveButton(BasePanel prev) {
+    private void buildSaveButton(BasePanel prev, EditVisitsPanel panel) {
         saveVisitButton = new JButton("Save");
         saveVisitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Save visit logic
-                JOptionPane.showMessageDialog(null, "Visit saved successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-                new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                int id = hospital.generateNewVisitNumber();
+                Patient patient = patientContent.getItemAt(patientContent.getSelectedIndex());
+
+                Date startDate = UtilsMethods.parseDate(startDateText.getText());
+                String inputDate = startDateText.getText();
+                if (!inputDate.equals(UtilsMethods.format(startDate))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (First visit!).\nPlease enter a valid date.");
+                    return;
+                }
+                Date endDate = UtilsMethods.parseDate(endDateText.getText());
+                inputDate = endDateText.getText();
+                if (!inputDate.equals(UtilsMethods.format(endDate))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (Last visit!).\nPlease enter a valid date.");
+                    return;
+                }
+
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Last visit is before first one.\nPlease enter a valid date.");
+                    return;
+                }
+
+                HashSet<MedicalProblem> problems = new HashSet<>();
+                HashSet<Treatment> treatments = new HashSet<>();
+                for (int i = 0; i < activeMedicalProblemListModel.getSize(); i++) {
+                    problems.add(activeMedicalProblemListModel.getElementAt(i));
+                }
+                for (int i = 0; i < treatmentsListModel.getSize(); i++) {
+                    treatments.add(treatmentsListModel.getElementAt(i));
+                }
+
+                Visit newVisit = new Visit(id, patient, startDate, endDate, problems, treatments);
+                if (hospital.addVisit(newVisit)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((VisitsPanel) prev).reloadData(hospital.getVisits());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
 
-    private void buildBackButton(BasePanel prev) {
+    private void buildBackButton(BasePanel prev, EditVisitsPanel panel) {
         backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -155,6 +208,7 @@ public class EditVisitsPanel extends EditPanel {
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 }
             }
         });
@@ -234,8 +288,8 @@ public class EditVisitsPanel extends EditPanel {
                 patientContent.setSelectedIndex(i);
             }
         }
-        startDateText.setText(visit.getStartDate().toString());
-        endDateText.setText(visit.getEndDate().toString());
+        startDateText.setText(UtilsMethods.format(visit.getStartDate()));
+        endDateText.setText(UtilsMethods.format(visit.getEndDate()));
         for (Treatment treatment : visit.getTreatmentsList()) {
             treatmentsListModel.addElement(TreatmentListOptionDTO.map(treatment));
         }

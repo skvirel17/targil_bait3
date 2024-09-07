@@ -34,8 +34,8 @@ public class EditMedicationPanel extends EditPanel {
         buildName();
         buildDosageField();
         buildNumberOfDosageField();
-        buildSaveButton(prev);
-        buildBackButton(prev);
+        buildSaveButton(prev, this);
+        buildBackButton(prev, this);
 
         compose();
         // Метка и текстовое поле для названия лекарства
@@ -58,7 +58,7 @@ public class EditMedicationPanel extends EditPanel {
         doseNumberText = new JTextField();
     }
 
-    private void buildSaveButton(BasePanel prev) {
+    private void buildSaveButton(BasePanel prev, EditMedicationPanel panel) {
         saveMedicationButton = new JButton("Save");
         saveMedicationButton.addActionListener(new ActionListener() {
             @Override
@@ -73,6 +73,7 @@ public class EditMedicationPanel extends EditPanel {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((MedicationsPanel) prev).reloadData(hospital.getMedications());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 } else {
                     JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
                 }
@@ -80,7 +81,7 @@ public class EditMedicationPanel extends EditPanel {
         });
     }
 
-    private void buildBackButton(BasePanel prev) {
+    private void buildBackButton(BasePanel prev, EditMedicationPanel panel) {
         // Кнопка возврата назад
         backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -90,6 +91,7 @@ public class EditMedicationPanel extends EditPanel {
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 }
             }
         });
@@ -131,10 +133,6 @@ public class EditMedicationPanel extends EditPanel {
                                 .addComponent(backButton)
                                 .addComponent(saveMedicationButton))
         );
-    }
-
-    private int generateUniqueCode() {
-        return hospital.getMedications().size() + 1; // Генерация уникального кода
     }
 
     public void fillFromObject(Medication medication) {

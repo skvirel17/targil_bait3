@@ -9,10 +9,13 @@ import GUI.panels.table_panels.DepartmentsPanel;
 import GUI.panels.table_panels.StaffMembersPanel;
 import enums.Specialization;
 import model.*;
+import utils.UtilsMethods;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +34,7 @@ public class EditStaffMembersPanel extends EditPanel {
     private JTextField lastNameText;
     //BirthDate
     private JLabel birthDateLabel;
-    private JTextField birthDateText;
+    private JFormattedTextField birthDateText;
     //Address
     private JLabel addressLabel;
     private JTextField addressText;
@@ -44,6 +47,9 @@ public class EditStaffMembersPanel extends EditPanel {
     //Gender
     private JLabel genderLabel;
     private JTextField genderText;
+    //Work start date
+    private JLabel workStartDateLabel;
+    private JFormattedTextField workStartDateText;
     //Salary
     private JLabel salaryLabel;
     private JTextField salaryText;
@@ -58,6 +64,12 @@ public class EditStaffMembersPanel extends EditPanel {
     private JList<DepartmentOptionDTO> allDepartmentList;
     private JScrollPane allDepartmentPane;
     private JButton selectDepartmentButton;
+    //License number
+    private JLabel licenseNumberLabel;
+    private JFormattedTextField licenseNumberText;
+    //Finish Internship
+    private JLabel isInternshipFinishedLabel;
+    private JCheckBox isInternshipFinishedContent;
     //Save button
     private JButton addButton;
     //Back button
@@ -75,12 +87,29 @@ public class EditStaffMembersPanel extends EditPanel {
         buildPhoneNumberField();
         buildEmailField();
         buildGenderField();
+        buildWorkStartDateField();
         buildSalaryField();
         buildDepartmentField();
+        buildLicenseNumberField();
+        buildInternShipField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
+        clearPanel();
 
-        compose();
+        compose(positionContent.getItemAt(positionContent.getSelectedIndex()));
+    }
+
+    public void disablePositionField() {
+        positionContent.setEnabled(false);
+    }
+
+    public void enablePositionField() {
+        positionContent.setEnabled(true);
+    }
+
+    private void buildInternShipField() {
+        isInternshipFinishedLabel = new JLabel("Internship finished: ");
+        isInternshipFinishedContent = new JCheckBox();
     }
 
     private void buildFirstNameField() {
@@ -88,14 +117,28 @@ public class EditStaffMembersPanel extends EditPanel {
         firstNameText = new JTextField();
     }
 
+    private void buildLicenseNumberField() {
+        licenseNumberLabel = new JLabel("License number: ");
+        try {
+            licenseNumberText = new JFormattedTextField(new MaskFormatter("##########"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
+    }
     private void buildLastNameField() {
         lastNameLabel = new JLabel("Last Name:");
         lastNameText = new JTextField();
     }
 
     private void buildBirthDateField() {
-        birthDateLabel = new JLabel("Birth Date (YYYY-MM-DD):");
-        birthDateText = new JTextField();
+        birthDateLabel = new JLabel("Birth Date (dd/mm/yyyy):");
+        try {
+            birthDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
     }
 
     private void buildAddressField() {
@@ -118,6 +161,16 @@ public class EditStaffMembersPanel extends EditPanel {
         genderText = new JTextField();
     }
 
+    private void buildWorkStartDateField() {
+        workStartDateLabel = new JLabel("Work start date(dd/mm/yyyy):");
+        try {
+            workStartDateText = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        } catch (ParseException e) {
+            //TODO: remove runtime exception
+            throw new RuntimeException(e);
+        }
+    }
+
     private void buildSalaryField() {
         salaryLabel = new JLabel("Salary:");
         salaryText = new JTextField();
@@ -126,6 +179,12 @@ public class EditStaffMembersPanel extends EditPanel {
     private void buildPositionField(){
         positionLabel = new JLabel("Type:");
         positionContent = createPositionContent();
+        positionContent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                compose(positionContent.getItemAt(positionContent.getSelectedIndex()));
+            }
+        });
     }
 
     private void buildDepartmentField() {
@@ -193,12 +252,21 @@ public class EditStaffMembersPanel extends EditPanel {
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
                     panel.clearPanel();
+                    panel.enablePositionField();
                 }
             }
         });
     }
 
-    private void compose() {
+    private void compose(String position) {
+        if (position.equals("doctor")) {
+            composeDoctor();
+        } else {
+            composeNurse();
+        }
+    }
+
+    private void composeDoctor() {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -225,8 +293,11 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addComponent(phoneNumberLabel)
                                 .addComponent(emailLabel)
                                 .addComponent(genderLabel)
+                                .addComponent(workStartDateLabel)
                                 .addComponent(salaryLabel)
                                 .addComponent(departmentLabel)
+                                .addComponent(licenseNumberLabel)
+                                .addComponent(isInternshipFinishedLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(positionContent)
@@ -237,8 +308,11 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addComponent(phoneNumberText)
                                 .addComponent(emailText)
                                 .addComponent(genderText)
+                                .addComponent(workStartDateText)
                                 .addComponent(salaryText)
                                 .addGroup(departmentGroupHor)
+                                .addComponent(licenseNumberText)
+                                .addComponent(isInternshipFinishedContent)
                                 .addComponent(addButton))
         );
 
@@ -269,11 +343,112 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addComponent(genderLabel)
                                 .addComponent(genderText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(workStartDateLabel)
+                                .addComponent(workStartDateText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(salaryLabel)
                                 .addComponent(salaryText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(departmentLabel)
                                 .addGroup(departmentGroupVer))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(licenseNumberLabel)
+                                .addComponent(licenseNumberText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(isInternshipFinishedLabel)
+                                .addComponent(isInternshipFinishedContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(backButton)
+                                .addComponent(addButton))
+        );
+    }
+
+    private void composeNurse() {
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        GroupLayout.Group departmentGroupHor = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeDepartmentPane))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectDepartmentButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allDepartmentPane));
+        GroupLayout.Group departmentGroupVer = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(activeDepartmentPane)
+                        .addComponent(selectDepartmentButton)
+                        .addComponent(allDepartmentPane));
+
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(positionLabel)
+                                .addComponent(firstNameLabel)
+                                .addComponent(lastNameLabel)
+                                .addComponent(birthDateLabel)
+                                .addComponent(addressLabel)
+                                .addComponent(phoneNumberLabel)
+                                .addComponent(emailLabel)
+                                .addComponent(genderLabel)
+                                .addComponent(workStartDateLabel)
+                                .addComponent(salaryLabel)
+                                .addComponent(departmentLabel)
+                                .addComponent(licenseNumberLabel)
+                                .addComponent(backButton))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(positionContent)
+                                .addComponent(firstNameText)
+                                .addComponent(lastNameText)
+                                .addComponent(birthDateText)
+                                .addComponent(addressText)
+                                .addComponent(phoneNumberText)
+                                .addComponent(emailText)
+                                .addComponent(genderText)
+                                .addComponent(workStartDateText)
+                                .addComponent(salaryText)
+                                .addGroup(departmentGroupHor)
+                                .addComponent(licenseNumberText)
+                                .addComponent(addButton))
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(positionLabel)
+                                .addComponent(positionContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(firstNameLabel)
+                                .addComponent(firstNameText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lastNameLabel)
+                                .addComponent(lastNameText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(birthDateLabel)
+                                .addComponent(birthDateText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(addressLabel)
+                                .addComponent(addressText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(phoneNumberLabel)
+                                .addComponent(phoneNumberText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(emailLabel)
+                                .addComponent(emailText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(genderLabel)
+                                .addComponent(genderText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(workStartDateLabel)
+                                .addComponent(workStartDateText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(salaryLabel)
+                                .addComponent(salaryText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(departmentLabel)
+                                .addGroup(departmentGroupVer))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(licenseNumberLabel)
+                                .addComponent(licenseNumberText))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(addButton))
@@ -288,26 +463,37 @@ public class EditStaffMembersPanel extends EditPanel {
         clearPanel();
         firstNameText.setText(staffMember.getFirstName());
         lastNameText.setText(staffMember.getLastName());
-        birthDateText.setText(staffMember.getBirthDate().toString());
+        birthDateText.setText(UtilsMethods.format(staffMember.getBirthDate()));
         addressText.setText(staffMember.getAddress());
         phoneNumberText.setText(staffMember.getPhoneNumber());
         genderText.setText(staffMember.getGender());
         emailText.setText(staffMember.getEmail());
         salaryText.setText(Double.toString(staffMember.getSalary()));
+        workStartDateText.setText(UtilsMethods.format(staffMember.getWorkStartDate()));
         for (Department department : staffMember.getDepartments()) {
             activeDepartmentListModel.addElement(DepartmentOptionDTO.map(department));
+        }
+        if (staffMember instanceof Doctor) {
+            licenseNumberText.setText(String.valueOf(((Doctor) staffMember).getLicenseNumber()));
+            isInternshipFinishedContent.setSelected(((Doctor) staffMember).isFinishInternship());
+        } else {
+            licenseNumberText.setText(String.valueOf(((Nurse) staffMember).getLicenseNumber()));
         }
     }
 
     private void clearPanel() {
         firstNameText.setText("");
         lastNameText.setText("");
-        birthDateText.setText("");
+        birthDateText.setText("01/01/1900");
         addressText.setText("");
         phoneNumberText.setText("");
         genderText.setText("");
         emailText.setText("");
+        salaryText.setText("");
+        workStartDateText.setText("01/01/1900");
         activeDepartmentListModel.removeAllElements();
+        licenseNumberText.setText("");
+        isInternshipFinishedContent.setSelected(false);
     }
 
 

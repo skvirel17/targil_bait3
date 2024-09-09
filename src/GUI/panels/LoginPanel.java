@@ -10,6 +10,11 @@ import model.StaffMember;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 
@@ -68,6 +73,18 @@ public class LoginPanel extends BasePanel {
                 new OpenPanelAction(base, DASHBOARD_PANEL, cardLayout).actionPerformed(e);
             }
         });
+
+        InputMap inputMap = loginButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = loginButton.getActionMap();
+
+        KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        inputMap.put(enterKey, "clickButton");
+        actionMap.put("clickButton", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginButton.doClick();
+            }
+        });
     }
 
     public static boolean isUserValid(String login, String passText) {
@@ -96,11 +113,9 @@ public class LoginPanel extends BasePanel {
                     JOptionPane.showMessageDialog(null, "Wrong password!", "", JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "User not found!", "", JOptionPane.WARNING_MESSAGE);
-                return false;
             }
         }
+        JOptionPane.showMessageDialog(null, "User not found!", "", JOptionPane.WARNING_MESSAGE);
         return false;
     }
 }

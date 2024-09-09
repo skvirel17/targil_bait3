@@ -153,7 +153,7 @@ public class SystemUsersGUI {
         cardLayout.show(mainScreen, LOGIN_PANEL);
         // הצגת החלון
         mainFrame.setVisible(true);
-
+        mainFrame.setMinimumSize(new Dimension(400, 400));
 
     }
 }

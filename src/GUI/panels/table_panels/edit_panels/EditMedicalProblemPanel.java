@@ -48,8 +48,8 @@ public class EditMedicalProblemPanel extends EditPanel{
         buildDepartmentField();
         buildTreatmentField();
         buildTypeField();
-        buildSaveButton(prev);
-        buildBackButton(prev);
+        buildSaveButton(prev, this);
+        buildBackButton(prev, this);
 
         compose();
 
@@ -97,7 +97,7 @@ public class EditMedicalProblemPanel extends EditPanel{
         });
     }
 
-    private void buildSaveButton(BasePanel prev){
+    private void buildSaveButton(BasePanel prev, EditMedicalProblemPanel panel){
         saveMedicalProblemButton = new JButton("Save");
         saveMedicalProblemButton.addActionListener(new ActionListener() {
             @Override
@@ -120,6 +120,7 @@ public class EditMedicalProblemPanel extends EditPanel{
                         JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                         ((MedicalProblemsPanel) prev).reloadData(hospital.getMedicalProblems());
                         new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                        panel.clearPanel();
                     } else {
                         JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
                     }
@@ -130,7 +131,7 @@ public class EditMedicalProblemPanel extends EditPanel{
 
 
 
-    private void buildBackButton(BasePanel prev){
+    private void buildBackButton(BasePanel prev, EditMedicalProblemPanel panel){
         backButton = new JButton("back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -139,6 +140,7 @@ public class EditMedicalProblemPanel extends EditPanel{
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 }
             }
         });

@@ -100,6 +100,14 @@ public class Hospital implements Serializable {
 		return max+1;
 	}
 
+	public int generateNewVisitNumber() {
+		int max = Integer.MIN_VALUE;
+		for (int visitNumber: getVisits().keySet()) {
+			max = (visitNumber > max) ? visitNumber : max;
+		}
+		return max+1;
+	}
+
 	
 	public boolean addDepartment(Department department) {
 		if(department==null) {

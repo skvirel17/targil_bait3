@@ -81,8 +81,8 @@ public class EditPatientsPanel extends EditPanel {
         buildHealthFundField();
         buildBiologicalSexField();
         buildVisitsField();
-        buildSaveButton(prev);
-        buildBackButton(prev);
+        buildSaveButton(prev, this);
+        buildBackButton(prev, this);
 
         compose();
     }
@@ -176,7 +176,7 @@ public class EditPatientsPanel extends EditPanel {
         });
     }
 
-    private void buildSaveButton(BasePanel prev) {
+    private void buildSaveButton(BasePanel prev, EditPatientsPanel panel) {
         savePatientButton = new JButton("Save");
         savePatientButton.addActionListener(new ActionListener() {
             @Override
@@ -206,6 +206,7 @@ public class EditPatientsPanel extends EditPanel {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((PatientsPanel) prev).reloadData(hospital.getPatients());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 } else {
                     JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
                 }
@@ -213,7 +214,7 @@ public class EditPatientsPanel extends EditPanel {
         });
     }
 
-    private void buildBackButton(BasePanel prev) {
+    private void buildBackButton(BasePanel prev, EditPatientsPanel panel) {
         backButton = new JButton("back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -222,6 +223,7 @@ public class EditPatientsPanel extends EditPanel {
                         "Changes will be lost! \nDo you want to continue?", "Confirmation", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
                 }
             }
         });

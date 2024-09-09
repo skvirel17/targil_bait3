@@ -35,6 +35,7 @@ public class StaffMembersPanel extends TablePanel {
                                 (Integer) this.getContent().getModel().
                                         getValueAt(this.getContent().getSelectedRow(), 0));
                         ((EditStaffMembersPanel)itemPanel).fillFromObject(editStaffMember);
+                        ((EditStaffMembersPanel)itemPanel).disablePositionField();
                     }
                 }
         );

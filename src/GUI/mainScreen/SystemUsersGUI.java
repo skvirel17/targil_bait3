@@ -4,6 +4,7 @@ import GUI.menu.*;
 import GUI.panels.*;
 import GUI.panels.table_panels.*;
 import GUI.panels.table_panels.edit_panels.*;
+import GUI.session.Session;
 import control.Hospital;
 import model.StaffMember;
 
@@ -61,6 +62,18 @@ public class SystemUsersGUI {
         return cardLayout;
     }
 
+    public static Session getSession() {
+        return Session.getInstance();
+    }
+
+    public static void createSession(int id) {
+        Session.getInstance(id);
+    }
+
+    public static void clearSession() {
+        Session.clearSession();
+    }
+
 
     public static void main(String[] args) {
         File file = new File("hospital.ser");
@@ -107,7 +120,7 @@ public class SystemUsersGUI {
         ((MedicalProblemsPanel) medicalProblemsPanel).itemPanel = editMedicalProblemPanel;
         ((MedicationsPanel) medicationPanel).itemPanel = editMedicationPanel;
         ((PatientsPanel) patientsPanel).itemPanel = editPatientsPanel;
-        ((StaffMembersPanel) staffMembersPanel).itemPanel = editStaffMembersPanel;
+        StaffMembersPanel.itemPanel = editStaffMembersPanel;
         ((TreatmentsPanel) treatmentsPanel).itemPanel = editTreatmentPanel;
         ((VisitsPanel) visitsPanel).itemPanel = editVisitsPanel;
 

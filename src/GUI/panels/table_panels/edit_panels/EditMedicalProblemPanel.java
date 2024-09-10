@@ -22,6 +22,7 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditMedicalProblemPanel extends EditPanel{
 
     public static final String EDIT_MEDICAL_PROBLEM_PANEL = "EDIT_MEDICAL_PROBLEM_PANEL";
+    private String id;
     private JLabel nameLabel;
     private JTextField nameText;
     private JLabel departmentLabel;
@@ -43,6 +44,8 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     public EditMedicalProblemPanel(BasePanel prev) {
         super(prev);
+
+        id = "";
 
         buildNameField();
         buildDepartmentField();
@@ -102,7 +105,6 @@ public class EditMedicalProblemPanel extends EditPanel{
         saveMedicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String type = ((String)typeContent.getSelectedItem()).substring(0,1);
                 String name = nameText.getName();
                 Department department = (Department) departmentContent.getSelectedItem();
                 HashSet<Treatment> treatments = new HashSet<>();
@@ -110,12 +112,14 @@ public class EditMedicalProblemPanel extends EditPanel{
                     treatments.add(activeTreatmentListModel.get(i));
                 }
 
-                MedicalProblem newMedicalProblem = new MedicalProblem(type, name, department, treatments ) {
-                        @Override
-                        public void describeSpecialProperties() {
-
-                        }
-                    };
+                MedicalProblem newMedicalProblem = null;
+                if (typeContent.getSelectedItem().equals("fracture")) {
+                    newMedicalProblem = new Fracture(name, department, treatments, "", false);
+                } else if (typeContent.getSelectedItem().equals("injury")) {
+                    newMedicalProblem = new Injury(name, department, treatments, 0.0, "");
+                } else if (typeContent.getSelectedItem().equals("injury")) {
+                    newMedicalProblem = new Disease(name, department, treatments, "");
+                }
                     if (SystemUsersGUI.hospital.addMedicalProblem(newMedicalProblem)) {
                         JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                         ((MedicalProblemsPanel) prev).reloadData(hospital.getMedicalProblems());
@@ -214,6 +218,7 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     public void fillFromObject(MedicalProblem medicalProblem) {
         clearPanel();
+        id = medicalProblem.getCode();
         nameText.setText(medicalProblem.getName());
         for (int i = 0; i < departmentContent.getItemCount(); i++) {
             if (departmentContent.getItemAt(i).getNumber() == medicalProblem.getDepartment().getNumber()) {
@@ -231,6 +236,7 @@ public class EditMedicalProblemPanel extends EditPanel{
     }
 
     private void clearPanel() {
+        id = "";
         nameText.setText("");
         activeTreatmentListModel.removeAllElements();
     }

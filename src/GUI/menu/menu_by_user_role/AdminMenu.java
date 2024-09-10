@@ -9,10 +9,10 @@ public class AdminMenu extends JMenuBar{
 
     private AdminMenu() {
         this.add(new BaseMenu());
-        this.add(new AccountMenu());
-        this.add(new ServiceMenu());
-        this.add(new DataMenu());
-        this.add(new ToolsMenu());
+        this.add(new AccountMenu("admin"));
+        //this.add(new ServiceMenu());
+        this.add(new DataMenu("admin"));
+        this.add(new ToolsMenu("admin"));
     }
 
     public static AdminMenu getInstance() {

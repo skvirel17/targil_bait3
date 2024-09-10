@@ -30,14 +30,23 @@ public class DataMenu extends JMenu {
         return item;
     }
 
-    public DataMenu() {
+    public DataMenu(String role) {
         super(MENU_DATA);
-        this.add(createItem(MI_DATA_DEPARTMENTS, DEPARTMENTS_PANEL));
-        this.add(createItem(MI_DATA_MEDICAL_PROBLEMS, MEDICAL_PROBLEMS_PANEL));
-        this.add(createItem(MI_DATA_STAFF_MEMBERS, STAFF_MEMBERS_PANEL));
-        this.add(createItem(MI_DATA_MEDICATIONS, MEDICATION_PANEL));
-        this.add(createItem(MI_DATA_PATIENTS, PATIENTS_PANEL));
-        this.add(createItem(MI_DATA_TREATMENTS, TREATMENTS_PANEL));
-        this.add(createItem(MI_DATA_VISITS, VISITS_PANEL));
+        if (role.equals("admin")) {
+            this.add(createItem(MI_DATA_DEPARTMENTS, DEPARTMENTS_PANEL));
+            this.add(createItem(MI_DATA_MEDICAL_PROBLEMS, MEDICAL_PROBLEMS_PANEL));
+            this.add(createItem(MI_DATA_STAFF_MEMBERS, STAFF_MEMBERS_PANEL));
+            this.add(createItem(MI_DATA_MEDICATIONS, MEDICATION_PANEL));
+            this.add(createItem(MI_DATA_PATIENTS, PATIENTS_PANEL));
+            this.add(createItem(MI_DATA_TREATMENTS, TREATMENTS_PANEL));
+            this.add(createItem(MI_DATA_VISITS, VISITS_PANEL));
+        } else {
+            this.add(createItem(MI_DATA_DEPARTMENTS, DEPARTMENTS_PANEL));
+            this.add(createItem(MI_DATA_MEDICAL_PROBLEMS, MEDICAL_PROBLEMS_PANEL));
+            this.add(createItem(MI_DATA_MEDICATIONS, MEDICATION_PANEL));
+            this.add(createItem(MI_DATA_PATIENTS, PATIENTS_PANEL));
+            this.add(createItem(MI_DATA_TREATMENTS, TREATMENTS_PANEL));
+            this.add(createItem(MI_DATA_VISITS, VISITS_PANEL));
+        }
     }
 }

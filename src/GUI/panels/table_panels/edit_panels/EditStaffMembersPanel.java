@@ -70,6 +70,9 @@ public class EditStaffMembersPanel extends EditPanel {
     //Finish Internship
     private JLabel isInternshipFinishedLabel;
     private JCheckBox isInternshipFinishedContent;
+    //Specialization
+    private JLabel specializationLabel;
+    private JComboBox<Specialization> specializationContent;
     //Save button
     private JButton addButton;
     //Back button
@@ -92,6 +95,7 @@ public class EditStaffMembersPanel extends EditPanel {
         buildDepartmentField();
         buildLicenseNumberField();
         buildInternShipField();
+        buildSpecializationField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
         clearPanel();
@@ -105,6 +109,19 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public void enablePositionField() {
         positionContent.setEnabled(true);
+    }
+
+    private void buildSpecializationField() {
+        specializationLabel = new JLabel("Specialization: ");
+        specializationContent = createSpecializationContent();
+    }
+
+    private JComboBox<Specialization> createSpecializationContent() {
+        specializationContent = new JComboBox<>();
+        for (Specialization spec : Specialization.values()){
+            specializationContent.addItem(spec);
+        }
+        return specializationContent;
     }
 
     private void buildInternShipField() {
@@ -218,26 +235,58 @@ public class EditStaffMembersPanel extends EditPanel {
                 int id = hospital.generateNewStaffMember();
                 String firstName = firstNameText.getText();
                 String lastName = lastNameText.getText();
-                String birthDateStr = birthDateText.getText();
+                Date birthdate = UtilsMethods.parseDate(birthDateText.getText());
+                String inputDate = birthDateText.getText();
+                if (!inputDate.equals(UtilsMethods.format(birthdate))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (Birth date). Please enter a valid date.");
+                    return;
+                }
                 String address = addressText.getText();
                 String phoneNumber = phoneNumberText.getText();
                 String email = emailText.getText();
                 String gender = genderText.getText();
                 String salaryStr = salaryText.getText();
+                double salary = 0;
+                try {
+                    salary = Double.parseDouble(salaryStr);
+                } catch (Exception exc) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid number format (Salary). Please enter a valid double.");
+                    return;
+                }
                 String position = positionContent.getItemAt(positionContent.getSelectedIndex());
-//                if(position.equals("doctor")){
-//                    StaffMember staffMember = new Doctor(id, firstName, lastName, birthDateStr, address, phoneNumber, email, gender, salaryStr)
-//                }
+                Date workStart = UtilsMethods.parseDate(workStartDateText.getText());
+                String inputWorkStart = workStartDateText.getText();
+                HashSet<Department> departments = new HashSet<>();
+                for (int i = 0; i < activeDepartmentListModel.getSize(); i++) {
+                    departments.add(activeDepartmentListModel.get(i));
+                }
+                if (!inputWorkStart.equals(UtilsMethods.format(workStart))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (Work start date). Please enter a valid date.");
+                    return;
+                }
+                int licenseNumber = Integer.parseInt(licenseNumberText.getText().trim());
+                if (!licenseNumberText.getText().trim().equals(String.valueOf(licenseNumber))) {
+                    JOptionPane.showMessageDialog(getMainFrame(), "Invalid number format for license. Please enter a valid integer.");
+                    return;
+                }
+                StaffMember newStaffMember;
+                if (position.equals("doctor")) {
+                    Boolean isInternship = isInternshipFinishedContent.isSelected();
+                    Specialization spec = (Specialization) specializationContent.getSelectedItem();
+                    newStaffMember = new Doctor(hospital.generateNewStaffMember(), firstName, lastName, birthdate,
+                            address, phoneNumber, email, gender, workStart, departments, salary, licenseNumber, isInternship, spec);
+                } else {
+                    newStaffMember = new Nurse(hospital.generateNewStaffMember(), firstName, lastName, birthdate,
+                            address, phoneNumber, email, gender, workStart, departments, salary, licenseNumber);
+                }
 //
-//                StaffMember staffMember = new StaffMember(id, firstName, lastName, birthDateStr, address, phoneNumber, email, gender, salaryStr);
-//                if (hospital.addDepartment(newDepartment)) {
-//                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-//                    ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
-//                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
-//                }
-                //StaffMember newStaffMember = new StaffMember(id, firstName, lastName);
+                if (hospital.addStaffMember(newStaffMember)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((StaffMembersPanel) prev).reloadData(hospital.getStaffMembers());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
@@ -262,6 +311,11 @@ public class EditStaffMembersPanel extends EditPanel {
         if (position.equals("doctor")) {
             composeDoctor();
         } else {
+            this.remove(isInternshipFinishedContent);
+            this.remove(isInternshipFinishedLabel);
+            this.remove(specializationLabel);
+            this.remove(specializationContent);
+
             composeNurse();
         }
     }
@@ -298,6 +352,7 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addComponent(departmentLabel)
                                 .addComponent(licenseNumberLabel)
                                 .addComponent(isInternshipFinishedLabel)
+                                .addComponent(specializationLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(positionContent)
@@ -313,6 +368,7 @@ public class EditStaffMembersPanel extends EditPanel {
                                 .addGroup(departmentGroupHor)
                                 .addComponent(licenseNumberText)
                                 .addComponent(isInternshipFinishedContent)
+                                .addComponent(specializationContent)
                                 .addComponent(addButton))
         );
 
@@ -357,6 +413,9 @@ public class EditStaffMembersPanel extends EditPanel {
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(isInternshipFinishedLabel)
                                 .addComponent(isInternshipFinishedContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(specializationLabel)
+                                .addComponent(specializationContent))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(addButton))
@@ -476,6 +535,11 @@ public class EditStaffMembersPanel extends EditPanel {
         if (staffMember instanceof Doctor) {
             licenseNumberText.setText(String.valueOf(((Doctor) staffMember).getLicenseNumber()));
             isInternshipFinishedContent.setSelected(((Doctor) staffMember).isFinishInternship());
+            for (int i = 0; i < specializationContent.getItemCount(); i++) {
+                if (specializationContent.getItemAt(i).equals(((Doctor)staffMember).getSpecialization())) {
+                    specializationContent.setSelectedIndex(i);
+                }
+            }
         } else {
             licenseNumberText.setText(String.valueOf(((Nurse) staffMember).getLicenseNumber()));
         }
@@ -494,6 +558,7 @@ public class EditStaffMembersPanel extends EditPanel {
         activeDepartmentListModel.removeAllElements();
         licenseNumberText.setText("");
         isInternshipFinishedContent.setSelected(false);
+        positionContent.setSelectedIndex(0);
     }
 
 

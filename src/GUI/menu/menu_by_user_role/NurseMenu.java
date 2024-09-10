@@ -9,10 +9,9 @@ public class NurseMenu extends JMenuBar {
 
     private NurseMenu() {
         this.add(new BaseMenu());
-        this.add(new AccountMenu());
-        this.add(new ServiceMenu());
-        this.add(new DataMenu());
-        this.add(new ToolsMenu());
+        this.add(new AccountMenu("nurse"));
+        this.add(new DataMenu("nurse"));
+        this.add(new ToolsMenu("nurse"));
     }
 
     public static NurseMenu getInstance() {

@@ -13,8 +13,11 @@ import model.StaffMember;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
@@ -22,6 +25,8 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 public class EditDepartmentPanel extends EditPanel {
 
     public static final String EDIT_DEPARTMENT_PANEL = "EDIT_DEPARTMENT_PANEL";
+    //ID
+    private Department department;
     //Name
     private JLabel departmentNameLabel;
     private JTextField departmentNameText;
@@ -52,6 +57,8 @@ public class EditDepartmentPanel extends EditPanel {
     public  EditDepartmentPanel(BasePanel prev){
         super(prev);
 
+        department = null;
+
         buildNameField();
         buildManagerField();
         buildLocationField();
@@ -59,6 +66,13 @@ public class EditDepartmentPanel extends EditPanel {
         buildSpecializationField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                clearPanel();
+            }
+        });
 
         compose();
     }
@@ -135,7 +149,7 @@ public class EditDepartmentPanel extends EditPanel {
         saveDepartmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int depNumber = hospital.generateNewDepartmentNumber();
+                int id = hospital.generateNewDepartmentNumber();
                 String name = departmentNameText.getText();
                 Doctor manager = (Doctor) managerContent.getSelectedItem();
                 String location = locationText.getText();
@@ -145,8 +159,17 @@ public class EditDepartmentPanel extends EditPanel {
                     staffMembers.add(activeStaffListModel.get(i));
                 }
 
-                Department newDepartment = new Department(depNumber, name, manager, location, spec, staffMembers);
-                if (hospital.addDepartment(newDepartment)) {
+                Department newDepartment = new Department(id, name, manager, location, spec, staffMembers);
+
+                if (department != null) {
+                    department.setName(name);
+                    department.setmanager(manager);
+                    department.setLocation(location);
+                    department.setSpecialization(spec);
+                    department.setStaffMembersList(staffMembers);
+                }
+
+                if (department != null || hospital.addDepartment(newDepartment)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((DepartmentsPanel) prev).reloadData(hospital.getDepartments());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -233,6 +256,7 @@ public class EditDepartmentPanel extends EditPanel {
 
     public void fillFromObject(Department department) {
         clearPanel();
+        this.department = department;
         departmentNameText.setText(department.getName());
         for (int i = 0; i < managerContent.getItemCount(); i++) {
             if (managerContent.getItemAt(i).getId() == department.getmanager().getId()) {
@@ -251,6 +275,7 @@ public class EditDepartmentPanel extends EditPanel {
     }
 
     private void clearPanel() {
+        department = null;
         departmentNameText.setText("");
         locationText.setText("");
         activeStaffListModel.removeAllElements();

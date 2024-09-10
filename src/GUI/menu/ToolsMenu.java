@@ -26,12 +26,18 @@ public class ToolsMenu extends JMenu {
         return item;
     }
 
-    public ToolsMenu() {
+    public ToolsMenu(String role) {
         super(MENU_TOOLS);
-        this.add(createItem(MI_TOOLS_MEDICATION_CALCULATOR, MEDICATION_CALCULATOR_PANEL));
-        this.add(createItem(MI_TOOLS_HOW_MANY_VISIT_BEFORE, HOW_MANY_VISIT_BEFORE_PANEL));
-        this.add(createItem(MI_TOOLS_GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION, GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL));
-        this.add(createItem(MI_TOOLS_STANDARD_CHECK, STANDARD_CHECK_PANEL));
-        this.add(createItem(MI_TOOLS_APPOINT_NEW_MANAGER, APPOINT_NEW_MANAGER_PANEL));
+        if (role.equals("admin")) {
+            this.add(createItem(MI_TOOLS_MEDICATION_CALCULATOR, MEDICATION_CALCULATOR_PANEL));
+            this.add(createItem(MI_TOOLS_HOW_MANY_VISIT_BEFORE, HOW_MANY_VISIT_BEFORE_PANEL));
+            this.add(createItem(MI_TOOLS_GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION, GET_NUMBER_OF_DOCTOR_BY_SPECIALIZATION_PANEL));
+            this.add(createItem(MI_TOOLS_STANDARD_CHECK, STANDARD_CHECK_PANEL));
+            this.add(createItem(MI_TOOLS_APPOINT_NEW_MANAGER, APPOINT_NEW_MANAGER_PANEL));
+        } else {
+            this.add(createItem(MI_TOOLS_MEDICATION_CALCULATOR, MEDICATION_CALCULATOR_PANEL));
+            this.add(createItem(MI_TOOLS_HOW_MANY_VISIT_BEFORE, HOW_MANY_VISIT_BEFORE_PANEL));
+            this.add(createItem(MI_TOOLS_STANDARD_CHECK, STANDARD_CHECK_PANEL));
+        }
     }
 }

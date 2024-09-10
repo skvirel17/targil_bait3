@@ -15,8 +15,6 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +25,6 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditPatientsPanel extends EditPanel {
 
     public static final String EDIT_PATIENT_PANEL = "EDIT_PATIENT_PANEL";
-    private Patient patient = null;
 
     //First name
     private JLabel patientFirstNameLabel;
@@ -86,13 +83,6 @@ public class EditPatientsPanel extends EditPanel {
         buildVisitsField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
     }
@@ -212,21 +202,7 @@ public class EditPatientsPanel extends EditPanel {
                 }
 
                 Patient newPatient = new Patient(id, name, lastName, birthdate, address, phoneNumber, email, gender, visit, healthFund, biologicalSex);
-
-                if(patient != null){
-                    patient.setFirstName(name);
-                    patient.setLastName(lastName);
-                    patient.setBirthDate(birthdate);
-                    patient.setAddress(address);
-                    patient.setPhoneNumber(phoneNumber);
-                    patient.setEmail(email);
-                    patient.setGender(gender);
-                    patient.setVisitsList(visit);
-                    patient.setHealthFund(healthFund);
-                    patient.setBiologicalSex(biologicalSex);
-                }
-
-                if (patient != null || hospital.addPatient(newPatient)) {
+                if (hospital.addPatient(newPatient)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((PatientsPanel) prev).reloadData(hospital.getPatients());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -338,7 +314,6 @@ public class EditPatientsPanel extends EditPanel {
 
     public void fillFromObject(Patient patient) {
         clearPanel();
-        this.patient = patient;
         patientFirstNameText.setText(patient.getFirstName());
         patientLastText.setText(patient.getLastName());
         patientBirthDateText.setText(UtilsMethods.format(patient.getBirthDate()));
@@ -362,7 +337,6 @@ public class EditPatientsPanel extends EditPanel {
     }
 
     private void clearPanel() {
-        patient = null;
         patientFirstNameText.setText("");
         patientLastText.setText("");
         patientBirthDateText.setText("");

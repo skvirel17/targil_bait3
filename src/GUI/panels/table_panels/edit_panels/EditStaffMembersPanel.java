@@ -15,6 +15,8 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,6 +27,8 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditStaffMembersPanel extends EditPanel {
 
     public static final String EDIT_STAFF_MEMBERS_PANEL = "EDIT_STAFF_MEMBERS_PANEL";
+    private StaffMember doctor = null;
+    private StaffMember nurse = null;
 
     //First name
     private JLabel firstNameLabel;
@@ -99,6 +103,13 @@ public class EditStaffMembersPanel extends EditPanel {
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
         clearPanel();
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                clearPanel();
+            }
+        });
 
         compose(positionContent.getItemAt(positionContent.getSelectedIndex()));
     }
@@ -520,6 +531,8 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public void fillFromObject(StaffMember staffMember) {
         clearPanel();
+        this.doctor = doctor;
+        this.nurse = nurse;
         firstNameText.setText(staffMember.getFirstName());
         lastNameText.setText(staffMember.getLastName());
         birthDateText.setText(UtilsMethods.format(staffMember.getBirthDate()));
@@ -546,6 +559,8 @@ public class EditStaffMembersPanel extends EditPanel {
     }
 
     private void clearPanel() {
+        doctor = null;
+        nurse = null;
         firstNameText.setText("");
         lastNameText.setText("");
         birthDateText.setText("01/01/1900");

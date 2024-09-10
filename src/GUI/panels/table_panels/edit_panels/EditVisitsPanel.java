@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 public class EditVisitsPanel extends EditPanel {
 
     public static final String EDIT_VISIT_PANEL = "EDIT_VISIT_PANEL";
+    private Visit visit = null;
 
     //Patient
     private JLabel patientLabel;
@@ -66,6 +69,13 @@ public class EditVisitsPanel extends EditPanel {
         buildTreatmentListField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                clearPanel();
+            }
+        });
 
         compose();
     }
@@ -187,7 +197,16 @@ public class EditVisitsPanel extends EditPanel {
                 }
 
                 Visit newVisit = new Visit(id, patient, startDate, endDate, problems, treatments);
-                if (hospital.addVisit(newVisit)) {
+
+                if(visit != null){
+                    visit.setPatient(patient);
+                    visit.setStartDate(startDate);
+                    visit.setEndDate(endDate);
+                    visit.setMedicalProblemsList(problems);
+                    visit.setTreatmentsList(treatments);
+                }
+
+                if (visit != null || hospital.addVisit(newVisit)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((VisitsPanel) prev).reloadData(hospital.getVisits());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -283,6 +302,7 @@ public class EditVisitsPanel extends EditPanel {
 
     public void fillFromObject(Visit visit) {
         clearPanel();
+        this.visit = visit;
         for (int i = 0; i < patientContent.getItemCount(); i++) {
             if (patientContent.getItemAt(i).getId() == visit.getPatient().getId()) {
                 patientContent.setSelectedIndex(i);
@@ -299,6 +319,7 @@ public class EditVisitsPanel extends EditPanel {
     }
 
     private void clearPanel() {
+        visit = null;
         startDateText.setText("");
         endDateText.setText("");
         treatmentsListModel.removeAllElements();

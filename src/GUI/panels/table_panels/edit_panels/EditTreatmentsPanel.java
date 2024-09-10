@@ -10,8 +10,6 @@ import model.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
@@ -20,7 +18,6 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public static final String EDIT_TREATMENT_PANEL = "EDIT_TREATMENT_PANEL";
 
-    private Treatment treatment = null;
     //Description
     private JLabel descriptionLabel;
     private JTextField descriptionText;
@@ -66,13 +63,6 @@ public class EditTreatmentsPanel extends EditPanel {
         buildMedicalProblemListField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
     }
@@ -169,15 +159,7 @@ public class EditTreatmentsPanel extends EditPanel {
                 }
 
                 Treatment newTreatment = new Treatment(id, description, medications, doctors, problems);
-
-                if(treatment != null){
-                    treatment.setDescription(description);
-                    treatment.setMedicationsList(medications);
-                    treatment.setDoctorsList(doctors);
-                    treatment.setMedicalProblemsList(problems);
-                }
-
-                if (treatment != null || hospital.addTreatment(newTreatment)) {
+                if (hospital.addTreatment(newTreatment)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((TreatmentsPanel) prev).reloadData(hospital.getTreatments());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -279,7 +261,6 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public void fillFromObject(Treatment treatment) {
         clearPanel();
-        this.treatment = treatment;
         descriptionText.setText(treatment.getDescription());
         for (Doctor doctor : treatment.getDoctorsList()) {
             activeDoctorListModel.addElement(DoctorListOptionDTO.map(doctor));
@@ -293,7 +274,6 @@ public class EditTreatmentsPanel extends EditPanel {
     }
 
     private void clearPanel() {
-        treatment = null;
         descriptionText.setText("");
         activeDoctorListModel.removeAllElements();
         activeMedicationListModel.removeAllElements();

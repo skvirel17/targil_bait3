@@ -12,8 +12,6 @@ import model.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.security.PrivateKey;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +23,6 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     public static final String EDIT_MEDICAL_PROBLEM_PANEL = "EDIT_MEDICAL_PROBLEM_PANEL";
     private String id;
-    private MedicalProblem medicalProblem;
     private JLabel nameLabel;
     private JTextField nameText;
     private JLabel departmentLabel;
@@ -56,13 +53,6 @@ public class EditMedicalProblemPanel extends EditPanel{
         buildTypeField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
 
@@ -228,7 +218,6 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     public void fillFromObject(MedicalProblem medicalProblem) {
         clearPanel();
-        this.medicalProblem = medicalProblem;
         id = medicalProblem.getCode();
         nameText.setText(medicalProblem.getName());
         for (int i = 0; i < departmentContent.getItemCount(); i++) {
@@ -248,7 +237,6 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     private void clearPanel() {
         id = "";
-        medicalProblem = null;
         nameText.setText("");
         activeTreatmentListModel.removeAllElements();
     }

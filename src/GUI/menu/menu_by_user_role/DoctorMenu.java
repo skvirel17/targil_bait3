@@ -9,10 +9,10 @@ public class DoctorMenu extends JMenuBar {
 
     private DoctorMenu() {
         this.add(new BaseMenu());
-        this.add(new AccountMenu());
-        this.add(new ServiceMenu());
-        this.add(new DataMenu());
-        this.add(new ToolsMenu());
+        //редактирование личных данных
+        this.add(new AccountMenu("doctor"));
+        this.add(new DataMenu("doctor"));
+        this.add(new ToolsMenu("doctor"));
     }
 
     public static DoctorMenu getInstance() {

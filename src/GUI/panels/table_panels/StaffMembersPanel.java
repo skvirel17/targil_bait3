@@ -21,7 +21,7 @@ public class StaffMembersPanel extends TablePanel {
     private static final Object[] columns = {"ID", "FIRST_NAME", "LAST_NAME", "BIRTH_DATE", "ADDRESS", "PHONE_NUMBER",
         "EMAIL", "GENDER", "WORK_START_DATE", "SALARY"};
 
-    public JPanel itemPanel;
+    public static JPanel itemPanel;
 
     public StaffMembersPanel(Map<Integer, StaffMember> staffMembers) {
         super(mapData(staffMembers), columns, EDIT_STAFF_MEMBERS_PANEL);

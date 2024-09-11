@@ -24,14 +24,19 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditMedicalProblemPanel extends EditPanel{
 
     public static final String EDIT_MEDICAL_PROBLEM_PANEL = "EDIT_MEDICAL_PROBLEM_PANEL";
-    private String id;
+
+    //MedicalProblem
     private MedicalProblem medicalProblem;
+    //Name
     private JLabel nameLabel;
     private JTextField nameText;
+    //Department
     private JLabel departmentLabel;
     private JComboBox<DepartmentOptionDTO> departmentContent;
+    //Type
     private JLabel typeLabel;
     private JComboBox<String> typeContent;
+    //Treatment
     private JLabel treatmentLabel;
     private JScrollPane activeTreatmentPane;
     private DefaultListModel<TreatmentListOptionDTO> activeTreatmentListModel;
@@ -40,7 +45,9 @@ public class EditMedicalProblemPanel extends EditPanel{
     private JList<TreatmentListOptionDTO> allTreatmentList;
     private JScrollPane allTreatmentPane;
     private JButton button;
+    //Save button
     private JButton saveMedicalProblemButton;
+    //Back button
     private JButton backButton;
     private GroupLayout layout;
 
@@ -48,7 +55,7 @@ public class EditMedicalProblemPanel extends EditPanel{
     public EditMedicalProblemPanel(BasePanel prev) {
         super(prev);
 
-        id = "";
+        medicalProblem = null;
 
         buildNameField();
         buildDepartmentField();
@@ -57,15 +64,15 @@ public class EditMedicalProblemPanel extends EditPanel{
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
-
         compose();
+    }
 
+    public void disableTypeField() {
+        typeContent.setEnabled(false);
+    }
+
+    public void enableTypeField() {
+        typeContent.setEnabled(true);
     }
 
     private void buildNameField(){
@@ -115,35 +122,52 @@ public class EditMedicalProblemPanel extends EditPanel{
         saveMedicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = nameText.getName();
+                String name = nameText.getText();
                 Department department = (Department) departmentContent.getSelectedItem();
                 HashSet<Treatment> treatments = new HashSet<>();
                 for (int i = 0; i < activeTreatmentListModel.getSize(); i++) {
                     treatments.add(activeTreatmentListModel.get(i));
                 }
+                String location = "";
+                boolean requiresCast = false;
+                double recoveryTime = 0.0;
+                String description = "";
 
                 MedicalProblem newMedicalProblem = null;
                 if (typeContent.getSelectedItem().equals("fracture")) {
-                    newMedicalProblem = new Fracture(name, department, treatments, "", false);
+                    newMedicalProblem = new Fracture(name, department, treatments, location, requiresCast);
                 } else if (typeContent.getSelectedItem().equals("injury")) {
-                    newMedicalProblem = new Injury(name, department, treatments, 0.0, "");
-                } else if (typeContent.getSelectedItem().equals("injury")) {
-                    newMedicalProblem = new Disease(name, department, treatments, "");
+                    newMedicalProblem = new Injury(name, department, treatments, recoveryTime, location);
+                } else if (typeContent.getSelectedItem().equals("disease")) {
+                    newMedicalProblem = new Disease(name, department, treatments, description);
                 }
-                    if (SystemUsersGUI.hospital.addMedicalProblem(newMedicalProblem)) {
-                        JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
-                        ((MedicalProblemsPanel) prev).reloadData(hospital.getMedicalProblems());
-                        new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
-                        panel.clearPanel();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+
+                if (medicalProblem != null) {
+                    medicalProblem.setName(name);
+                    medicalProblem.setDepartment(department);
+                    medicalProblem.setTreatmentsList(treatments);
+                    if (typeContent.getSelectedItem().equals("fracture")) {
+                        ((Fracture) medicalProblem).setLocation(location);
+                        ((Fracture) medicalProblem).setRequiresCast(requiresCast);
+                    } else if (typeContent.getSelectedItem().equals("injury")) {
+                        ((Injury) medicalProblem).setCommonRecoveryTime(recoveryTime);
+                        ((Injury) medicalProblem).setLocation(location);
+                    } else if (typeContent.getSelectedItem().equals("disease")) {
+                        ((Disease) medicalProblem).setDescription(description);
                     }
                 }
-            });
-        }
 
-
-
+                if (medicalProblem != null || SystemUsersGUI.hospital.addMedicalProblem(newMedicalProblem)) {
+                    JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
+                    ((MedicalProblemsPanel) prev).reloadData(hospital.getMedicalProblems());
+                    new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
+                    panel.clearPanel();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Something went wrong. Please contact administrator!", " ", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
 
     private void buildBackButton(BasePanel prev, EditMedicalProblemPanel panel){
         backButton = new JButton("back");
@@ -223,13 +247,12 @@ public class EditMedicalProblemPanel extends EditPanel{
     }
 
     private JComboBox<String> createTypeContent() {
-        return new JComboBox<>(new String[]{"injury", "desease", "fracture"});
+        return new JComboBox<>(new String[]{"injury", "disease", "fracture"});
     }
 
     public void fillFromObject(MedicalProblem medicalProblem) {
         clearPanel();
         this.medicalProblem = medicalProblem;
-        id = medicalProblem.getCode();
         nameText.setText(medicalProblem.getName());
         for (int i = 0; i < departmentContent.getItemCount(); i++) {
             if (departmentContent.getItemAt(i).getNumber() == medicalProblem.getDepartment().getNumber()) {
@@ -239,18 +262,18 @@ public class EditMedicalProblemPanel extends EditPanel{
         for (Treatment treatment : medicalProblem.getTreatmentsList()) {
             activeTreatmentListModel.addElement(TreatmentListOptionDTO.map(treatment));
         }
-        for(int i = 0; i < typeContent.getItemCount(); i++ ){
+        for(int i = 0; i < typeContent.getItemCount(); i++){
             if(medicalProblem.getCode().substring(0,1).equals(typeContent.getItemAt(i).substring(0,1))){
                 typeContent.setSelectedIndex(i);
             }
         }
     }
 
-    private void clearPanel() {
-        id = "";
+    void clearPanel() {
         medicalProblem = null;
         nameText.setText("");
         activeTreatmentListModel.removeAllElements();
+        enableTypeField();
     }
 }
 

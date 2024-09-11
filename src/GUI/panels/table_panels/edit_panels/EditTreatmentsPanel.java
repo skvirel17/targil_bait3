@@ -20,7 +20,8 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public static final String EDIT_TREATMENT_PANEL = "EDIT_TREATMENT_PANEL";
 
-    private Treatment treatment = null;
+    //Treatment
+    private Treatment treatment;
     //Description
     private JLabel descriptionLabel;
     private JTextField descriptionText;
@@ -60,19 +61,14 @@ public class EditTreatmentsPanel extends EditPanel {
     public EditTreatmentsPanel(BasePanel prev) {
         super(prev);
 
+        treatment = null;
+
         buildDescriptionField();
         buildDoctorsListField();
         buildMedicationListField();
         buildMedicalProblemListField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
     }
@@ -170,7 +166,7 @@ public class EditTreatmentsPanel extends EditPanel {
 
                 Treatment newTreatment = new Treatment(id, description, medications, doctors, problems);
 
-                if(treatment != null){
+                if (treatment != null) {
                     treatment.setDescription(description);
                     treatment.setMedicationsList(medications);
                     treatment.setDoctorsList(doctors);
@@ -280,6 +276,7 @@ public class EditTreatmentsPanel extends EditPanel {
     public void fillFromObject(Treatment treatment) {
         clearPanel();
         this.treatment = treatment;
+
         descriptionText.setText(treatment.getDescription());
         for (Doctor doctor : treatment.getDoctorsList()) {
             activeDoctorListModel.addElement(DoctorListOptionDTO.map(doctor));
@@ -292,7 +289,7 @@ public class EditTreatmentsPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         treatment = null;
         descriptionText.setText("");
         activeDoctorListModel.removeAllElements();

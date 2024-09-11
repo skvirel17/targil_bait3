@@ -24,8 +24,9 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 public class EditVisitsPanel extends EditPanel {
 
     public static final String EDIT_VISIT_PANEL = "EDIT_VISIT_PANEL";
-    private Visit visit = null;
 
+    //Visit
+    private Visit visit;
     //Patient
     private JLabel patientLabel;
     private JComboBox<Patient> patientContent;
@@ -62,6 +63,8 @@ public class EditVisitsPanel extends EditPanel {
     public  EditVisitsPanel(BasePanel prev) {
         super(prev);
 
+        visit = null;
+
         buildPatientField();
         buildStartDateField();
         buildEndDateField();
@@ -69,13 +72,6 @@ public class EditVisitsPanel extends EditPanel {
         buildTreatmentListField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
     }
@@ -198,7 +194,7 @@ public class EditVisitsPanel extends EditPanel {
 
                 Visit newVisit = new Visit(id, patient, startDate, endDate, problems, treatments);
 
-                if(visit != null){
+                if (visit != null) {
                     visit.setPatient(patient);
                     visit.setStartDate(startDate);
                     visit.setEndDate(endDate);
@@ -318,7 +314,7 @@ public class EditVisitsPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         visit = null;
         startDateText.setText("");
         endDateText.setText("");

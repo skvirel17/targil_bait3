@@ -21,34 +21,34 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditMedicationPanel extends EditPanel {
 
     public static final String EDIT_MEDICATION_PANEL = "EDIT_MEDICATION_PANEL";
-    private Medication medication = null;
+    private Medication medication;
+    //Name
     private JLabel nameLabel;
     private JTextField nameText;
+    //Dosage
     private JLabel dosageLabel;
     private JTextField dosageText;
+    //Dose number
     private JLabel doseNumberLabel;
     private JTextField doseNumberText;
+    //Save button
     private JButton saveMedicationButton;
+    //Back button
     private JButton backButton;
     private GroupLayout layout;
 
     public EditMedicationPanel(BasePanel prev) {
         super(prev);
+
+        medication = null;
+
         buildName();
         buildDosageField();
         buildNumberOfDosageField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
-
         compose();
-
     }
 
     private void buildName() {
@@ -79,15 +79,7 @@ public class EditMedicationPanel extends EditPanel {
                 int numberOfDosage = Integer.parseInt(doseNumberText.getText());
 
                 Medication newMedication = new Medication(codeMedication, name, dosage, numberOfDosage);
-
-                if(medication != null){
-                    medication.setName(name);
-                    medication.setDosage(dosage);
-                    medication.setNumberOfDose(numberOfDosage);
-                }
-
-
-                if (medication != null || hospital.addMedication(newMedication)) {
+                if (hospital.addMedication(newMedication)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((MedicationsPanel) prev).reloadData(hospital.getMedications());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -155,15 +147,13 @@ public class EditMedicationPanel extends EditPanel {
 
     public void fillFromObject(Medication medication) {
         clearPanel();
-        this.medication = medication;
         nameText.setText(medication.getName());
         dosageText.setText(Double.toString(medication.getDosage()));
         doseNumberText.setText(Integer.toString(medication.getNumberOfDose()));
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         nameText.setText("");
-        medication = null;
         dosageText.setText("");
         doseNumberText.setText("");
     }

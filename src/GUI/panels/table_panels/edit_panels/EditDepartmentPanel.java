@@ -13,11 +13,8 @@ import model.StaffMember;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
@@ -25,7 +22,7 @@ import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
 public class EditDepartmentPanel extends EditPanel {
 
     public static final String EDIT_DEPARTMENT_PANEL = "EDIT_DEPARTMENT_PANEL";
-    //ID
+    //Department (edit object)
     private Department department;
     //Name
     private JLabel departmentNameLabel;
@@ -66,13 +63,6 @@ public class EditDepartmentPanel extends EditPanel {
         buildSpecializationField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
 
         compose();
     }
@@ -274,7 +264,7 @@ public class EditDepartmentPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         department = null;
         departmentNameText.setText("");
         locationText.setText("");

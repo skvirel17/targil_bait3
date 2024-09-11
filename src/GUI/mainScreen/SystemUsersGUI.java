@@ -66,8 +66,8 @@ public class SystemUsersGUI {
         return Session.getInstance();
     }
 
-    public static void createSession(int id) {
-        Session.getInstance(id);
+    public static void createSession(int id, String role) {
+        Session.getInstance(id, role);
     }
 
     public static void clearSession() {
@@ -87,7 +87,6 @@ public class SystemUsersGUI {
             hospital =  Hospital.getInstance();
             System.out.println("File hospital.ser does not exist.");
         }
-
 
         JPanel editProfilePanel = new EditProfilePanel();
         JPanel addMedicationPanel = new AddMedicationPanel();
@@ -165,8 +164,8 @@ public class SystemUsersGUI {
 
         cardLayout.show(mainScreen, LOGIN_PANEL);
         // הצגת החלון
-
-        mainFrame.setMinimumSize(new Dimension(400, 400));
         mainFrame.setVisible(true);
+        mainFrame.setMinimumSize(new Dimension(400, 400));
+
     }
 }

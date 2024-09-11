@@ -102,10 +102,10 @@ public class LoginPanel extends BasePanel {
                     }
                     if (staffMember instanceof Doctor) {
                         getMainFrame().setJMenuBar(DoctorMenu.getInstance());
-                        createSession(staffMember.getId());
+                        createSession(staffMember.getId(), "doctor");
                     } else if (staffMember instanceof Nurse) {
                         getMainFrame().setJMenuBar(NurseMenu.getInstance());
-                        createSession(staffMember.getId());
+                        createSession(staffMember.getId(), "nurse");
                     } else {
                         JOptionPane.showMessageDialog(null, "User is not defined!", "", JOptionPane.WARNING_MESSAGE);
                         return false;

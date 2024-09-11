@@ -66,8 +66,8 @@ public class SystemUsersGUI {
         return Session.getInstance();
     }
 
-    public static void createSession(int id) {
-        Session.getInstance(id);
+    public static void createSession(int id, String role) {
+        Session.getInstance(id, role);
     }
 
     public static void clearSession() {

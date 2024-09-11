@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.HashSet;
+import java.util.List;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -93,10 +94,16 @@ public class EditTreatmentsPanel extends EditPanel {
                 allDoctorListModel.addElement(DoctorListOptionDTO.map((Doctor) member));
             }
         }
-        selectDoctorButton = new JButton("Select Sublist");
+        selectDoctorButton = new JButton("Add");
         selectDoctorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<DoctorListOptionDTO> selected = allDoctorList.getSelectedValuesList();
+                for (DoctorListOptionDTO item : selected) {
+                    if (activeDoctorListModel.indexOf(item) == -1) {
+                        activeDoctorListModel.addElement(item);
+                    };
+                }
             }
         });
     }
@@ -114,10 +121,16 @@ public class EditTreatmentsPanel extends EditPanel {
         for (Medication medication : hospital.getMedications().values()) {
             allMedicationListModel.addElement(MedicationListOptionDTO.map(medication));
         }
-        medicationSelectButton = new JButton("Select Sublist");
+        medicationSelectButton = new JButton("Add");
         medicationSelectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<MedicationListOptionDTO> selected = allMedicationList.getSelectedValuesList();
+                for (MedicationListOptionDTO item : selected) {
+                    if (activeMedicationListModel.indexOf(item) == -1) {
+                        activeMedicationListModel.addElement(item);
+                    };
+                }
             }
         });
     }
@@ -135,10 +148,16 @@ public class EditTreatmentsPanel extends EditPanel {
         for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
             allMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(medicalProblem));
         }
-        medicalProblemButton = new JButton("Select Sublist");
+        medicalProblemButton = new JButton("Add");
         medicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<MedicationProblemListOptionDTO> selected = allMedicalProblemList.getSelectedValuesList();
+                for (MedicationProblemListOptionDTO item : selected) {
+                    if (activeMedicalProblemListModel.indexOf(item) == -1) {
+                        activeMedicalProblemListModel.addElement(item);
+                    };
+                }
             }
         });
     }

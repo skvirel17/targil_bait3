@@ -42,6 +42,8 @@ public class EditDepartmentPanel extends EditPanel {
     private JList<StaffMemberListOptionDTO> allStaffList;
     private JScrollPane allStaffPane;
     private JButton selectStaffListButton;
+
+    private JButton clearDepartmentButton;
     //Specialization
     private JLabel specializationLabel;
     private JComboBox<Specialization> specializationContent;
@@ -107,7 +109,7 @@ public class EditDepartmentPanel extends EditPanel {
             allStaffListModel.addElement(StaffMemberListOptionDTO.map(member));
         }
 
-        selectStaffListButton = new JButton("Select Sublist");
+        selectStaffListButton = new JButton("    Add    ");
         selectStaffListButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,6 +119,15 @@ public class EditDepartmentPanel extends EditPanel {
                         activeStaffListModel.addElement(item);
                     };
                 }
+            }
+
+        });
+
+        clearDepartmentButton = new JButton("Clear all");
+        clearDepartmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activeStaffListModel.removeAllElements();
             }
         });
     }
@@ -194,12 +205,16 @@ public class EditDepartmentPanel extends EditPanel {
 
         GroupLayout.Group staffGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeStaffPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectStaffListButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(selectStaffListButton)
+                        .addComponent(clearDepartmentButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allStaffPane));
         GroupLayout.Group staffGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeStaffPane)
-                        .addComponent(selectStaffListButton)
+                        .addGroup(layout.createSequentialGroup() // создаем отдельную группу для кнопок
+                                .addComponent(selectStaffListButton)
+                                .addComponent(clearDepartmentButton))
                         .addComponent(allStaffPane));
 
         layout.setHorizontalGroup(

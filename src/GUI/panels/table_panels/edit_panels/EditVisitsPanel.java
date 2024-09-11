@@ -25,6 +25,8 @@ public class EditVisitsPanel extends EditPanel {
 
     public static final String EDIT_VISIT_PANEL = "EDIT_VISIT_PANEL";
 
+    //Visit
+    private Visit visit;
     //Patient
     private JLabel patientLabel;
     private JComboBox<Patient> patientContent;
@@ -60,6 +62,8 @@ public class EditVisitsPanel extends EditPanel {
 
     public  EditVisitsPanel(BasePanel prev) {
         super(prev);
+
+        visit = null;
 
         buildPatientField();
         buildStartDateField();
@@ -189,7 +193,16 @@ public class EditVisitsPanel extends EditPanel {
                 }
 
                 Visit newVisit = new Visit(id, patient, startDate, endDate, problems, treatments);
-                if (hospital.addVisit(newVisit)) {
+
+                if (visit != null) {
+                    visit.setPatient(patient);
+                    visit.setStartDate(startDate);
+                    visit.setEndDate(endDate);
+                    visit.setMedicalProblemsList(problems);
+                    visit.setTreatmentsList(treatments);
+                }
+
+                if (visit != null || hospital.addVisit(newVisit)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((VisitsPanel) prev).reloadData(hospital.getVisits());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -285,6 +298,7 @@ public class EditVisitsPanel extends EditPanel {
 
     public void fillFromObject(Visit visit) {
         clearPanel();
+        this.visit = visit;
         for (int i = 0; i < patientContent.getItemCount(); i++) {
             if (patientContent.getItemAt(i).getId() == visit.getPatient().getId()) {
                 patientContent.setSelectedIndex(i);
@@ -301,6 +315,7 @@ public class EditVisitsPanel extends EditPanel {
     }
 
     void clearPanel() {
+        visit = null;
         startDateText.setText("");
         endDateText.setText("");
         treatmentsListModel.removeAllElements();

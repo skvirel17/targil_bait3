@@ -32,6 +32,7 @@ public class MedicalProblemsPanel extends TablePanel {
                                 getValueAt(this.getContent().getSelectedRow(), 0);
                         MedicalProblem editMedicalProblem = hospital.getMedicalProblem(code);
                         ((EditMedicalProblemPanel)itemPanel).fillFromObject(editMedicalProblem);
+                        ((EditMedicalProblemPanel)itemPanel).disableTypeField();
                     }
 
                 }

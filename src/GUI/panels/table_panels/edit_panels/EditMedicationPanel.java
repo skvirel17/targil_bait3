@@ -21,18 +21,27 @@ import static GUI.mainScreen.SystemUsersGUI.*;
 public class EditMedicationPanel extends EditPanel {
 
     public static final String EDIT_MEDICATION_PANEL = "EDIT_MEDICATION_PANEL";
+    private Medication medication;
+    //Name
     private JLabel nameLabel;
     private JTextField nameText;
+    //Dosage
     private JLabel dosageLabel;
     private JTextField dosageText;
+    //Dose number
     private JLabel doseNumberLabel;
     private JTextField doseNumberText;
+    //Save button
     private JButton saveMedicationButton;
+    //Back button
     private JButton backButton;
     private GroupLayout layout;
 
     public EditMedicationPanel(BasePanel prev) {
         super(prev);
+
+        medication = null;
+
         buildName();
         buildDosageField();
         buildNumberOfDosageField();

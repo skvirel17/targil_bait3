@@ -28,6 +28,8 @@ public class EditPatientsPanel extends EditPanel {
 
     public static final String EDIT_PATIENT_PANEL = "EDIT_PATIENT_PANEL";
 
+    //Patient
+    private Patient patient;
     //First name
     private JLabel patientFirstNameLabel;
     private JTextField patientFirstNameText;
@@ -72,6 +74,8 @@ public class EditPatientsPanel extends EditPanel {
 
     public EditPatientsPanel(BasePanel prev) {
         super(prev);
+
+        patient = null;
 
         buildFirstNameField();
         buildLastNameField();
@@ -198,13 +202,27 @@ public class EditPatientsPanel extends EditPanel {
                 String gender = genderText.getText();
                 HealthFund healthFund = (HealthFund) healthFundContent.getSelectedItem();
                 BiologicalSex biologicalSex = (BiologicalSex) biologicalText.getSelectedItem();
-                HashSet<Visit> visit = new HashSet<>();
+                HashSet<Visit> visits = new HashSet<>();
                 for (int i = 0; i < activeVisitsListModel.getSize(); i++) {
-                    visit.add(activeVisitsListModel.get(i));
+                    visits.add(activeVisitsListModel.get(i));
                 }
 
-                Patient newPatient = new Patient(id, name, lastName, birthdate, address, phoneNumber, email, gender, visit, healthFund, biologicalSex);
-                if (hospital.addPatient(newPatient)) {
+                Patient newPatient = new Patient(id, name, lastName, birthdate, address, phoneNumber, email, gender, visits, healthFund, biologicalSex);
+
+                if (patient != null) {
+                    patient.setFirstName(name);
+                    patient.setLastName(lastName);
+                    patient.setBirthDate(birthdate);
+                    patient.setAddress(address);
+                    patient.setPhoneNumber(phoneNumber);
+                    patient.setEmail(email);
+                    patient.setGender(gender);
+                    patient.setVisitsList(visits);
+                    patient.setHealthFund(healthFund);
+                    patient.setBiologicalSex(biologicalSex);
+                }
+
+                if (patient != null || hospital.addPatient(newPatient)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((PatientsPanel) prev).reloadData(hospital.getPatients());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -316,6 +334,8 @@ public class EditPatientsPanel extends EditPanel {
 
     public void fillFromObject(Patient patient) {
         clearPanel();
+        this.patient = patient;
+
         patientFirstNameText.setText(patient.getFirstName());
         patientLastText.setText(patient.getLastName());
         patientBirthDateText.setText(UtilsMethods.format(patient.getBirthDate()));
@@ -339,6 +359,7 @@ public class EditPatientsPanel extends EditPanel {
     }
 
     void clearPanel() {
+        patient = null;
         patientFirstNameText.setText("");
         patientLastText.setText("");
         patientBirthDateText.setText("");

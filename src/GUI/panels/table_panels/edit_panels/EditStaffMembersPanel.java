@@ -28,6 +28,8 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public static final String EDIT_STAFF_MEMBERS_PANEL = "EDIT_STAFF_MEMBERS_PANEL";
 
+    //StaffMember
+    private StaffMember staffMember;
     //First name
     private JLabel firstNameLabel;
     private JTextField firstNameText;
@@ -83,6 +85,8 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public EditStaffMembersPanel(BasePanel prev) {
         super(prev);
+
+        staffMember = null;
 
         buildPositionField();
         buildFirstNameField();
@@ -271,17 +275,39 @@ public class EditStaffMembersPanel extends EditPanel {
                     return;
                 }
                 StaffMember newStaffMember;
+                boolean isInternship = false;
+                Specialization spec = null;
                 if (position.equals("doctor")) {
-                    Boolean isInternship = isInternshipFinishedContent.isSelected();
-                    Specialization spec = (Specialization) specializationContent.getSelectedItem();
+                    isInternship = isInternshipFinishedContent.isSelected();
+                    spec = (Specialization) specializationContent.getSelectedItem();
                     newStaffMember = new Doctor(hospital.generateNewStaffMember(), firstName, lastName, birthdate,
                             address, phoneNumber, email, gender, workStart, departments, salary, licenseNumber, isInternship, spec);
                 } else {
                     newStaffMember = new Nurse(hospital.generateNewStaffMember(), firstName, lastName, birthdate,
                             address, phoneNumber, email, gender, workStart, departments, salary, licenseNumber);
                 }
-//
-                if (hospital.addStaffMember(newStaffMember)) {
+
+                if (staffMember != null) {
+                    staffMember.setFirstName(firstName);
+                    staffMember.setLastName(lastName);
+                    staffMember.setBirthDate(birthdate);
+                    staffMember.setAddress(address);
+                    staffMember.setPhoneNumber(phoneNumber);
+                    staffMember.setEmail(email);
+                    staffMember.setGender(gender);
+                    staffMember.setWorkStartDate(workStart);
+                    staffMember.setDepartments(departments);
+                    staffMember.setSalary(salary);
+                    if (position.equals("doctor")) {
+                        ((Doctor) staffMember).setLicenseNumber(licenseNumber);
+                        ((Doctor) staffMember).setFinishInternship(isInternship);
+                        ((Doctor) staffMember).setSpecialization(spec);
+                    } else {
+                        ((Nurse) staffMember).setLicenseNumber(licenseNumber);
+                    }
+                }
+
+                if (staffMember != null || hospital.addStaffMember(newStaffMember)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((StaffMembersPanel) prev).reloadData(hospital.getStaffMembers());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -521,6 +547,7 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public void fillFromObject(StaffMember staffMember) {
         clearPanel();
+        this.staffMember = staffMember;
         firstNameText.setText(staffMember.getFirstName());
         lastNameText.setText(staffMember.getLastName());
         birthDateText.setText(UtilsMethods.format(staffMember.getBirthDate()));
@@ -547,6 +574,7 @@ public class EditStaffMembersPanel extends EditPanel {
     }
 
     void clearPanel() {
+        staffMember = null;
         firstNameText.setText("");
         lastNameText.setText("");
         birthDateText.setText("01/01/1900");
@@ -560,6 +588,7 @@ public class EditStaffMembersPanel extends EditPanel {
         licenseNumberText.setText("");
         isInternshipFinishedContent.setSelected(false);
         positionContent.setSelectedIndex(0);
+        enablePositionField();
     }
 
 

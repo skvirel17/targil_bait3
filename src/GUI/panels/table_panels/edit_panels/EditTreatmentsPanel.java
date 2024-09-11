@@ -20,6 +20,8 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public static final String EDIT_TREATMENT_PANEL = "EDIT_TREATMENT_PANEL";
 
+    //Treatment
+    private Treatment treatment;
     //Description
     private JLabel descriptionLabel;
     private JTextField descriptionText;
@@ -58,6 +60,8 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public EditTreatmentsPanel(BasePanel prev) {
         super(prev);
+
+        treatment = null;
 
         buildDescriptionField();
         buildDoctorsListField();
@@ -161,7 +165,15 @@ public class EditTreatmentsPanel extends EditPanel {
                 }
 
                 Treatment newTreatment = new Treatment(id, description, medications, doctors, problems);
-                if (hospital.addTreatment(newTreatment)) {
+
+                if (treatment != null) {
+                    treatment.setDescription(description);
+                    treatment.setMedicationsList(medications);
+                    treatment.setDoctorsList(doctors);
+                    treatment.setMedicalProblemsList(problems);
+                }
+
+                if (treatment != null || hospital.addTreatment(newTreatment)) {
                     JOptionPane.showMessageDialog(null, "added successfully!", " ", JOptionPane.INFORMATION_MESSAGE);
                     ((TreatmentsPanel) prev).reloadData(hospital.getTreatments());
                     new OpenPanelAction(getMainScreen(), prev.getPanelStringKey(), getCardLayout()).actionPerformed(e);
@@ -263,6 +275,8 @@ public class EditTreatmentsPanel extends EditPanel {
 
     public void fillFromObject(Treatment treatment) {
         clearPanel();
+        this.treatment = treatment;
+
         descriptionText.setText(treatment.getDescription());
         for (Doctor doctor : treatment.getDoctorsList()) {
             activeDoctorListModel.addElement(DoctorListOptionDTO.map(doctor));
@@ -276,6 +290,7 @@ public class EditTreatmentsPanel extends EditPanel {
     }
 
     void clearPanel() {
+        treatment = null;
         descriptionText.setText("");
         activeDoctorListModel.removeAllElements();
         activeMedicationListModel.removeAllElements();

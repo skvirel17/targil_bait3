@@ -88,7 +88,6 @@ public class SystemUsersGUI {
             System.out.println("File hospital.ser does not exist.");
         }
 
-
         JPanel editProfilePanel = new EditProfilePanel();
         JPanel addMedicationPanel = new AddMedicationPanel();
         JPanel addIssueAndTreatmentToVisitPanel = new AddIssueAndTreatmentToVisitPanel();

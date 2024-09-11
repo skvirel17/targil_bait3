@@ -67,13 +67,6 @@ public class EditDepartmentPanel extends EditPanel {
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                clearPanel();
-            }
-        });
-
         compose();
     }
 
@@ -274,7 +267,7 @@ public class EditDepartmentPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         department = null;
         departmentNameText.setText("");
         locationText.setText("");

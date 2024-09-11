@@ -10,6 +10,8 @@ import model.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
@@ -273,7 +275,7 @@ public class EditTreatmentsPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         descriptionText.setText("");
         activeDoctorListModel.removeAllElements();
         activeMedicationListModel.removeAllElements();

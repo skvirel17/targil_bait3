@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -298,7 +300,7 @@ public class EditVisitsPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         startDateText.setText("");
         endDateText.setText("");
         treatmentsListModel.removeAllElements();

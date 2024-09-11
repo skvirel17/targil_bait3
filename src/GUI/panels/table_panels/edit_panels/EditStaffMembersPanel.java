@@ -15,6 +15,8 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -98,7 +100,6 @@ public class EditStaffMembersPanel extends EditPanel {
         buildSpecializationField();
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
-        clearPanel();
 
         compose(positionContent.getItemAt(positionContent.getSelectedIndex()));
     }
@@ -545,7 +546,7 @@ public class EditStaffMembersPanel extends EditPanel {
         }
     }
 
-    private void clearPanel() {
+    void clearPanel() {
         firstNameText.setText("");
         lastNameText.setText("");
         birthDateText.setText("01/01/1900");

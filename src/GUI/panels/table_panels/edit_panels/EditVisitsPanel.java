@@ -17,6 +17,7 @@ import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 import static GUI.mainScreen.SystemUsersGUI.getCardLayout;
@@ -149,10 +150,16 @@ public class EditVisitsPanel extends EditPanel {
         for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
             allMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(medicalProblem));
         }
-        medicalProblemButton = new JButton("Select Sublist");
+        medicalProblemButton = new JButton("Add");
         medicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<MedicationProblemListOptionDTO> selected = allMedicalProblemList.getSelectedValuesList();
+                for (MedicationProblemListOptionDTO item : selected) {
+                    if (activeMedicalProblemListModel.indexOf(item) == -1) {
+                        activeMedicalProblemListModel.addElement(item);
+                    };
+                }
             }
         });
     }

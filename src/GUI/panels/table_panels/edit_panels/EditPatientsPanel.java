@@ -13,6 +13,7 @@ import utils.UtilsMethods;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -21,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
 
@@ -66,6 +68,7 @@ public class EditPatientsPanel extends EditPanel {
     private JList<VisitListOptionDTO> allVisitsList;
     private JScrollPane allVisitsPane;
     private JButton selectVisitButton;
+    private JButton clearVisitButton;
     //Save button
     private JButton savePatientButton;
     //Back button
@@ -174,10 +177,24 @@ public class EditPatientsPanel extends EditPanel {
             allVisitsListModel.addElement(VisitListOptionDTO.map(visit));
         }
 
-        selectVisitButton = new JButton("Select Sublist");
+        selectVisitButton = new JButton("    Add    ");
         selectVisitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<VisitListOptionDTO> selected = allVisitsList.getSelectedValuesList();
+                for (VisitListOptionDTO item : selected) {
+                    if (activeVisitsListModel.indexOf(item) == -1) {
+                        activeVisitsListModel.addElement(item);
+                    };
+                }
+            }
+        });
+
+        clearVisitButton = new JButton("Clear all");
+        clearVisitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activeVisitsListModel.removeAllElements();
             }
         });
     }
@@ -257,12 +274,16 @@ public class EditPatientsPanel extends EditPanel {
 
         GroupLayout.Group visitsGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeVisitsPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectVisitButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(selectVisitButton)
+                        .addComponent(clearVisitButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allVisitsPane));
         GroupLayout.Group visitsGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeVisitsPane)
-                        .addComponent(selectVisitButton)
+                        .addGroup(layout.createSequentialGroup() // создаем отдельную группу для кнопок
+                                .addComponent(selectVisitButton)
+                                .addComponent(clearVisitButton)) // добавляем кнопки одна под другой
                         .addComponent(allVisitsPane));
 
         layout.setHorizontalGroup(

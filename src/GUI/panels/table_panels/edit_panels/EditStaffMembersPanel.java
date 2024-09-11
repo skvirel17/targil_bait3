@@ -20,6 +20,7 @@ import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import static GUI.mainScreen.SystemUsersGUI.*;
@@ -68,6 +69,7 @@ public class EditStaffMembersPanel extends EditPanel {
     private JList<DepartmentOptionDTO> allDepartmentList;
     private JScrollPane allDepartmentPane;
     private JButton selectDepartmentButton;
+    private JButton clearDepartmentButton;
     //License number
     private JLabel licenseNumberLabel;
     private JFormattedTextField licenseNumberText;
@@ -79,6 +81,7 @@ public class EditStaffMembersPanel extends EditPanel {
     private JComboBox<Specialization> specializationContent;
     //Save button
     private JButton addButton;
+
     //Back button
     private JButton backButton;
 
@@ -224,10 +227,24 @@ public class EditStaffMembersPanel extends EditPanel {
             allDepartmentListModel.addElement(DepartmentOptionDTO.map(department));
         }
 
-        selectDepartmentButton = new JButton("Select Sublist");
+        selectDepartmentButton = new JButton("    Add    ");
         selectDepartmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<DepartmentOptionDTO> selected = allDepartmentList.getSelectedValuesList();
+                for (DepartmentOptionDTO item : selected) {
+                    if (activeDepartmentListModel.indexOf(item) == -1) {
+                        activeDepartmentListModel.addElement(item);
+                    };
+                }
+            }
+        });
+
+        clearDepartmentButton = new JButton("Clear all");
+        clearDepartmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activeDepartmentListModel.removeAllElements();
             }
         });
     }
@@ -355,12 +372,16 @@ public class EditStaffMembersPanel extends EditPanel {
 
         GroupLayout.Group departmentGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeDepartmentPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectDepartmentButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(selectDepartmentButton)
+                        .addComponent(clearDepartmentButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allDepartmentPane));
         GroupLayout.Group departmentGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeDepartmentPane)
-                        .addComponent(selectDepartmentButton)
+                        .addGroup(layout.createSequentialGroup() // создаем отдельную группу для кнопок
+                                .addComponent(selectDepartmentButton)
+                                .addComponent(clearDepartmentButton))
                         .addComponent(allDepartmentPane));
 
         layout.setHorizontalGroup(

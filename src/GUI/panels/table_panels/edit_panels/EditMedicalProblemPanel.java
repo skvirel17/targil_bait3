@@ -47,6 +47,7 @@ public class EditMedicalProblemPanel extends EditPanel{
     private JList<TreatmentListOptionDTO> allTreatmentList;
     private JScrollPane allTreatmentPane;
     private JButton button;
+    private JButton clearButton;
     //Description
     private JLabel descLabel;
     private JTextField descText;
@@ -152,7 +153,7 @@ public class EditMedicalProblemPanel extends EditPanel{
             allTreatmentListModel.addElement(TreatmentListOptionDTO.map(member));
         }
 
-        button = new JButton("Select Sublist");
+        button = new JButton("    Add    ");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -162,6 +163,14 @@ public class EditMedicalProblemPanel extends EditPanel{
                         activeTreatmentListModel.addElement(item);
                     };
                 }
+            }
+        });
+
+        clearButton = new JButton("Clear all");
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activeTreatmentListModel.removeAllElements();
             }
         });
     }
@@ -241,12 +250,16 @@ public class EditMedicalProblemPanel extends EditPanel{
 
         GroupLayout.Group treatmentGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeTreatmentPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(button)
+                        .addComponent(clearButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentPane));
         GroupLayout.Group treatmentGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeTreatmentPane)
-                        .addComponent(button)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(button)
+                                .addComponent(clearButton))
                         .addComponent(allTreatmentPane));
 
         layout.setHorizontalGroup(
@@ -299,12 +312,16 @@ public class EditMedicalProblemPanel extends EditPanel{
 
         GroupLayout.Group treatmentGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeTreatmentPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(button)
+                        .addComponent(clearButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentPane));
         GroupLayout.Group treatmentGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeTreatmentPane)
-                        .addComponent(button)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(button)
+                                .addComponent(clearButton))
                         .addComponent(allTreatmentPane));
 
         layout.setHorizontalGroup(
@@ -362,12 +379,16 @@ public class EditMedicalProblemPanel extends EditPanel{
 
         GroupLayout.Group treatmentGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeTreatmentPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(button)
+                        .addComponent(clearButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentPane));
         GroupLayout.Group treatmentGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeTreatmentPane)
-                        .addComponent(button)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(button)
+                                .addComponent(clearButton))
                         .addComponent(allTreatmentPane));
 
         layout.setHorizontalGroup(

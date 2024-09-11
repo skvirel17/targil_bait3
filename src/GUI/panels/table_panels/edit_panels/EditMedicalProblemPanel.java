@@ -10,11 +10,13 @@ import enums.Specialization;
 import model.*;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.security.PrivateKey;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,18 @@ public class EditMedicalProblemPanel extends EditPanel{
     private JList<TreatmentListOptionDTO> allTreatmentList;
     private JScrollPane allTreatmentPane;
     private JButton button;
+    //Description
+    private JLabel descLabel;
+    private JTextField descText;
+    //Location
+    private JLabel locationLabel;
+    private JTextField locationText;
+    //RequiresCast
+    private JLabel requiresCastLabel;
+    private JCheckBox requiresCastContent;
+    //Common recovery time
+    private JLabel recoveryTimeLabel;
+    private JFormattedTextField recoveryTimeText;
     //Save button
     private JButton saveMedicalProblemButton;
     //Back button
@@ -61,10 +75,15 @@ public class EditMedicalProblemPanel extends EditPanel{
         buildDepartmentField();
         buildTreatmentField();
         buildTypeField();
+        buildDescriptionField();
+        buildLocationField();
+        buildRequiresCastField();
+        buildRecoveryTimeField();
+
         buildSaveButton(prev, this);
         buildBackButton(prev, this);
 
-        compose();
+        compose(typeContent.getItemAt(typeContent.getSelectedIndex()));
     }
 
     public void disableTypeField() {
@@ -73,6 +92,30 @@ public class EditMedicalProblemPanel extends EditPanel{
 
     public void enableTypeField() {
         typeContent.setEnabled(true);
+    }
+
+    private void buildRecoveryTimeField(){
+        recoveryTimeLabel = new JLabel("Recovery time:");
+        try {
+            recoveryTimeText = new JFormattedTextField(new MaskFormatter("###.##"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void buildRequiresCastField(){
+        requiresCastLabel = new JLabel("Requires cast:");
+        requiresCastContent = new JCheckBox();
+    }
+
+    private void buildLocationField(){
+        locationLabel = new JLabel("Location:");
+        locationText = new JTextField();
+    }
+
+    private void buildDescriptionField(){
+        descLabel = new JLabel("Description:");
+        descText = new JTextField();
     }
 
     private void buildNameField(){
@@ -87,6 +130,12 @@ public class EditMedicalProblemPanel extends EditPanel{
     private void buildTypeField(){
         typeLabel = new JLabel("Type:");
         typeContent = createTypeContent();
+        typeContent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                compose(typeContent.getItemAt(typeContent.getSelectedIndex()));
+            }
+        });
     }
 
     private void buildTreatmentField(){
@@ -128,10 +177,10 @@ public class EditMedicalProblemPanel extends EditPanel{
                 for (int i = 0; i < activeTreatmentListModel.getSize(); i++) {
                     treatments.add(activeTreatmentListModel.get(i));
                 }
-                String location = "";
-                boolean requiresCast = false;
-                double recoveryTime = 0.0;
-                String description = "";
+                String location = locationText.getText();
+                boolean requiresCast = requiresCastContent.isSelected();
+                double recoveryTime = Double.parseDouble(recoveryTimeText.getText().trim());
+                String description = descText.getText();
 
                 MedicalProblem newMedicalProblem = null;
                 if (typeContent.getSelectedItem().equals("fracture")) {
@@ -184,7 +233,7 @@ public class EditMedicalProblemPanel extends EditPanel{
         });
     }
 
-    private void compose(){
+    private void composeDisease() {
         layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -207,12 +256,14 @@ public class EditMedicalProblemPanel extends EditPanel{
                                 .addComponent(typeLabel)
                                 .addComponent(departmentLabel)
                                 .addComponent(treatmentLabel)
+                                .addComponent(descLabel)
                                 .addComponent(backButton))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(nameText)
                                 .addComponent(typeContent)
                                 .addComponent(departmentContent)
                                 .addGroup(treatmentGroupHor)
+                                .addComponent(descText)
                                 .addComponent(saveMedicalProblemButton))
         );
 
@@ -231,17 +282,170 @@ public class EditMedicalProblemPanel extends EditPanel{
                                 .addComponent(treatmentLabel)
                                 .addGroup(treatmentGroupVer))
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(descLabel)
+                                .addComponent(descText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(backButton)
                                 .addComponent(saveMedicalProblemButton))
 
         );
     }
 
+    private void composeFracture() {
+        layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        GroupLayout.Group treatmentGroupHor = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeTreatmentPane))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentPane));
+        GroupLayout.Group treatmentGroupVer = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(activeTreatmentPane)
+                        .addComponent(button)
+                        .addComponent(allTreatmentPane));
+
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nameLabel)
+                                .addComponent(typeLabel)
+                                .addComponent(departmentLabel)
+                                .addComponent(treatmentLabel)
+                                .addComponent(locationLabel)
+                                .addComponent(requiresCastLabel)
+                                .addComponent(backButton))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nameText)
+                                .addComponent(typeContent)
+                                .addComponent(departmentContent)
+                                .addGroup(treatmentGroupHor)
+                                .addComponent(locationText)
+                                .addComponent(requiresCastContent)
+                                .addComponent(saveMedicalProblemButton))
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(nameLabel)
+                                .addComponent(nameText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(typeLabel)
+                                .addComponent(typeContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(departmentLabel)
+                                .addComponent(departmentContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(treatmentLabel)
+                                .addGroup(treatmentGroupVer))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(locationLabel)
+                                .addComponent(locationText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(requiresCastLabel)
+                                .addComponent(requiresCastContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(backButton)
+                                .addComponent(saveMedicalProblemButton))
+
+        );
+    }
+
+    private void composeInjury() {
+        layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        GroupLayout.Group treatmentGroupHor = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeTreatmentPane))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(button))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentPane));
+        GroupLayout.Group treatmentGroupVer = layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(activeTreatmentPane)
+                        .addComponent(button)
+                        .addComponent(allTreatmentPane));
+
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nameLabel)
+                                .addComponent(typeLabel)
+                                .addComponent(departmentLabel)
+                                .addComponent(treatmentLabel)
+                                .addComponent(recoveryTimeLabel)
+                                .addComponent(locationLabel)
+                                .addComponent(backButton))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nameText)
+                                .addComponent(typeContent)
+                                .addComponent(departmentContent)
+                                .addGroup(treatmentGroupHor)
+                                .addComponent(recoveryTimeText)
+                                .addComponent(locationText)
+                                .addComponent(saveMedicalProblemButton))
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(nameLabel)
+                                .addComponent(nameText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(typeLabel)
+                                .addComponent(typeContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(departmentLabel)
+                                .addComponent(departmentContent))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(treatmentLabel)
+                                .addGroup(treatmentGroupVer))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(recoveryTimeLabel)
+                                .addComponent(recoveryTimeText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(locationLabel)
+                                .addComponent(locationText))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(backButton)
+                                .addComponent(saveMedicalProblemButton))
+
+        );
+    }
+
+    private void compose(String type){
+        if ("fracture".equals(type)) {
+            composeFracture();
+            this.remove(recoveryTimeLabel);
+            this.remove(recoveryTimeText);
+            this.remove(descLabel);
+            this.remove(descText);
+        } else if ("injury".equals(type)) {
+            composeInjury();
+            this.remove(requiresCastLabel);
+            this.remove(requiresCastContent);
+            this.remove(descLabel);
+            this.remove(descText);
+        } else if ("disease".equals(type)) {
+            composeDisease();
+            this.remove(recoveryTimeLabel);
+            this.remove(recoveryTimeText);
+            this.remove(requiresCastLabel);
+            this.remove(requiresCastContent);
+            this.remove(locationLabel);
+            this.remove(locationText);
+        }
+    }
+
 
     private JComboBox<DepartmentOptionDTO> createDepartmentContent() {
         JComboBox<DepartmentOptionDTO> departmentContent = new JComboBox<>();
-        for (Map.Entry department : hospital.getDepartments().entrySet()){
-            departmentContent.addItem(DepartmentOptionDTO.map((Department) department.getValue()));
+        for (Department department : hospital.getDepartments().values()){
+            departmentContent.addItem(DepartmentOptionDTO.map(department));
         }
         return departmentContent;
     }
@@ -267,12 +471,26 @@ public class EditMedicalProblemPanel extends EditPanel{
                 typeContent.setSelectedIndex(i);
             }
         }
+
+        if (medicalProblem instanceof Disease) {
+            descText.setText(((Disease) medicalProblem).getDescription());
+        } else if (medicalProblem instanceof Fracture) {
+            locationText.setText(((Fracture) medicalProblem).getLocation());
+            requiresCastContent.setSelected(((Fracture) medicalProblem).isRequiresCast());
+        } else if (medicalProblem instanceof Injury) {
+            locationText.setText(((Injury) medicalProblem).getLocation());
+            recoveryTimeText.setText(String.valueOf(((Injury) medicalProblem).getCommonRecoveryTime()));
+        }
     }
 
     void clearPanel() {
         medicalProblem = null;
         nameText.setText("");
         activeTreatmentListModel.removeAllElements();
+        descText.setText("");
+        locationText.setText("");
+        requiresCastContent.setSelected(false);
+        recoveryTimeText.setText("0.0");
         enableTypeField();
     }
 }

@@ -43,6 +43,7 @@ public class EditVisitsPanel extends EditPanel {
     private JList<TreatmentListOptionDTO> treatmentsList;
     private JScrollPane treatmentsPane;
     private DefaultListModel<TreatmentListOptionDTO> allTreatmentsListModel;
+    private DefaultListModel<MedicationListOptionDTO> activeMedicationListModel;
     private JList<TreatmentListOptionDTO> allTreatmentsList;
     private JScrollPane allTreatmentsPane;
     private JButton selectTreatmentButton;
@@ -55,6 +56,8 @@ public class EditVisitsPanel extends EditPanel {
     private JList<MedicationProblemListOptionDTO> allMedicalProblemList;
     private JScrollPane allMedicalProblemPane;
     private JButton medicalProblemButton;
+    private JButton clearMedicationButton;
+    private JButton clearMedicalProblemButton;
     //Save button
     private JButton saveVisitButton;
     //Back button
@@ -124,7 +127,7 @@ public class EditVisitsPanel extends EditPanel {
             allTreatmentsListModel.addElement(TreatmentListOptionDTO.map(treatment));
         }
 
-        selectTreatmentButton = new JButton("Add Treatment");
+        selectTreatmentButton = new JButton("    Add    ");
         selectTreatmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,6 +136,14 @@ public class EditVisitsPanel extends EditPanel {
                 if (selectedTreatment != null) {
                     treatmentsListModel.addElement(selectedTreatment);
                 }
+            }
+        });
+
+        clearMedicationButton = new JButton("Clear all");
+        clearMedicationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allTreatmentsListModel.removeAllElements();
             }
         });
     }
@@ -150,7 +161,7 @@ public class EditVisitsPanel extends EditPanel {
         for (MedicalProblem medicalProblem : hospital.getMedicalProblems().values()) {
             allMedicalProblemListModel.addElement(MedicationProblemListOptionDTO.map(medicalProblem));
         }
-        medicalProblemButton = new JButton("Add");
+        medicalProblemButton = new JButton("    Add    ");
         medicalProblemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -160,6 +171,14 @@ public class EditVisitsPanel extends EditPanel {
                         activeMedicalProblemListModel.addElement(item);
                     };
                 }
+            }
+        });
+
+        clearMedicalProblemButton = new JButton("Clear all");
+        clearMedicalProblemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activeMedicalProblemListModel.removeAllElements();
             }
         });
     }
@@ -244,22 +263,30 @@ public class EditVisitsPanel extends EditPanel {
 
         GroupLayout.Group treatmentsGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(treatmentsPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectTreatmentButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(selectTreatmentButton)
+                        .addComponent(clearMedicationButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allTreatmentsPane));
         GroupLayout.Group treatmentsGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(treatmentsPane)
-                        .addComponent(selectTreatmentButton)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(selectTreatmentButton)
+                            .addComponent(clearMedicationButton))
                         .addComponent(allTreatmentsPane));
 
         GroupLayout.Group medicalProblemsGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeMedicalProblemPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(medicalProblemButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(medicalProblemButton)
+                        .addComponent(clearMedicalProblemButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allMedicalProblemPane));
         GroupLayout.Group medicalProblemsGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeMedicalProblemPane)
-                        .addComponent(medicalProblemButton)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(medicalProblemButton)
+                            .addComponent(clearMedicalProblemButton))
                         .addComponent(allMedicalProblemPane));
 
         layout.setHorizontalGroup(

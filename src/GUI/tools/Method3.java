@@ -12,43 +12,31 @@ import java.util.HashMap;
 import static GUI.mainScreen.SystemUsersGUI.hospital;
 
 public class Method3 {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Hospital System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
 
-        // יצירת מופע של המחלקה Hospital
-        //Hospital hospital = new Hospital();
-
-        // יצירת פאנל
-        JPanel panel = new JPanel();
-        frame.add(panel);
-        placeComponents(panel, hospital);
-
-        frame.setVisible(true);
-    }
+    private static JComboBox<Specialization> specializationTextField;
+    private static JLabel specializationLabel;
+    private static JButton checkDoctorsBySpecializationButton;
+    private static JLabel resultArea;
 
     public static void placeComponents(JPanel panel, Hospital hospital) {
-        panel.setLayout(null); // שימוש במיקום אבסולוטי
+        GroupLayout layout = new GroupLayout(panel);
+        panel.setLayout(layout); // שימוש במיקום אבסולוטי
 
         // כפתור לחישוב כמות הרופאים לפי התמחות
-        JButton checkDoctorsBySpecializationButton = new JButton("Check Doctors by Specialization");
-        checkDoctorsBySpecializationButton.setBounds(10, 60, 250, 25);
+        checkDoctorsBySpecializationButton = new JButton("Check Doctors by Specialization");
         panel.add(checkDoctorsBySpecializationButton);
 
         // יצירת תיבת בחירה לתחום התמחות (מחרוזות במקום אובייקט התמחות)
-        JLabel specializationLabel = new JLabel("Enter Specialization:");
-        specializationLabel.setBounds(10, 20, 200, 25);
+        specializationLabel = new JLabel("Choose Specialization:");
         panel.add(specializationLabel);
 
-        JTextField specializationTextField = new JTextField();
-        specializationTextField.setBounds(150, 20, 200, 25);
+        specializationTextField = new JComboBox();
+        for (Specialization item : Specialization.values()) {
+            specializationTextField.addItem(item);
+        }
         panel.add(specializationTextField);
 
-        // תווית לתוצאה
-        JTextArea resultArea = new JTextArea();
-        resultArea.setBounds(10, 100, 450, 250);
-        resultArea.setEditable(false); // השדה לא ניתן לעריכה
+        resultArea = new JLabel();
         panel.add(resultArea);
 
         // הוספת מאזין לכפתור
@@ -56,7 +44,7 @@ public class Method3 {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // קבלת ההתמחות שהוזנה מהתיבה
-                String enteredSpecialization = specializationTextField.getText();
+                Specialization enteredSpecialization = (Specialization) specializationTextField.getSelectedItem();
 
                 // קריאה למתודה ב-Hospital לקבלת מספר הרופאים לפי התמחות
                 HashMap<Specialization, Integer> result = hospital.getNumberOfDoctorsBySpecialization();
@@ -72,5 +60,41 @@ public class Method3 {
                 }
             }
         });
+        compose(layout);
+    }
+
+    private static void compose(GroupLayout layout) {
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(specializationLabel)
+                                .addComponent(specializationTextField)
+                        )
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(checkDoctorsBySpecializationButton)
+                        )
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(resultArea)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(specializationLabel)
+                                .addComponent(specializationTextField)
+                        )
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(checkDoctorsBySpecializationButton)
+                        )
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(resultArea)
+                        )
+        );
     }
 }
+

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import control.Hospital;
 import enums.BiologicalSex;
+import exceptions.FutureDateException;
 import utils.UtilsMethods;
 
 public abstract class Person implements Serializable {
@@ -78,7 +79,7 @@ public abstract class Person implements Serializable {
 	public void setBirthDate(Date birthDate) {
 		//if the birthday is after "today", it set to "today"
 		if(birthDate.after(Hospital.TODAY)) {
-			birthDate=Hospital.TODAY;
+			throw new FutureDateException(birthDate);
 		}
 		this.birthDate = birthDate;
 	}

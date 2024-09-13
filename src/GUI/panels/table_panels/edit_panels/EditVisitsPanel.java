@@ -143,7 +143,7 @@ public class EditVisitsPanel extends EditPanel {
         clearMedicationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                allTreatmentsListModel.removeAllElements();
+                treatmentsListModel.removeAllElements();
             }
         });
     }

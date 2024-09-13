@@ -3,8 +3,9 @@ package GUI.panels.table_panels.edit_panels;
 import GUI.actions.OpenPanelAction;
 import GUI.dto.*;
 import GUI.panels.BasePanel;
-import GUI.panels.table_panels.TreatmentsPanel;
 import GUI.panels.table_panels.VisitsPanel;
+import control.Hospital;
+import exceptions.FutureDateException;
 import model.*;
 import utils.UtilsMethods;
 
@@ -12,8 +13,6 @@ import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -131,10 +130,11 @@ public class EditVisitsPanel extends EditPanel {
         selectTreatmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Add selected treatment to the list
-                TreatmentListOptionDTO selectedTreatment = allTreatmentsList.getSelectedValue();
-                if (selectedTreatment != null) {
-                    treatmentsListModel.addElement(selectedTreatment);
+                List<TreatmentListOptionDTO> selected = allTreatmentsList.getSelectedValuesList();
+                for (TreatmentListOptionDTO item : selected) {
+                    if (treatmentsListModel.indexOf(item) == -1) {
+                        treatmentsListModel.addElement(item);
+                    };
                 }
             }
         });
@@ -197,11 +197,29 @@ public class EditVisitsPanel extends EditPanel {
                     JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (First visit!).\nPlease enter a valid date.");
                     return;
                 }
+                if (startDate.after(Hospital.TODAY)) {
+                    try {
+                        throw new FutureDateException(startDate);
+                    } catch (FutureDateException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(getMainFrame(), ex.getMessage());
+                        return;
+                    }
+                }
                 Date endDate = UtilsMethods.parseDate(endDateText.getText());
                 inputDate = endDateText.getText();
                 if (!inputDate.equals(UtilsMethods.format(endDate))) {
                     JOptionPane.showMessageDialog(getMainFrame(), "Invalid date format (Last visit!).\nPlease enter a valid date.");
                     return;
+                }
+                if (endDate.after(Hospital.TODAY)) {
+                    try {
+                        throw new FutureDateException(endDate);
+                    } catch (FutureDateException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(getMainFrame(), ex.getMessage());
+                        return;
+                    }
                 }
 
                 if (startDate.after(endDate)) {
@@ -350,8 +368,8 @@ public class EditVisitsPanel extends EditPanel {
 
     void clearPanel() {
         visit = null;
-        startDateText.setText("");
-        endDateText.setText("");
+        startDateText.setText("01/01/1900");
+        endDateText.setText("01/01/1900");
         treatmentsListModel.removeAllElements();
         activeMedicalProblemListModel.removeAllElements();
     }

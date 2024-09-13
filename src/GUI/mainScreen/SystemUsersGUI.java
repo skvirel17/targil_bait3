@@ -6,12 +6,12 @@ import GUI.panels.table_panels.*;
 import GUI.panels.table_panels.edit_panels.*;
 import GUI.session.Session;
 import control.Hospital;
-import model.StaffMember;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Map;
 
 import static GUI.panels.AddIssueAndTreatmentToVisitPanel.ADD_ISSUE_AND_TREATMENT_TO_VISIT_PANEL;
 import static GUI.panels.AddMedicationPanel.ADD_MEDICATION_PANEL;
@@ -80,13 +80,22 @@ public class SystemUsersGUI {
 
         if (file.exists()) {
             hospital = Hospital.deserialize("hospital.ser");
-            for(Map.Entry<Integer, StaffMember> member : hospital.getStaffMembers().entrySet()){
-                member.getValue().setPassWord("");
-            }
         } else {
             hospital =  Hospital.getInstance();
             System.out.println("File hospital.ser does not exist.");
         }
+
+        mainFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                hospital.serialize();
+            }
+        });
+
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            JOptionPane.showMessageDialog(mainFrame, "Error: " + "Something went wrong. Please contact your admin!", "Error", JOptionPane.ERROR_MESSAGE);
+            throwable.printStackTrace();
+        });
 
         JPanel editProfilePanel = new EditProfilePanel();
         JPanel addMedicationPanel = new AddMedicationPanel();

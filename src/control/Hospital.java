@@ -43,8 +43,7 @@ public class Hospital implements Serializable {
 		}
 		return instance;
 	}
-	
-	
+
 	//add
 	public boolean addDoctorToDepartment(Department department,Doctor doctor) {
 		if(department==null||doctor==null) {
@@ -74,49 +73,49 @@ public class Hospital implements Serializable {
 	}
 
 	public int generateNewDepartmentNumber() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int departmentNumber: getDepartments().keySet()) {
-			max = (departmentNumber > max) ? departmentNumber : max;
+			max = Math.max(departmentNumber, max);
 		}
 		return max+1;
 	}
 
 	public int generateNewMedicationCode() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int medicationCode: getMedications().keySet()) {
-			max = (medicationCode > max) ? medicationCode : max;
+			max = Math.max(medicationCode, max);
 		}
 		return max+1;
 	}
 
 	public int generateNewPatientNumber() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int patientNumber: getPatients().keySet()) {
-			max = (patientNumber > max) ? patientNumber : max;
+			max = Math.max(patientNumber, max);
 		}
 		return max+1;
 	}
 
 	public int generateNewStaffMember() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int staffMemberNumber: getStaffMembers().keySet()) {
-			max = (staffMemberNumber > max) ? staffMemberNumber : max;
+			max = Math.max(staffMemberNumber, max);
 		}
 		return max+1;
 	}
 
 	public int generateNewTreatmentNumber() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int treatmentNumber: getTreatments().keySet()) {
-			max = (treatmentNumber > max) ? treatmentNumber : max;
+			max = Math.max(treatmentNumber, max);
 		}
 		return max+1;
 	}
 
 	public int generateNewVisitNumber() {
-		int max = Integer.MIN_VALUE;
+		int max = 0;
 		for (int visitNumber: getVisits().keySet()) {
-			max = (visitNumber > max) ? visitNumber : max;
+			max = Math.max(visitNumber, max);
 		}
 		return max+1;
 	}

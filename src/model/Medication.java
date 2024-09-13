@@ -1,5 +1,8 @@
 package model;
 
+import exceptions.NegativeDosageException;
+import exceptions.NegativeNumberOfDosesException;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -48,7 +51,7 @@ public class Medication implements Serializable {
 	public void setDosage(double dosage) {
 		//checks if the dosage is not negative. if it is not, set to 1.0.
 		if(dosage<0) {
-			dosage=1.0;
+			throw new NegativeDosageException(dosage);
 		}
 		this.dosage = dosage;
 	}
@@ -57,7 +60,7 @@ public class Medication implements Serializable {
 	public void setNumberOfDose(int numberOfDose) {
 		//checks if the numberOfDose is over 1. if it is not, set to 1.
 		if(numberOfDose<1) {
-			numberOfDose=1;
+			throw new NegativeNumberOfDosesException(numberOfDose);
 		}
 		this.numberOfDose = numberOfDose;
 	}

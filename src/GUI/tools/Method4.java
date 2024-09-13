@@ -10,44 +10,29 @@ import java.awt.event.ActionListener;
 import static GUI.mainScreen.SystemUsersGUI.hospital;
 
 public class Method4 {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Hospital System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
-
-        // יצירת מופע של המחלקה Hospital
-        //Hospital hospital = new Hospital();
-
-        // יצירת פאנל
-        JPanel panel = new JPanel();
-        frame.add(panel);
-        placeComponents(panel, hospital);
-
-        frame.setVisible(true);
-    }
+    private static JLabel resultArea;
+    private static JButton healthStandardButton;
+    private static JButton avgSalaryButton;
+    private static JButton intensiveCareStaffButton;
 
     public static void placeComponents(JPanel panel, Hospital hospital) {
-        panel.setLayout(null); // שימוש במיקום אבסולוטי
+        GroupLayout layout = new GroupLayout(panel);// שימוש במיקום אבסולוטי
+        panel.setLayout(layout); // שימוש במיקום אבסולוטי
 
         // כפתור 41: חישוב כמות אנשי צוות שמוכשרים לטיפול נמרץ
-        JButton intensiveCareStaffButton = new JButton("Intensive Care Staff Members");
-        intensiveCareStaffButton.setBounds(10, 20, 250, 25);
+        intensiveCareStaffButton = new JButton("Intensive Care Staff Members");
         panel.add(intensiveCareStaffButton);
 
         // כפתור 42: חישוב השכר הממוצע של אנשי הצוות
-        JButton avgSalaryButton = new JButton("Average Salary");
-        avgSalaryButton.setBounds(10, 60, 250, 25);
+        avgSalaryButton = new JButton("Average Salary                  ");
         panel.add(avgSalaryButton);
 
         // כפתור 43: בדיקת עמידה בסטנדרט של משרד הבריאות
-        JButton healthStandardButton = new JButton("Health Ministry Standard");
-        healthStandardButton.setBounds(10, 100, 250, 25);
+        healthStandardButton = new JButton("Health Ministry Standard");
         panel.add(healthStandardButton);
 
         // תווית לתוצאות
-        JTextArea resultArea = new JTextArea();
-        resultArea.setBounds(10, 150, 450, 200);
-        resultArea.setEditable(false); // השדה לא ניתן לעריכה
+        resultArea = new JLabel();
         panel.add(resultArea);
 
         // מאזין לכפתור 41: אנשי צוות מוכשרים לטיפול נמרץ
@@ -80,5 +65,36 @@ public class Method4 {
                 }
             }
         });
+        compose(layout);
+    }
+
+        private static void compose(GroupLayout layout) {
+
+            layout.setAutoCreateGaps(true);
+            layout.setAutoCreateContainerGaps(true);
+
+            layout.setHorizontalGroup(
+                    layout.createParallelGroup()
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(healthStandardButton))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(avgSalaryButton))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(intensiveCareStaffButton))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(resultArea))
+            );
+
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(healthStandardButton))
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(avgSalaryButton))
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(intensiveCareStaffButton))
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(resultArea))
+            );
     }
 }

@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import control.Hospital;
 import enums.Specialization;
+import exceptions.FutureDateException;
 import utils.UtilsMethods;
 
 public abstract class StaffMember extends Person implements Serializable {
@@ -60,7 +61,7 @@ public abstract class StaffMember extends Person implements Serializable {
 	public void setWorkStartDate(Date workStartDate) {
 		//if the workStartDate is after "today", it set to "today"
 		if(workStartDate.after(Hospital.TODAY)) {
-			workStartDate=Hospital.TODAY;
+			throw new FutureDateException(workStartDate);
 		}
 		this.workStartDate = workStartDate;
 	}

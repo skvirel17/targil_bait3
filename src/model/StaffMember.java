@@ -16,7 +16,7 @@ public abstract class StaffMember extends Person implements Serializable {
 
 	private  String passWord = "";
 
-	private static final long serialVersionUID = 7665079918262989153L;
+	//private static final long serialVersionUID = 7665079918262989153L;
 
 	//Constructors
 	public StaffMember(int id, String firstName, String lastName, Date birthDate, String address, String phoneNumber,
@@ -26,7 +26,6 @@ public abstract class StaffMember extends Person implements Serializable {
 		setWorkStartDate(workStartDate);
 		this.departments = departments;
 		this.salary = salary;
-		this.passWord = "";
 	}
 	
 	public StaffMember(int id, String firstName, String lastName, Date birthDate, String address, String phoneNumber,

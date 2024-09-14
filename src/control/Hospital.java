@@ -5,6 +5,8 @@ import java.util.*;
 
 import com.sun.corba.se.impl.orbutil.ObjectUtility;
 import enums.*;
+import exceptions.ObjectAlreadyExistsException;
+import exceptions.ObjectDoesNotExist;
 import model.*;
 import utils.MyFileLogWriter;
 import utils.UtilsMethods;
@@ -45,19 +47,29 @@ public class Hospital implements Serializable {
 	
 	//add
 	public boolean addDoctorToDepartment(Department department,Doctor doctor) {
-		if(department!=null&&doctor!=null
-				&&departments.containsKey(department.getNumber())&&staffMembers.containsKey(doctor.getId())) {
-				return department.addDoctor(doctor);
+		if(department==null||doctor==null) {
+			throw new NullPointerException();
 		}
-		return false;
+		if(!departments.containsKey(department.getNumber())){
+			throw new ObjectDoesNotExist(department.getNumber(), department.getClass().getSimpleName(), this.getClass().getSimpleName());
+		}
+		if(!staffMembers.containsKey(doctor.getId())) {
+			throw new ObjectDoesNotExist(doctor.getId(), doctor.getClass().getSimpleName(), this.getClass().getSimpleName());
+		}
+		return department.addDoctor(doctor);
 	}
 	
 	public boolean addNurseToDepartment(Department department,Nurse nurse) {
-		if(department!=null&&nurse!=null
-				&&departments.containsKey(department.getNumber())&&staffMembers.containsKey(nurse.getId())) {
-				return department.addNurse(nurse);
+		if(department==null||nurse==null) {
+			throw new NullPointerException();
 		}
-		return false;
+		if(!departments.containsKey(department.getNumber())){
+			throw new ObjectDoesNotExist(department.getNumber(), department.getClass().getSimpleName(), this.getClass().getSimpleName());
+		}
+		if(!staffMembers.containsKey(nurse.getId())) {
+			throw new ObjectDoesNotExist(nurse.getId(), nurse.getClass().getSimpleName(), this.getClass().getSimpleName());
+		}
+		return department.addNurse(nurse);
 	}
 
 	public int generateNewDepartmentNumber() {
@@ -111,10 +123,10 @@ public class Hospital implements Serializable {
 	
 	public boolean addDepartment(Department department) {
 		if(department==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (departments.containsKey(department.getNumber())) {
-			return false;
+			throw new ObjectAlreadyExistsException(department,this.getClass().getSimpleName());
 		}
 		return departments.put(department.getNumber(),department)==null;
 	}
@@ -125,17 +137,17 @@ public class Hospital implements Serializable {
 	
 	public boolean addMedicalProblem(MedicalProblem medicalProblem) {
 		if(medicalProblem==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (medicalProblems.containsKey(medicalProblem.getCode())) {
-			return false;
+			throw new ObjectAlreadyExistsException(medicalProblem,this.getClass().getSimpleName());
 		}
 		boolean flag=true;
 		for(Treatment treatment:medicalProblem.getTreatmentsList()) {
 			if(!treatment.addMedicalProblem(medicalProblem)) {
 				flag=false;
 			}
-			
+
 		}
 		if (flag==true) {
 			flag=medicalProblems.put(medicalProblem.getCode(),medicalProblem)==null;
@@ -161,17 +173,17 @@ public class Hospital implements Serializable {
 			return false;
 		}
 		if (medications.containsKey(medication.getCode())) {
-			return false;
+			throw new ObjectAlreadyExistsException(medication,this.getClass().getSimpleName());
 		}
 		return medications.put(medication.getCode(),medication)==null;
 	}
 	
 	public boolean addStaffMember(StaffMember staffMember) {
 		if(staffMember==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (staffMembers.containsKey(staffMember.getId())) {
-			return false;
+			throw new ObjectAlreadyExistsException(staffMember,this.getClass().getSimpleName());
 		}
 		return staffMembers.put(staffMember.getId(),staffMember)==null;
 	}
@@ -194,30 +206,30 @@ public class Hospital implements Serializable {
 	
 	public boolean addPatient(Patient patient) {
 		if(patient==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (patients.containsKey(patient.getId())) {
-			return false;
+			throw new ObjectAlreadyExistsException(patient,this.getClass().getSimpleName());
 		}
 		return patients.put(patient.getId(),patient)==null;
 	}
 	
 	public boolean addTreatment(Treatment treatment) {
 		if(treatment==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (treatments.containsKey(treatment.getSerialNumber())) {
-			return false;
+			throw new ObjectAlreadyExistsException(treatment,this.getClass().getSimpleName());
 		}
 		return treatments.put(treatment.getSerialNumber(),treatment)==null;
 	}
 	
 	public boolean addVisit(Visit visit) {
 		if(visit==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (visits.containsKey(visit.getNumber())) {
-			return false;
+			throw new ObjectAlreadyExistsException(visit,this.getClass().getSimpleName());
 		}
 		if(visit.getPatient().addVisit(visit))
 			return visits.put(visit.getNumber(),visit)==null;
@@ -227,38 +239,34 @@ public class Hospital implements Serializable {
 	//remove
 	public boolean removeDepartment(Department department) {
 		if(department==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!departments.containsKey(department.getNumber())) {
-			return false;
+			throw new ObjectDoesNotExist(department.getNumber(), department.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(StaffMember staffMember:department.getStaffMembersList()) {
-				staffMember.removeDepartment(department);
-			}
+			staffMember.removeDepartment(department);
+		}
 		for(MedicalProblem medicalProblem:medicalProblems.values()) {
-			if(!Objects.isNull(medicalProblem.getDepartment()) && medicalProblem.getDepartment().equals(department)) {
+			if(medicalProblem.getDepartment().equals(department)) {
 				medicalProblem.setDepartment(null);
 			}
 		}
-		return departments.remove(department.getNumber()) != null;
+		return departments.remove(department.getNumber())!=null;
 	}
 	
 	public boolean removeMedicalProblem(MedicalProblem medicalProblem) {
 		if(medicalProblem==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!medicalProblems.containsKey(medicalProblem.getCode())) {
-			return false;
+			throw new ObjectDoesNotExist(medicalProblem.getCode(), medicalProblem.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(Treatment t:medicalProblem.getTreatmentsList()) {
-			if(!Objects.isNull(t)) {
-				t.removeMedicalProblem(medicalProblem);
-			}
+			t.removeMedicalProblem(medicalProblem);
 		}
 		for(Visit v:visits.values()) {
-			if(!Objects.isNull(v)) {
-				v.removeMedicalProblem(medicalProblem);
-			}
+			v.removeMedicalProblem(medicalProblem);
 		}
 		return medicalProblems.remove(medicalProblem.getCode())!=null;
 	}
@@ -276,33 +284,28 @@ public class Hospital implements Serializable {
 	
 	public boolean removeMedication(Medication medication) {
 		if(medication==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!medications.containsKey(medication.getCode())) {
-			return false;
+			throw new ObjectDoesNotExist(medication.getCode(), medication.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(Treatment treatment:treatments.values()) {
-			if (!Objects.isNull(treatment)) {
-				treatment.removeMedication(medication);
-			}
+			treatment.removeMedication(medication);
 		}
-
 		return medications.remove(medication.getCode())!=null;
 	}
 	
 	public boolean removeStaffMember(StaffMember staffMember) {
 		if(staffMember==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!staffMembers.containsKey(staffMember.getId())) {
-			return false;
+			throw new ObjectDoesNotExist(staffMember.getId(), staffMember.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(Department d:staffMember.getDepartments()) {
-			if(!Objects.isNull(d)) {
-				d.removeStaffMember(staffMember);
-				if (!Objects.isNull(d.getmanager()) && d.getmanager().equals(staffMember)) {
-					d.setmanager(null);
-				}
+			d.removeStaffMember(staffMember);
+			if(d.getmanager().equals(staffMember)) {
+				d.setmanager(null);
 			}
 		}
 		return staffMembers.remove(staffMember.getId()) != null;
@@ -318,15 +321,13 @@ public class Hospital implements Serializable {
 	
 	public boolean removePatient(Patient patient) {
 		if(patient==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!patients.containsKey(patient.getId())) {
-			return false;
+			throw new ObjectDoesNotExist(patient.getId(), patient.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(Visit visit:patient.getVisitsList()) {
-			if(!Objects.isNull(visit)) {
-				visits.remove(visit.getNumber());
-			}
+			visit.setPatient(null);
 		}
 		return patients.remove(patient.getId()) != null;
 	}
@@ -334,83 +335,100 @@ public class Hospital implements Serializable {
 	
 	public boolean removeTreatment(Treatment treatment) {
 		if(treatment==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!treatments.containsKey(treatment.getSerialNumber())) {
-			return false;
+			throw new ObjectDoesNotExist(treatment.getSerialNumber(), treatment.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}
 		for(MedicalProblem medicalProblem:treatment.getMedicalProblemsList()) {
-			if(!Objects.isNull(medicalProblem)) {
-				medicalProblem.removeTreatment(treatment);
-			}
+			medicalProblem.removeTreatment(treatment);
 		}
 		for(Visit v:visits.values()) {
-			if(!Objects.isNull(v)) {
-				v.removeTreatment(treatment);
-			}
+			v.removeTreatment(treatment);
 		}
 		return treatments.remove(treatment.getSerialNumber()) != null;
 	}
 	
 	public boolean removeVisit(Visit visit) {
 		if(visit==null) {
-			return false;
+			throw new NullPointerException();
 		}
 		if (!visits.containsKey(visit.getNumber())) {
-			return false;
+			throw new ObjectDoesNotExist(visit.getNumber(), visit.getClass().getSimpleName(), this.getClass().getSimpleName());
 		}if(visit.getPatient()!=null) {
 			visit.getPatient().removeVisit(visit);
 		}
 		return visits.remove(visit.getNumber()) != null;
 	}
-	
+
 	//getReal
 	public Department getRealDepartment(Integer number) {
+		if(!departments.containsKey(number)) {
+			throw new ObjectDoesNotExist(number, "Department", this.getClass().getSimpleName());
+		}
 		return departments.get(number);
 	}
-	
+
 	public MedicalProblem getMedicalProblem(String code) {
+		if(!medicalProblems.containsKey(code)) {
+			throw new ObjectDoesNotExist(code, "MedicalProblem", this.getClass().getSimpleName());
+		}
 		return medicalProblems.get(code);
 	}
-	
+
 	public Disease getRealDisease(String code) {
 		return (Disease) getMedicalProblem(code);
 	}
-	
+
 	public Fracture getRealFracture(String code) {
 		return (Fracture) getMedicalProblem(code);
 	}
-	
+
 
 	public Injury getRealInjury(String code) {
 		return (Injury) getMedicalProblem(code);
 	}
-	
+
 	public StaffMember getStaffMember(Integer id) {
+		if(!staffMembers.containsKey(id)) {
+			throw new ObjectDoesNotExist(id, "StaffMember", this.getClass().getSimpleName());
+		}
 		return staffMembers.get(id);
 	}
 	public Doctor getRealDoctor(int id) {
 		return (Doctor) getStaffMember(id);
 	}
-	
+
 	public Nurse getRealNurse(int id) {
 		return (Nurse) getStaffMember(id);
 	}
-	
+
 	public Patient getRealPatient(Integer id) {
+		if(!patients.containsKey(id)) {
+			throw new ObjectDoesNotExist(id, "Patient", this.getClass().getSimpleName());
+		}
 		return patients.get(id);
 	}
-	
-	
+
+
 	public Medication getRealMedication(Integer code) {
+		if(!medications.containsKey(code)) {
+			throw new ObjectDoesNotExist(code, "Medication", this.getClass().getSimpleName());
+		}
 		return medications.get(code);
 	}
-	
+
 	public Treatment getRealTreatment(Integer number) {
+		if(!treatments.containsKey(number)) {
+			throw new ObjectDoesNotExist(number, "Treatment", this.getClass().getSimpleName());
+		}
 		return treatments.get(number);
 	}
-	
+
 	public Visit getRealVisit(Integer number) {
+		if(!visits.containsKey(number)) {
+			throw new ObjectDoesNotExist(number, "Visit", this.getClass().getSimpleName());
+		}
 		return visits.get(number);
 	}
 	

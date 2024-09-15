@@ -139,7 +139,7 @@ public class EditStaffMembersPanel extends EditPanel {
     private void buildLicenseNumberField() {
         licenseNumberLabel = new JLabel("License number: ");
         try {
-            licenseNumberText = new JFormattedTextField(new MaskFormatter("##########"));
+            licenseNumberText = new JFormattedTextField(new MaskFormatter("########"));
         } catch (ParseException e) {
             //TODO: remove runtime exception
             throw new RuntimeException(e);
@@ -198,6 +198,8 @@ public class EditStaffMembersPanel extends EditPanel {
     private void buildPositionField(){
         positionLabel = new JLabel("Type:");
         positionContent = createPositionContent();
+        positionContent.revalidate();
+        positionContent.repaint();
         positionContent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -472,12 +474,16 @@ public class EditStaffMembersPanel extends EditPanel {
 
         GroupLayout.Group departmentGroupHor = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(activeDepartmentPane))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(selectDepartmentButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(selectDepartmentButton)
+                        .addComponent(clearDepartmentButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(allDepartmentPane));
         GroupLayout.Group departmentGroupVer = layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(activeDepartmentPane)
-                        .addComponent(selectDepartmentButton)
+                        .addGroup(layout.createSequentialGroup() // создаем отдельную группу для кнопок
+                                .addComponent(selectDepartmentButton)
+                                .addComponent(clearDepartmentButton))
                         .addComponent(allDepartmentPane));
 
         layout.setHorizontalGroup(
@@ -562,6 +568,7 @@ public class EditStaffMembersPanel extends EditPanel {
 
     public void fillFromObject(StaffMember staffMember) {
         clearPanel();
+        positionContent.setSelectedIndex((staffMember instanceof Doctor)? 0:1);
         this.staffMember = staffMember;
         firstNameText.setText(staffMember.getFirstName());
         lastNameText.setText(staffMember.getLastName());

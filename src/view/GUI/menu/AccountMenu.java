@@ -31,10 +31,10 @@ public class AccountMenu extends JMenu{
     private static JMenuItem createItem() {
         JMenuItem personalItem = new JMenuItem(MI_PERSONAL_INFO);
         personalItem.addActionListener(e -> {
-            (new OpenPanelAction(SystemUsersGUI.getMainScreen(), EditStaffMembersPanel.EDIT_STAFF_MEMBERS_PANEL, getCardLayout())).actionPerformed(e);
+            (new OpenPanelAction(SystemUsersGUI.getMainScreen(), EDIT_PERSONAL_INFO_PANEL, getCardLayout())).actionPerformed(e);
             StaffMember editStaffMember = hospital.getStaffMember(getSession().getId());
-            ((EditStaffMembersPanel)itemPanel).fillFromObject(editStaffMember);
-            ((EditStaffMembersPanel)itemPanel).disablePositionField();
+            ((EditStaffMembersPanel) edit).fillFromObject(editStaffMember);
+            ((EditStaffMembersPanel)edit).disablePositionField();
         });
         return personalItem;
     }

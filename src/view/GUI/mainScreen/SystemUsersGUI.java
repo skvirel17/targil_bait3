@@ -44,6 +44,8 @@ import static view.GUI.panels.table_panels.edit_panels.EditVisitsPanel.EDIT_VISI
 
 public class SystemUsersGUI {
 
+    public static final String EDIT_PERSONAL_INFO_PANEL = "EDIT_PERSONAL_INFO_PANEL";
+    public static JPanel edit;
     private static final JFrame mainFrame = new MainScreenPanel();
     private static final JPanel mainScreen = new JPanel();
     private static final CardLayout cardLayout = new CardLayout();
@@ -122,6 +124,7 @@ public class SystemUsersGUI {
         JPanel editPatientsPanel = new EditPatientsPanel((BasePanel) patientsPanel);
         JPanel editMedicationPanel = new EditMedicationPanel((BasePanel) medicationPanel);
         JPanel editStaffMembersPanel = new EditStaffMembersPanel((BasePanel) staffMembersPanel);
+        JPanel editPersonalInfoPanel = new EditStaffMembersPanel((BasePanel) dashboardPanel);
         JPanel editTreatmentPanel = new EditTreatmentsPanel((BasePanel) treatmentsPanel);
         JPanel editVisitsPanel = new EditVisitsPanel((BasePanel) visitsPanel);
         ((DepartmentsPanel) departmentsPanel).itemPanel = editDepartmentPanel;
@@ -168,9 +171,9 @@ public class SystemUsersGUI {
         mainScreen.add(editStaffMembersPanel, EDIT_STAFF_MEMBERS_PANEL);
         mainScreen.add(editTreatmentPanel, EDIT_TREATMENT_PANEL);
         mainScreen.add(editVisitsPanel, EDIT_VISIT_PANEL);
-
+        mainScreen.add(editPersonalInfoPanel, EDIT_PERSONAL_INFO_PANEL);
         mainFrame.setContentPane(mainScreen);
-
+        edit = editPersonalInfoPanel;
         cardLayout.show(mainScreen, LOGIN_PANEL);
         // הצגת החלון
         mainFrame.setVisible(true);

@@ -10,4 +10,8 @@ public class DashBoardPanel extends BasePanel{
 
         this.setLayout(new BorderLayout());
     }
+
+    public String getPanelStringKey() {
+        return DASHBOARD_PANEL;
+    }
 }

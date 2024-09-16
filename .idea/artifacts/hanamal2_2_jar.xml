@@ -2,7 +2,7 @@
   <artifact type="jar" name="hanamal2 2:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/hanamal2_2_jar</output-path>
     <root id="archive" name="hanamal2 2.jar">
-      <element id="module-output" name="hanamal2 2" />
+      <element id="module-output" name="hanamal2_2" />
     </root>
   </artifact>
 </component>
